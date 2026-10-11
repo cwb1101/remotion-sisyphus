@@ -1,0 +1,26 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "抖音横屏知识短视频《回避型依恋》— Remotion 纯代码动画",
+  "scripts": {
+    "sfx": "node scripts/synth-sfx.mjs",
+    "check": "node scripts/check-script.mjs",
+    "studio": "npm run sfx && remotion studio src/index.ts",
+    "render:preview": "npm run check && npm run sfx && remotion render src/index.ts Preview out/preview.mp4",
+    "frames": "node scripts/extract-frames.mjs out/preview.mp4 out/frames",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.8",
+    "@fontsource/noto-serif-sc": "5.2.8",
+    "@remotion/cli": "4.0.530",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.530"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "typescript": "5.9.2"
+  }
+}
