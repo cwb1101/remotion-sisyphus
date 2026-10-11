@@ -97,8 +97,11 @@ const ProgressLamps: React.FC<{frame: number}> = ({frame}) => {
 	);
 };
 
-export const WhatItLooksLike: React.FC<{frame: number; cam: Cam}> = ({frame, cam}) => {
-	if (frame < R.start || frame > R.end + 40) return null;
+/** 本节结束（第 18 屏开始）时 TA 的状态，下一节从这里接 */
+export const WHAT_END = {x: AX - 620, ringR: RING_R, frost: 0.15, thick: 4, spotW: 520, heartGlow: 1.1, AX};
+
+export const WhatItLooksLike: React.FC<{frame: number; cam: Cam; tail?: number}> = ({frame, cam, tail = 40}) => {
+	if (frame < R.start || frame >= R.end + tail) return null;
 	const beat = pulseAt(frame);
 	const st = stationX(frame);
 	const arrive = prog(frame, s10.start, s10.start + 28, whip);

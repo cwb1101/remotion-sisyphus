@@ -3,11 +3,11 @@
  */
 import React, {useId} from 'react';
 import {AbsoluteFill} from 'remotion';
-import {Cam, camSpeed, camTransform} from '../lib/camera';
+import {Cam, camTransform} from '../lib/camera';
 
 export const World: React.FC<{cam: Cam; frame: number; children: React.ReactNode}> = ({cam, frame, children}) => {
 	const id = useId().replace(/:/g, '');
-	const v = camSpeed(frame);
+	const v = cam;
 	const bx = Math.min(28, Math.abs(v.vx) * 0.09);
 	const by = Math.min(28, Math.abs(v.vy) * 0.09);
 	const bz = Math.min(6, v.vz * 60);

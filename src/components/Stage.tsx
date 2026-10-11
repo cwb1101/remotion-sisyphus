@@ -123,6 +123,11 @@ const MOODS: Record<string, Mood> = {
 	hook: {haze: '#3a2414', hazeA: 0.55, vignette: 0.85},
 	question: {haze: '#0f1f3a', hazeA: 0.7, vignette: 0.7},
 	what: {haze: '#1c1f24', hazeA: 0.5, vignette: 0.6},
+	origin: {haze: '#3d2a16', hazeA: 0.62, vignette: 0.8},
+	express: {haze: '#0c2a2e', hazeA: 0.55, vignette: 0.7},
+	cycle: {haze: '#0f1f3a', hazeA: 0.7, vignette: 0.7},
+	change: {haze: '#4a3018', hazeA: 0.62, vignette: 0.55},
+	ending: {haze: '#14213d', hazeA: 0.6, vignette: 0.75},
 };
 export const moodAt = (frame: number): Mood => {
 	const ids = Object.keys(MOODS);

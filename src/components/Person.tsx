@@ -50,6 +50,9 @@ export const heartHeight = (age = 1) => {
 	return P.thigh + P.shin + P.torso * 0.7;
 };
 
+/** 心脏的世界坐标（用于镜头推进到心口） */
+export const heartWorld = (x: number, age = 1, scale = 1.3, facing = 1) => ({x: x + 6 * scale * facing, y: -heartHeight(age) * scale});
+
 const rad = (d: number) => (d * Math.PI) / 180;
 const seg = (x: number, y: number, ang: number, len: number) => ({x: x + Math.sin(rad(ang)) * len, y: y + Math.cos(rad(ang)) * len});
 
@@ -67,7 +70,8 @@ export const Person: React.FC<{
 	heartScale?: number; // 心形放大（特写时让心填满画面）
 	tone?: string; // 单色（人群剪影/幽灵）
 	opacity?: number;
-}> = ({x, y = 0, scale = 1, facing = 1, pose = {}, palette, age = 1, face = 'neutral', heart = 0.5, heartGlow = 1, heartScale = 1, tone, opacity = 1}) => {
+	phone?: boolean; // 前手拿着发光的手机
+}> = ({x, y = 0, scale = 1, facing = 1, pose = {}, palette, age = 1, face = 'neutral', heart = 0.5, heartGlow = 1, heartScale = 1, tone, opacity = 1, phone = false}) => {
 	const id = useId().replace(/:/g, '');
 	const P = props(age);
 	const {lean = 0, head = 0, bob = 0, crouch = 0} = pose;
@@ -177,6 +181,13 @@ export const Person: React.FC<{
 			{faceEls}
 			{limb([af.s, af.e, af.h], P.armW, C.shirt)}
 			<circle cx={af.h.x} cy={af.h.y} r={P.armW * 0.5} fill={C.skin} />
+			{phone && !tone && (
+				<g transform={`translate(${af.h.x + 4} ${af.h.y - 10}) rotate(-20)`}>
+					<circle r={40} fill="#9fd0ff" opacity={0.12} />
+					<rect x={-9} y={-16} width={18} height={30} rx={3} fill="#1a1d24" />
+					<rect x={-7} y={-13} width={14} height={23} rx={2} fill="#bfe3ff" />
+				</g>
+			)}
 			{heart >= 0 && !tone && (
 				<g transform={`translate(${heartPos.x} ${heartPos.y})`}>
 					<circle r={55 * heartGlow * Math.sqrt(heartScale) * (1 + 0.4 * hb) * (P.heart / 9)} fill={`url(#hg-${id})`} opacity={0.5 + 0.5 * Math.min(1, hb)} />
@@ -191,5 +202,6 @@ export const PAL = {
 	cool: {skin: '#F1C7A6', skinShade: '#D9A988', hair: '#1E1A1C', shirt: '#3F7FA0', shirtShade: '#2E6280', pants: '#2A3142', pantsShade: '#1F2533', shoes: '#14161C'},
 	warm: {skin: '#F3C9A4', skinShade: '#DBAA84', hair: '#4A2A1E', shirt: '#E9895F', shirtShade: '#C96E47', pants: '#3D3550', pantsShade: '#2E283D', shoes: '#1A1520'},
 	mom: {skin: '#EFC3A0', skinShade: '#D6A582', hair: '#2B1C18', shirt: '#B45A6A', shirtShade: '#944756', pants: '#38304A', pantsShade: '#2A2438', shoes: '#16131C'},
+	sage: {skin: '#EEC6A2', skinShade: '#D5A884', hair: '#5A5A5A', shirt: '#8FB59A', shirtShade: '#74997F', pants: '#3A3E48', pantsShade: '#2C2F37', shoes: '#16171B'},
 	kid: {skin: '#F3CBAA', skinShade: '#DCAE8C', hair: '#1E1A1C', shirt: '#6FA6C4', shirtShade: '#5288A6', pants: '#33405A', pantsShade: '#273147', shoes: '#14161C'},
 } satisfies Record<string, Palette>;

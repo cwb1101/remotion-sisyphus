@@ -202,7 +202,7 @@ const Slam: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 								color: frame >= impact2 - 5 ? C.hi : C.text,
 								opacity: frame < impact2 - 5 ? 0 : clamp(t2 * 2),
 								transform: `scale(${sc}) translateY(${-size * 0.02}px)`,
-								margin: `0 ${size * 0.04}px`,
+								margin: `0 ${size * (0.04 + (seg.text.length > 2 ? 0.12 * seg.text.length * 0.5 : 0))}px`,
 							}}
 						>
 							{seg.text}

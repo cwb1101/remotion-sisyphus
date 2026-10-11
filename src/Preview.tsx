@@ -6,7 +6,7 @@ import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {PREVIEW_END, PREVIEW_SECTIONS, sectionRange} from './data/script';
 import {C} from './theme';
-import {cameraAt, registerCamera} from './lib/camera';
+import {createCamera} from './lib/camera';
 import {prog} from './lib/anim';
 import {Atmosphere, Haze} from './components/Stage';
 import {Subtitles} from './components/Subtitles';
@@ -17,7 +17,7 @@ import {Question, questionCamera} from './sections/Question';
 import {WhatItLooksLike, whatCamera} from './sections/WhatItLooksLike';
 import './fonts';
 
-registerCamera([...hookCamera, ...questionCamera, ...whatCamera]);
+const {cameraAt} = createCamera([...hookCamera, ...questionCamera, ...whatCamera]);
 
 const LAST = sectionRange(PREVIEW_SECTIONS[PREVIEW_SECTIONS.length - 1]).end;
 

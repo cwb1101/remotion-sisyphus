@@ -1,10 +1,11 @@
 /**
  * 全片只有一台摄像机：世界坐标里的点 (x,y) 以缩放 z 出现在屏幕点 (sx,sy)。
- * 各节导出自己的关键帧（帧号取自 script.json），在这里合并成连续镜头。
+ * 各节导出自己的关键帧（帧号取自 script.json），由 createCamera 合成连续镜头。
  * 另外叠加：常驻轻微漂移（保证画面不静止）+ 重击时的震屏。
+ * 每个合成（预览 / 完整片）各自创建一台，互不影响。
  */
 import {clamp, easeInOut, lerp, noise1} from './anim';
-import {screens, cue} from '../data/script';
+import {screens} from '../data/script';
 
 export type CamKey = {
 	f: number;
@@ -16,16 +17,12 @@ export type CamKey = {
 	rot?: number;
 	ease?: (t: number) => number;
 };
-export type Cam = {x: number; y: number; z: number; sx: number; sy: number; rot: number};
+export type Cam = {x: number; y: number; z: number; sx: number; sy: number; rot: number; vx: number; vy: number; vz: number};
+type Base = Omit<Cam, 'vx' | 'vy' | 'vz'>;
 
-let KEYS: CamKey[] = [];
-export const registerCamera = (keys: CamKey[]) => {
-	KEYS = [...keys].sort((a, b) => a.f - b.f);
-};
+const full = (k: CamKey): Base => ({x: k.x, y: k.y, z: k.z, sx: k.sx ?? 960, sy: k.sy ?? 540, rot: k.rot ?? 0});
 
-const full = (k: CamKey): Cam => ({x: k.x, y: k.y, z: k.z, sx: k.sx ?? 960, sy: k.sy ?? 540, rot: k.rot ?? 0});
-
-const baseCam = (f: number): Cam => {
+const baseAt = (KEYS: CamKey[], f: number): Base => {
 	if (KEYS.length === 0) return {x: 0, y: 0, z: 1, sx: 960, sy: 540, rot: 0};
 	if (f <= KEYS[0].f) return full(KEYS[0]);
 	for (let i = 0; i < KEYS.length - 1; i++) {
@@ -48,7 +45,7 @@ const baseCam = (f: number): Cam => {
 	return full(KEYS[KEYS.length - 1]);
 };
 
-/** 重击震屏：取自 script.json 中 slam/title 屏的 hit/hit2/boom 音效帧 */
+/** 重击震屏：取自 script.json 中的 hit/hit2/boom/thud 音效帧 */
 const SHAKES: {f: number; amp: number}[] = screens.flatMap((s) =>
 	(s.sfx ?? [])
 		.filter((c) => c.name === 'hit' || c.name === 'hit2' || c.name === 'boom' || c.name === 'thud')
@@ -73,16 +70,27 @@ export const shakeAt = (f: number) => {
 	return {dx, dy, dr};
 };
 
-export const cameraAt = (f: number): Cam => {
-	const c = baseCam(f);
-	const sh = shakeAt(f);
-	return {
-		...c,
-		sx: c.sx + Math.sin(f / 47) * 5 + sh.dx,
-		sy: c.sy + Math.cos(f / 61) * 4 + sh.dy,
-		rot: c.rot + Math.sin(f / 83) * 0.35 + sh.dr,
-		z: c.z * (1 + Math.sin(f / 71) * 0.008),
+export const createCamera = (keys: CamKey[]) => {
+	const KEYS = [...keys].sort((a, b) => a.f - b.f);
+	const base = (f: number) => baseAt(KEYS, f);
+	const cameraAt = (f: number): Cam => {
+		const c = base(f);
+		const p = base(f - 1);
+		const sh = shakeAt(f);
+		return {
+			...c,
+			sx: c.sx + Math.sin(f / 47) * 5 + sh.dx,
+			sy: c.sy + Math.cos(f / 61) * 4 + sh.dy,
+			rot: c.rot + Math.sin(f / 83) * 0.35 + sh.dr,
+			z: c.z * (1 + Math.sin(f / 71) * 0.008),
+			vx: (c.x - p.x) * c.z,
+			vy: (c.y - p.y) * c.z,
+			vz: Math.abs(Math.log(c.z / p.z)),
+		};
 	};
+	/** 取某一帧的「无漂移」机位，作为新关键帧（用于在既有镜头后无缝接续） */
+	const keyAt = (f: number): CamKey => ({f, ...base(f)});
+	return {cameraAt, keyAt};
 };
 
 export const camTransform = (c: Cam) =>
@@ -95,12 +103,3 @@ export const project = (c: Cam, wx: number, wy: number) => {
 	const dy = (wy - c.y) * c.z;
 	return {x: c.sx + dx * Math.cos(r) - dy * Math.sin(r), y: c.sy + dx * Math.sin(r) + dy * Math.cos(r)};
 };
-
-/** 摄像机水平速度（屏幕像素/帧），用于甩镜头时的运动模糊 */
-export const camSpeed = (f: number) => {
-	const a = baseCam(f - 1);
-	const b = baseCam(f);
-	return {vx: (b.x - a.x) * b.z, vy: (b.y - a.y) * b.z, vz: Math.abs(Math.log(b.z / a.z))};
-};
-
-export {cue};

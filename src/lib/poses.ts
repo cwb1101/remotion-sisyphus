@@ -52,3 +52,11 @@ export const walk = (phase: number, amp = 1, base: Pose = STAND): Pose => {
 };
 /** 由水平位移得到走路相位 */
 export const strideFor = (x: number, scale = 1.3) => x / (52 * scale);
+/** 双手举起要抱 */
+export const REACH_UP: Pose = {lean: 4, head: -10, armFront: {a: 128, b: 8}, armBack: {a: 118, b: 10}};
+/** 背身向后伸手：推开 */
+export const PUSH_BACK: Pose = {lean: 4, head: 6, armFront: {a: 40, b: 70, k: 0.8}, armBack: {a: -82, b: -6}};
+/** 低头看手机 */
+export const PHONE: Pose = {head: 18, armFront: {a: 38, b: 70, k: 0.8}, armBack: {a: -6, b: 8}};
+/** 坐（配合椅子）：大腿水平、小腿垂直 */
+export const SIT: Pose = {lean: -2, head: 4, bob: 80, legFront: {a: 88, b: -88}, legBack: {a: 82, b: -82}, armFront: {a: 30, b: 40}, armBack: {a: 20, b: 40}};

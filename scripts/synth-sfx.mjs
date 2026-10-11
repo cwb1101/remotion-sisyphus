@@ -265,6 +265,48 @@ S.lamp_off = () => {
 	return reverb(mix(click, drop), 0.35, 1.3, 1.2);
 };
 
+// 穿过心脏：低频涌起 + 闷响（转场）
+S.dive = () => {
+	const swell = biquad(noiseBuf(1.2, (t) => (t < 0.9 ? (t / 0.9) ** 2 : Math.max(0, 1 - (t - 0.9) / 0.3))), 'lp', (t) => 150 + 900 * (t / 1.2) ** 2, 1.5);
+	const sub = tone(1.6, (t) => 45 + 25 * Math.min(1, t / 0.9), (t) => (t < 0.9 ? (t / 0.9) ** 2 : Math.exp(-(t - 0.9) / 0.25)) * 0.8);
+	const thump = tone(0.8, (t) => 70 - 30 * Math.min(1, t / 0.1), (t) => envAD(t - 0.9, 0.002, 0.15));
+	return reverb(mix(swell, sub, thump), 0.3, 1.4, 1.2);
+};
+// 相机闪光：高频「嗞」+ 咔
+S.flash = () => {
+	const zap = tone(0.4, (t) => 5200 - 3000 * Math.min(1, t / 0.3), (t) => envAD(t, 0.002, 0.08) * 0.25);
+	const click = biquad(noiseBuf(0.1, (t) => envAD(t, 0.0005, 0.01)), 'hp', 3000);
+	return reverb(mix(zap, click), 0.35, 1, 0.8);
+};
+// 冰裂
+S.crack = () => {
+	const b = buf(0.5);
+	for (let k = 0; k < 9; k++) {
+		const at = Math.floor((k * 0.03 + rnd() * 0.02) * SR);
+		const len = Math.floor(0.004 * SR);
+		for (let i = 0; i < len && at + i < b.length; i++) b[at + i] += noise() * (1 - i / len) * (1 - k / 10);
+	}
+	const ring = tone(0.5, 3100, (t) => envAD(t, 0.001, 0.06) * 0.2);
+	return reverb(mix(biquad(b, 'hp', 1800), ring), 0.3, 0.9, 0.6);
+};
+// 碎裂：一串高频碎片
+S.shatter = () => {
+	const parts = [];
+	for (let k = 0; k < 18; k++) {
+		const at = rnd() * 0.25;
+		parts.push(tone(0.7, 2500 + rnd() * 4000, (t) => envAD(t - at, 0.0005, 0.03 + rnd() * 0.04) * (0.3 + rnd() * 0.5)));
+	}
+	const hit = biquad(noiseBuf(0.3, (t) => envAD(t, 0.0005, 0.03)), 'hp', 2000);
+	return reverb(mix(hit, ...parts), 0.35, 1, 0.8);
+};
+// 水滴（融化）
+S.drip = () => reverb(tone(0.35, (t) => 900 + 1400 * Math.exp(-t / 0.015), (t) => envAD(t, 0.001, 0.05)), 0.4, 1.1, 0.8);
+// 温暖的钟声
+S.chime = () => {
+	const fs = [880, 1318.5, 1760];
+	return reverb(mix(...fs.map((f, i) => tone(2.2, f, (t) => envAD(t, 0.003, 0.5 - i * 0.12) * (0.5 - i * 0.12)))), 0.4, 1.3, 1.5);
+};
+
 // ---------- 底噪（每节一套） ----------
 const LONG = 45;
 S.bed_dark = () => {
@@ -302,8 +344,68 @@ S.bed_tick = () => {
 	return reverb(mix(out, pad), 0.2, 1.1, 1.2);
 };
 
+// 第四节 回忆：八音盒式的慢琶音 + 暖垫
+S.bed_memory = () => {
+	const notes = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 698.46];
+	const out = buf(LONG);
+	const step = 0.75;
+	for (let k = 0; k * step < LONG; k++) {
+		const f = notes[k % notes.length];
+		const n = tone(1.6, f, (t) => envAD(t, 0.002, 0.45) * 0.12);
+		const i0 = Math.floor(k * step * SR);
+		for (let i = 0; i < n.length && i0 + i < out.length; i++) out[i0 + i] += n[i];
+	}
+	const pad = mix(tone(LONG, 130.81, () => 0.16), tone(LONG, 196, (t) => 0.08 * (0.7 + 0.3 * Math.sin(t * 0.3))));
+	return reverb(mix(out, biquad(pad, 'lp', 700)), 0.35, 1.3, 1.5);
+};
+// 第五节 实验室：低频脉冲 + 冷空气
+S.bed_lab = () => {
+	const drone = tone(LONG, 49, (t) => 0.35 * (0.8 + 0.2 * Math.sin(t * 2 * Math.PI * 0.5)));
+	const hi = tone(LONG, 1975, (t) => 0.012 * (0.5 + 0.5 * Math.sin(t * 0.7)));
+	const air = biquad(noiseBuf(LONG, () => 0.18), 'bp', (t) => 900 + 300 * Math.sin(t * 0.2), 0.8);
+	return reverb(mix(drone, hi, air), 0.25, 1.2, 1.2);
+};
+// 第六节 追与逃：110bpm 的紧张脉冲
+S.bed_chase = () => {
+	const beat = 60 / 110;
+	const out = buf(LONG);
+	for (let k = 0; k * beat < LONG; k++) {
+		const kick = tone(0.3, (t) => 85 - 40 * Math.min(1, t / 0.05), (t) => envAD(t, 0.001, 0.06) * 0.45);
+		const i0 = Math.floor(k * beat * SR);
+		for (let i = 0; i < kick.length && i0 + i < out.length; i++) out[i0 + i] += kick[i];
+		if (k % 2 === 1) {
+			const sn = biquad(noiseBuf(0.15, (t) => envAD(t, 0.001, 0.03) * 0.15), 'bp', 1800, 1);
+			for (let i = 0; i < sn.length && i0 + i < out.length; i++) out[i0 + i] += sn[i];
+		}
+	}
+	const pad = mix(tone(LONG, 110, () => 0.1), tone(LONG, 130.81, () => 0.06), tone(LONG, 164.81, (t) => 0.05 * (0.6 + 0.4 * Math.sin(t))));
+	return reverb(mix(out, pad), 0.2, 1, 1);
+};
+// 第七节 希望：大调暖垫 + 慢琶音
+S.bed_hope = () => {
+	const chord = [261.63, 329.63, 392, 523.25];
+	const pad = mix(...chord.map((f, i) => tone(LONG, f, (t) => (0.07 - i * 0.01) * (0.75 + 0.25 * Math.sin(t * (0.3 + i * 0.07) + i)))));
+	const out = buf(LONG);
+	const arp = [523.25, 659.25, 783.99, 1046.5];
+	for (let k = 0; k * 0.5 < LONG; k++) {
+		const n = tone(1.2, arp[k % 4], (t) => envAD(t, 0.003, 0.3) * 0.06);
+		const i0 = Math.floor(k * 0.5 * SR);
+		for (let i = 0; i < n.length && i0 + i < out.length; i++) out[i0 + i] += n[i];
+	}
+	return reverb(mix(pad, out, tone(LONG, 65.41, () => 0.12)), 0.35, 1.4, 1.5);
+};
+// 第八节 收尾：开头的低频垫回来，加一点暖色
+S.bed_end = () => {
+	const drone = tone(LONG, 55, () => 0.4);
+	const warm = mix(tone(LONG, 220, (t) => 0.05 * (0.6 + 0.4 * Math.sin(t * 0.4))), tone(LONG, 277.18, (t) => 0.035 * (0.6 + 0.4 * Math.sin(t * 0.33))));
+	const air = biquad(noiseBuf(LONG, () => 0.2), 'lp', 350);
+	return reverb(mix(drone, warm, air), 0.3, 1.3, 1.5);
+};
+
 console.log(`合成音效 → ${OUT}`);
+// 底噪电平：按各节实测响度微调，让全片各节平均响度接近
+const BED_PEAK = {bed_dark: -6, bed_warm: -6, bed_tick: -3.5, bed_memory: -4, bed_lab: -6, bed_chase: -3.5, bed_hope: -3, bed_end: -5};
 for (const [name, fn] of Object.entries(S)) {
 	const isBed = name.startsWith('bed_');
-	writeWav(name, fn(), isBed ? -6 : -1);
+	writeWav(name, fn(), isBed ? BED_PEAK[name] ?? -6 : -1);
 }

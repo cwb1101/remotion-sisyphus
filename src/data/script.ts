@@ -50,6 +50,9 @@ export const PREVIEW_END =
 export const screenAt = (frame: number): Screen | undefined =>
 	screens.find((s) => frame >= s.start && frame < s.end);
 
+export const WATERMARK = '肆号静匣Logos';
+export const CITATIONS = ['Ainsworth et al., 1978', 'Sroufe & Waters, 1977', 'Spangler & Grossmann, 1993', 'Mikulincer, Dolev & Shaver, 2004'];
 export const ALL_TEXT = Array.from(
-	new Set([...screens.map((s) => s.text).join(''), ...'回避型依恋'])
+	new Set([...screens.map((s) => s.text).join(''), ...'回避型依恋', ...WATERMARK, ...CITATIONS.join(' ·；研究出处')])
 ).join('');
+export const FULL_END: number = screens[screens.length - 1].end;

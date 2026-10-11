@@ -7,9 +7,12 @@
     "sfx": "node scripts/synth-sfx.mjs",
     "check": "node scripts/check-script.mjs",
     "studio": "npm run sfx && remotion studio src/index.ts",
-    "render:preview": "npm run check && npm run sfx && remotion render src/index.ts Preview out/preview.mp4",
+    "render:preview": "npm run check && npm run sfx && remotion render src/index.ts Preview out/preview.mp4 --crf=18",
     "frames": "node scripts/extract-frames.mjs out/preview.mp4 out/frames",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "render:full": "npm run check && npm run sfx && node scripts/render-full.mjs",
+    "frames:full": "node scripts/extract-frames.mjs out/avoidant-attachment.mp4 out/frames_full",
+    "qa": "node scripts/qa.mjs out/avoidant-attachment.mp4"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.8",
@@ -20,6 +23,8 @@
     "remotion": "4.0.530"
   },
   "devDependencies": {
+    "@remotion/bundler": "4.0.530",
+    "@remotion/renderer": "4.0.530",
     "@types/react": "19.1.12",
     "typescript": "5.9.2"
   }
