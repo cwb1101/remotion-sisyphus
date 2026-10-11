@@ -251,6 +251,20 @@ S.particles = () => {
 	return reverb(mix(...parts), 0.4, 1.1, 1.0);
 };
 
+// 舞台灯打开：沉闷的「咚」+ 一点电流嗡声
+S.lamp = () => {
+	const chunk = tone(0.6, (t) => 75 - 30 * Math.min(1, t / 0.08), (t) => envAD(t, 0.001, 0.07));
+	const click = biquad(noiseBuf(0.1, (t) => envAD(t, 0.0005, 0.008)), 'bp', 2500, 1.5);
+	const hum = tone(1.2, 100, (t) => Math.min(1, t / 0.15) * Math.max(0, 1 - t / 1.2) * 0.12, 'tri');
+	return reverb(mix(chunk, gain(click, 0.7), biquad(hum, 'lp', 600)), 0.3, 1.2, 1.0);
+};
+// 舞台灯关掉：咔 + 下沉
+S.lamp_off = () => {
+	const click = biquad(noiseBuf(0.1, (t) => envAD(t, 0.0005, 0.006)), 'bp', 2200, 1.5);
+	const drop = tone(0.8, (t) => 160 * Math.exp(-t / 0.25) + 40, (t) => envAD(t, 0.002, 0.18) * 0.6);
+	return reverb(mix(click, drop), 0.35, 1.3, 1.2);
+};
+
 // ---------- 底噪（每节一套） ----------
 const LONG = 45;
 S.bed_dark = () => {

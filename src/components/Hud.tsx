@@ -32,12 +32,12 @@ export const ChapterTag: React.FC<{frame: number}> = ({frame}) => {
 				lineHeight: 1.36,
 				letterSpacing: '0.08em',
 				whiteSpace: 'nowrap',
-				color: C.ink,
+				color: C.text,
 				opacity: lerp(1, 0.85, t),
 			}}
 		>
 			{Array.from(title.text).map((ch, i) => (
-				<span key={i} style={{color: i >= 3 ? C.red : C.ink}}>
+				<span key={i} style={{color: i >= 3 ? C.hi : C.text}}>
 					{ch}
 				</span>
 			))}
@@ -48,7 +48,7 @@ export const ChapterTag: React.FC<{frame: number}> = ({frame}) => {
 					height: size * 0.07,
 					marginLeft: size * 0.3,
 					verticalAlign: 'middle',
-					background: C.ink,
+					background: C.text,
 					opacity: t * 0.5,
 					transform: `scaleX(${t})`,
 					transformOrigin: 'left center',

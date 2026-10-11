@@ -59,11 +59,11 @@ const Normal: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 				fontWeight: 700,
 				fontSize: SUB.normalSize,
 				lineHeight: 1.4,
-				color: C.ink,
+				color: C.text,
 				letterSpacing: '0.04em',
 				opacity: 1 - exit,
 				transform: `translateY(${-10 * exit}px) scale(${1 + beat * 0.025})`,
-				textShadow: halo('rgba(242,237,228,0.95)'),
+				textShadow: halo('rgba(0,0,0,0.92)'),
 			}}
 		>
 			{segs.map((seg, si) => {
@@ -81,7 +81,7 @@ const Normal: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 								display: 'inline-block',
 								opacity: e,
 								transform: `translateY(${(1 - e) * 22}px) scale(${sc})`,
-								color: seg.hi ? C.red : undefined,
+								color: seg.hi ? C.hi : undefined,
 								fontWeight: seg.hi ? 900 : 700,
 							}}
 						>
@@ -102,7 +102,7 @@ const Normal: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 								bottom: 2,
 								height: 8,
 								borderRadius: 4,
-								background: C.red,
+								background: C.hi,
 								opacity: 0.85,
 								transform: `scaleX(${easeOut(u)})`,
 								transformOrigin: 'left center',
@@ -121,7 +121,7 @@ const Impact: React.FC<{frame: number; at: number; strength?: number; color?: st
 	frame,
 	at,
 	strength = 1,
-	color = C.red,
+	color = C.hi,
 }) => {
 	const dt = frame - at;
 	if (dt < 0 || dt > 26) return null;
@@ -144,12 +144,12 @@ const Impact: React.FC<{frame: number; at: number; strength?: number; color?: st
 					cy={SUB.slamY}
 					r={r * 0.72}
 					fill="none"
-					stroke={C.ink}
+					stroke="#ffffff"
 					strokeWidth={lerp(8, 0.5, t) * strength}
 					opacity={(1 - t) * 0.35}
 				/>
 			</svg>
-			<AbsoluteFill style={{background: '#FFFDF8', opacity: Math.max(0, 0.45 - dt * 0.09) * strength}} />
+			<AbsoluteFill style={{background: '#EAF3FF', opacity: Math.max(0, 0.3 - dt * 0.06) * strength}} />
 		</AbsoluteFill>
 	);
 };
@@ -181,12 +181,12 @@ const Slam: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 					fontWeight: 900,
 					fontSize: size,
 					lineHeight: 1.36,
-					color: C.ink,
+					color: C.text,
 					whiteSpace: 'nowrap',
 					opacity: clamp(tIn * 3) * (1 - exit),
 					filter: blur > 0.2 ? `blur(${blur}px)` : undefined,
 					transform: `scale(${bounce * (1 - exit * 0.08) * (1 + beat * 0.035)})`,
-					textShadow: halo('rgba(242,237,228,0.97)', 1.2),
+					textShadow: halo('rgba(0,0,0,0.95)', 1.2),
 				}}
 			>
 				{segs.map((seg, si) => {
@@ -199,7 +199,7 @@ const Slam: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 							key={si}
 							style={{
 								display: 'inline-block',
-								color: frame >= impact2 - 5 ? C.red : C.ink,
+								color: frame >= impact2 - 5 ? C.hi : C.text,
 								opacity: frame < impact2 - 5 ? 0 : clamp(t2 * 2),
 								transform: `scale(${sc}) translateY(${-size * 0.02}px)`,
 								margin: `0 ${size * 0.04}px`,
@@ -232,9 +232,9 @@ const Title: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 					fontSize: SUB.titleSize,
 					lineHeight: 1.36,
 					letterSpacing: '0.08em',
-					color: C.ink,
+					color: C.text,
 					whiteSpace: 'nowrap',
-					textShadow: halo('rgba(242,237,228,0.97)', 1.6),
+					textShadow: halo('rgba(0,0,0,0.95)', 1.6),
 				}}
 			>
 				{list.map((ch, i) => {
@@ -249,7 +249,7 @@ const Title: React.FC<{s: Screen; frame: number}> = ({s, frame}) => {
 								display: 'inline-block',
 								opacity: clamp(t * 2.5),
 								transform: `scale(${sc})`,
-								color: i >= 3 ? C.red : C.ink,
+								color: i >= 3 ? C.hi : C.text,
 							}}
 						>
 							{ch}
@@ -272,7 +272,7 @@ const Note: React.FC<{s: Screen; frame: number}> = ({s, frame}) => (
 			fontFamily: FONT_SANS,
 			fontWeight: 400,
 			fontSize: 30,
-			color: C.inkSoft,
+			color: C.dim,
 			opacity: prog(frame, s.start, s.start + 10) * (1 - prog(frame, s.end - EXIT, s.end)),
 		}}
 	>
