@@ -11,6 +11,7 @@ npm run render           # 完整片：合成音效 → 每节分段渲染 → �
 npm run render -- --only=answer,ending   # 只重渲某几节（其余沿用 out/parts 里的分段），再重新拼接
 npm run render:preview   # 只渲染预览（开头 + 第一节）到 out/preview.mp4
 npm run studio           # 在浏览器里逐帧预览
+npx remotion still src/index.ts Cover out/cover.png   # 16:9 封面（加 --browser-executable 同上）
 ```
 
 渲染用的是机器上已装的 Chromium headless shell（`/opt/pw-browsers/...`）。换机器时设环境变量 `REMOTION_BROWSER=`（留空），并去掉 `render:preview` 里的 `--browser-executable`，Remotion 会自己下载浏览器。

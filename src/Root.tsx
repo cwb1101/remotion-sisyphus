@@ -1,6 +1,7 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {CUES, FPS} from './data/subtitles';
+import {Cover} from './Cover';
 import {Film} from './Film';
 import {MYTH_END} from './sections/Myth';
 import {HEIGHT, WIDTH} from './theme';
@@ -20,6 +21,8 @@ export const RemotionRoot: React.FC = () => (
       height={HEIGHT}
       defaultProps={{sections: ['opening', 'myth', 'punishment', 'absurd', 'descent', 'answer', 'ending'], fadeOut: false}}
     />
+    {/* 16:9 封面（单帧） */}
+    <Composition id="Cover" component={Cover} durationInFrames={1} fps={FPS} width={WIDTH} height={HEIGHT} />
     {/* 预览：开头 + 第一节 */}
     <Composition
       id="Preview"
