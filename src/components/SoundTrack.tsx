@@ -18,7 +18,7 @@ const duck = (f: number) => {
 	let d = 1;
 	for (const t of IMPACTS) {
 		const dt = f - t;
-		if (dt >= -2 && dt < 40) d = Math.min(d, 1 - 0.55 * Math.exp(-Math.max(0, dt) / 14));
+		if (dt >= -2 && dt < 40) d = Math.min(d, 1 - 0.7 * Math.exp(-Math.max(0, dt) / 16));
 	}
 	return d;
 };
