@@ -84,8 +84,20 @@ const Line: React.FC<{c: Cue; ink: Ink; y: number; local: number; size?: number}
 };
 
 /** 重点词砸下来 + 全屏冲击 */
+/** 砸下来的词：只有一个重点词时就是它；有多个且相距很近时（如“无用又无望”）取整段 */
+const slamWord = (c: Cue) => {
+  if (c.highlights.length === 0) return c.text;
+  const first = c.text.indexOf(c.highlights[0]);
+  const lastWord = c.highlights[c.highlights.length - 1];
+  const end = c.text.indexOf(lastWord) + lastWord.length;
+  const span = c.text.slice(first, end);
+  return [...span].length <= 6 ? span : c.highlights[0];
+};
+
 const Slam: React.FC<{c: Cue; ink: Ink; local: number}> = ({c, ink, local}) => {
-  const word = c.highlights[0] ?? c.text;
+  const word = slamWord(c);
+  // 字太多时缩小，保证不出画（左右各留 110px）
+  const size = Math.min(SLAM_SIZE, 1700 / [...word].length);
   const dur = c.end - c.start;
   const fall = ramp(local, 0, SLAM_HIT, Easing.in(Easing.quad));
   const t = local - SLAM_HIT;
@@ -130,7 +142,7 @@ const Slam: React.FC<{c: Cue; ink: Ink; local: number}> = ({c, ink, local}) => {
           textAlign: 'center',
           fontFamily: SERIF,
           fontWeight: 900,
-          fontSize: SLAM_SIZE,
+          fontSize: size,
           lineHeight: 1,
           color: COLORS.ember,
           opacity: fall * (1 - outT),
@@ -151,11 +163,18 @@ const Title: React.FC<{c: Cue; ink: Ink; local: number}> = ({c, ink, local}) => 
   const chars = [...c.text];
   const dur = c.end - c.start;
   const outT = ramp(local, dur - 8, dur, easeIn);
+  // 字多时缩小，保证整行（含字距）不超过 1700px
+  const size = Math.min(TITLE_SIZE, 1700 / (chars.length * 1.14));
+  const hl = new Set<number>();
+  for (const h of c.highlights) {
+    const i = c.text.indexOf(h);
+    if (i >= 0) for (let k = 0; k < [...h].length; k++) hl.add([...c.text.slice(0, i)].length + k);
+  }
   const lastLand = 2 + (chars.length - 1) * TITLE_STEP + 5;
   const subIn = ramp(local, lastLand + 2, lastLand + 14, out);
   return (
     <div style={{position: 'absolute', left: 0, right: 0, top: 540, transform: `translateY(-50%) scale(${1 + outT * 0.06})`, opacity: 1 - outT, textAlign: 'center'}}>
-      <div style={{fontFamily: SERIF, fontWeight: 900, fontSize: TITLE_SIZE, lineHeight: 1.1, letterSpacing: '0.14em', color: ink.color, textShadow: ink.shadow}}>
+      <div style={{fontFamily: SERIF, fontWeight: 900, fontSize: size, lineHeight: 1.1, letterSpacing: '0.14em', color: ink.color, textShadow: ink.shadow}}>
         {chars.map((ch, i) => {
           const s = 2 + i * TITLE_STEP;
           const f = ramp(local, s, s + 5, Easing.in(Easing.quad));
@@ -169,6 +188,7 @@ const Title: React.FC<{c: Cue; ink: Ink; local: number}> = ({c, ink, local}) => 
                 opacity: f,
                 transform: `translateY(${-200 * (1 - f)}px) scale(${(1.8 - 0.8 * f) * (1 + sq)}, ${(1.8 - 0.8 * f) * (1 - sq)})`,
                 transformOrigin: '50% 90%',
+                ...(hl.has(i) ? {color: COLORS.ember, textShadow: `0 0 40px rgba(226,85,45,0.6), ${ink.shadow}`} : {}),
               }}
             >
               {ch}
@@ -201,7 +221,8 @@ const Counter: React.FC<{c: Cue; prev: Cue | undefined; next: Cue | undefined; i
   const e = ramp(local, 2, dur * 0.85, Easing.in(Easing.quad));
   const value = n0 === p.n ? p.n : Math.round(n0 * Math.pow(p.n / n0, e));
   const inT = chainedPrev || c.start === 0 ? 1 : ramp(local, 0, 5, out);
-  const outT = chainedNext ? 0 : ramp(local, dur - 5, dur, easeIn);
+  // 全片最后一屏不淡出，最后一帧和第 0 帧一致，方便循环播放
+  const outT = chainedNext || !next ? 0 : ramp(local, dur - 5, dur, easeIn);
   const pop = 1 + 0.05 * Math.abs(Math.sin(value * 1.3));
   return (
     <div
@@ -248,9 +269,9 @@ export const Subtitles: React.FC<{cues: Cue[]; inks?: Record<string, Ink>}> = ({
         if (f === null) return null;
         return (
           <React.Fragment key={`sfx-${c.id}`}>
-            <Sfx name="impact" at={f} volume={c.style === 'title' ? 0.65 : 0.8} />
+            <Sfx name="impact" at={f} volume={c.style === 'title' ? 0.9 : 1} />
             {c.style === 'title' &&
-              [...c.text].map((_, i) => <Sfx key={i} name="thump" at={c.start + 2 + i * TITLE_STEP + 5} volume={0.45} rate={1 + i * 0.06} />)}
+              [...c.text].map((_, i) => <Sfx key={i} name="thump" at={c.start + 2 + i * TITLE_STEP + 5} volume={0.3} rate={1 + i * 0.06} />)}
           </React.Fragment>
         );
       })}

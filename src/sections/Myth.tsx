@@ -20,7 +20,8 @@ const DEATH_HOME: Pt = {x: P.x, y: P.y - 700};
 const DEATH_R = 520;
 const UNDER: Pt = {x: P.x, y: HORIZON + 320};
 const QUEEN: Pt = {x: P.x + 320, y: HORIZON + 380};
-const RETURN: Pt = {x: P.x - 60, y: HORIZON - 160};
+/** 西西弗斯从冥界溜回人间后站的位置；众神在这里合围，第二节从这里开始 */
+export const RETURN: Pt = {x: P.x - 60, y: HORIZON - 160};
 
 // ---------- 时间点：全部由字幕数据推出 ----------
 const cKing = cue('king');
@@ -417,7 +418,7 @@ const Sound: React.FC = () => (
   <>
     {COLS.map((_, i) => {
       const order = Math.abs(i - 4);
-      return i <= 4 ? <Sfx key={i} name="ping" at={T.colsStart + order * 6 + 8} volume={0.3} rate={0.7 + (4 - order) * 0.12} /> : null;
+      return i <= 4 ? <Sfx key={i} name="ping" at={T.colsStart + order * 6 + 8} volume={0.15} rate={0.7 + (4 - order) * 0.12} /> : null;
     })}
     <Sfx name="bell" at={T.crown} volume={0.3} rate={1.5} />
     <Sfx name="slide" at={T.zig0 + 2} volume={0.5} />
@@ -441,15 +442,18 @@ const Sound: React.FC = () => (
     <Sfx name="arp" at={T.climb0 + 4} volume={0.55} />
     <Sfx name="rumble" at={cGods.start} volume={0.85} />
     <Sfx name="riser" at={T.converge1 - 40} volume={0.5} />
-    <Sfx name="impact" at={T.converge1 - 6} volume={0.8} />
+    <Sfx name="impact" at={T.converge1 - 6} volume={0.55} />
   </>
 );
 
 export const MYTH_END = T.converge1 + 6;
+/** 众神的环收拢到最大的那一帧（之后由第二节接手） */
+export const GODS_MERGE = T.converge1;
 
-export const Myth: React.FC = () => {
+/** last=false 时（后面还有段落）在众神合围那一帧收场，交给第二节 */
+export const Myth: React.FC<{last?: boolean}> = ({last = true}) => {
   const frame = useCurrentFrame();
-  const visible = frame >= HANDOFF - 40;
+  const visible = frame >= HANDOFF - 40 && (last || frame < T.converge1);
   return (
     <>
       {visible && (

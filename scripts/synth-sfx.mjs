@@ -162,7 +162,8 @@ write('thump', reverb(mix(
 
 // 重点词砸下来的冲击
 write('impact', reverb(mix(
-  [sweep(2.2, (t) => 32 + 90 * Math.exp(-t / 0.08), (t) => env(t, 0.002, 0.55))],
+  [sweep(2.2, (t) => 32 + 90 * Math.exp(-t / 0.08), (t) => env(t, 0.002, 0.8))],
+  [sweep(1.2, (t) => 55 + 40 * Math.exp(-t / 0.05), (t) => env(t, 0.002, 0.3)), 0.6],
   [shape(biquad(noise(1.0, 3), 'lp', (t) => 200 + 2400 * Math.exp(-t / 0.08)), (t) => env(t, 0.001, 0.16)), 0.9],
   [shape(biquad(noise(0.2, 4), 'hp', 3000), (t) => env(t, 0.0005, 0.02)), 0.35],
 ), {mix: 0.35, size: 0.88, tail: 1.6}));
@@ -308,3 +309,40 @@ write('rumble', reverb(mix(
 write('dissonant_hit', reverb(mix(...[98, 103.8, 146.8, 155.6].map((f) => [
   fill(2.5, (t) => (((f * t) % 1) * 2 - 1) * env(t, 0.004, 0.6)), 0.3,
 ])), {mix: 0.35, tail: 1.5}));
+
+// ---------- 第二节之后用到的音效 ----------
+
+// 机械式低音脉冲（无用又无望的劳动）
+write('pulse', mix(
+  [sweep(0.35, (t) => 70 + 40 * Math.exp(-t / 0.03), (t) => env(t, 0.002, 0.09))],
+  [shape(biquad(noise(0.1, 30), 'bp', 900, 2), (t) => env(t, 0.0005, 0.01)), 0.35],
+));
+
+// 心跳：咚-咚
+write('heartbeat', reverb(mix(
+  [sweep(0.4, (t) => 50 + 30 * Math.exp(-t / 0.04), (t) => env(t, 0.004, 0.09))],
+  [sweep(0.4, (t) => 46 + 24 * Math.exp(-t / 0.04), (t) => env(t, 0.004, 0.08)), 0.75, 0.22],
+), {mix: 0.15, tail: 0.5}));
+
+// 明亮的大三和弦（胜利）
+write('chord', reverb(mix(...[261.6, 329.6, 392, 523.3, 659.3].map((f, k) => [
+  fill(4, (t) => (Math.sin(TAU * f * t) + 0.25 * Math.sin(TAU * 2 * f * t)) * env(t, 0.02 + k * 0.01, 1.4)), 0.35,
+])), {mix: 0.4, size: 0.86, tail: 2.5}));
+
+// 温暖的长音铺底（清醒、回答）
+write('pad', reverb((() => {
+  const freqs = [130.8, 196, 261.6, 329.6];
+  return fill(5, (t) => {
+    const a = Math.min(1, t / 1.5) * Math.min(1, (5 - t) / 1.5);
+    return freqs.reduce((s, f, k) => s + Math.sin(TAU * f * t + Math.sin(TAU * 0.2 * t + k) * 0.6) / (k + 1.5), 0) * a;
+  });
+})(), {mix: 0.45, size: 0.88, tail: 2}));
+
+// 轻风（下山）
+write('wind', shape(biquad(noise(4, 31), 'bp', (t) => 500 + 300 * Math.sin(TAU * 0.4 * t), 0.8), (t) => Math.min(1, t / 1, (4 - t) / 1.2) * (0.7 + 0.3 * Math.sin(TAU * 0.9 * t))));
+
+// 轻柔的脚步
+write('step', mix(
+  [shape(biquad(noise(0.12, 32), 'lp', 900), (t) => env(t, 0.002, 0.025))],
+  [sweep(0.12, () => 95, (t) => env(t, 0.002, 0.03)), 0.5],
+));

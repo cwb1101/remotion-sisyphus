@@ -4,8 +4,9 @@ import '@fontsource/noto-serif-sc/900.css';
 import '@fontsource/noto-sans-sc/500.css';
 import {continueRender, delayRender} from 'remotion';
 import {CUES} from '../data/subtitles';
+import {WATERMARK_TEXT} from '../components/Watermark';
 
-const text = CUES.map((c) => c.text + (c.sub ?? '')).join('') + '？∞0123456789';
+const text = CUES.map((c) => c.text + (c.sub ?? '')).join('') + '？∞0123456789' + WATERMARK_TEXT;
 const handle = delayRender('加载思源字体');
 
 Promise.all([

@@ -6,7 +6,7 @@ import {clamp, hash, mixColor} from '../lib/anim';
 // 它在不同段落里扮演不同角色——石头、西西弗斯、宙斯、死神、冥后、众神、片名的太阳——
 // 通过 variant、尺寸、发光、挤压、锯齿边缘来变形。所有尺寸都是世界坐标。
 
-export type OrbVariant = 'stone' | 'ember' | 'void' | 'ring' | 'pale';
+export type OrbVariant = 'stone' | 'ember' | 'void' | 'ring' | 'pale' | 'emberRing';
 
 const PALETTE: Record<OrbVariant, {light: string; base: string; dark: string; glow: string}> = {
   stone: {light: '#F1EBE0', base: COLORS.stone, dark: COLORS.stoneShade, glow: '#FFF3E0'},
@@ -14,6 +14,7 @@ const PALETTE: Record<OrbVariant, {light: string; base: string; dark: string; gl
   void: {light: '#1A1A20', base: COLORS.void, dark: '#000000', glow: '#000000'},
   ring: {light: COLORS.white, base: COLORS.white, dark: COLORS.white, glow: '#FFF6E8'},
   pale: {light: '#F2F0FA', base: COLORS.pale, dark: '#55526A', glow: '#D8D4F0'},
+  emberRing: {light: COLORS.emberHot, base: COLORS.ember, dark: COLORS.ember, glow: COLORS.ember},
 };
 
 export type OrbProps = {
@@ -63,7 +64,7 @@ export const Orb: React.FC<OrbProps> = ({
   if (r <= 0 || opacity <= 0) return null;
 
   const body =
-    variant === 'ring' ? (
+    variant === 'ring' || variant === 'emberRing' ? (
       <>
         <circle r={r} fill="none" stroke={p.glow} strokeWidth={ringWidth * 4} opacity={0.18 * Math.max(0.3, g)} />
         <circle r={r} fill="none" stroke={base} strokeWidth={ringWidth} />

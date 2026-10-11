@@ -13,24 +13,24 @@ import {COLORS, SERIF} from '../theme';
 // 橙点长大到填满整个画面（片名），再缩回去，交给第一节。
 
 // ---------- 场景几何（世界坐标） ----------
-const FOOT: Pt = {x: -560, y: 300};
-const TOP: Pt = {x: 560, y: -220};
+export const FOOT: Pt = {x: -560, y: 300};
+export const TOP: Pt = {x: 560, y: -220};
 const LEN = Math.hypot(TOP.x - FOOT.x, TOP.y - FOOT.y);
 const DIR: Pt = {x: (TOP.x - FOOT.x) / LEN, y: (TOP.y - FOOT.y) / LEN};
 const UP: Pt = {x: DIR.y, y: -DIR.x};
-const STONE_R = 78;
-const DOT_R = 14;
-const onSlope = (u: number, lift: number): Pt => ({x: FOOT.x + DIR.x * LEN * u + UP.x * lift, y: FOOT.y + DIR.y * LEN * u + UP.y * lift});
-const DOT_GAP = (STONE_R + DOT_R + 4) / LEN;
-const PEAK_U = 0.93;
+export const STONE_R = 78;
+export const DOT_R = 14;
+export const onSlope = (u: number, lift: number): Pt => ({x: FOOT.x + DIR.x * LEN * u + UP.x * lift, y: FOOT.y + DIR.y * LEN * u + UP.y * lift});
+export const DOT_GAP = (STONE_R + DOT_R + 4) / LEN;
+export const PEAK_U = 0.93;
 
 /** 橙点最后站的位置；问号被吸进这里，片名从这里长出来，第一节也从这里开始 */
 export const P: Pt = onSlope(PEAK_U - DOT_GAP, DOT_R);
 
 const WORD: Pt = {x: 300, y: -500};
 const WORD_SIZE = 170;
-const QMARK: Pt = {x: 0, y: -60};
-const QMARK_SIZE = 1250;
+export const QMARK: Pt = {x: 0, y: -60};
+export const QMARK_SIZE = 1250;
 
 // ---------- 时间点：全部由字幕数据推出 ----------
 const c1 = cue('count-1');
@@ -66,7 +66,7 @@ export const HANDOFF = T.orbSmall;
 
 const LOOPS = 9;
 const loopPhase = (f: number) => LOOPS * Math.pow(ramp(f, T.loopStart, T.loopEnd, (t) => t), 3);
-const uInLoop = (s: number) => (s < 0.72 ? PEAK_U * inOut(s / 0.72) : PEAK_U * (1 - Easing.in(Easing.quad)((s - 0.72) / 0.28)));
+export const uInLoop = (s: number) => (s < 0.72 ? PEAK_U * inOut(s / 0.72) : PEAK_U * (1 - Easing.in(Easing.quad)((s - 0.72) / 0.28)));
 /** 每一次石头开始滚回的帧，用来放 tick */
 const LOOP_TICKS = Array.from({length: LOOPS}, (_, k) => {
   const t = Math.cbrt((k + 0.72) / LOOPS);
@@ -110,6 +110,7 @@ const dotRadius = (f: number) => {
 };
 
 // ---------- 相机 ----------
+/** 开头的相机关键帧；片尾回到第 0 帧的构图时也用它 */
 export const openingShots: Shot[] = [
   {f: 0, x: FOOT.x + 300, y: FOOT.y - 30, zoom: 2.0, rot: -3},
   {f: T.land + 8, x: FOOT.x + 290, y: FOOT.y - 40, zoom: 1.85, rot: -2},
@@ -277,8 +278,8 @@ const Sound: React.FC = () => (
     <Sfx name="whoosh" at={cAlmost.start - 4} volume={0.6} />
     <Sfx name="grind" at={T.almostTop} volume={0.35} />
     <Sfx name="roll" at={T.almostSlide} volume={0.55} />
-    <Sfx name="thump" at={cHappy.start} volume={0.45} />
-    <Sfx name="bell" at={T.happyWord} volume={0.5} />
+    <Sfx name="thump" at={cHappy.start} volume={0.3} />
+    <Sfx name="bell" at={T.happyWord} volume={0.3} />
     <Sfx name="grind" at={T.happyPush + 6} volume={0.4} />
     <Sfx name="roll" at={T.happyTop} volume={0.7} />
     <Sfx name="shatter" at={T.shatter - 1} volume={0.9} />
