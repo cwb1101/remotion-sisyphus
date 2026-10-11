@@ -1,0 +1,25 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sfx": "node scripts/synth-sfx.mjs",
+    "check": "node --experimental-strip-types scripts/check-subtitles.ts",
+    "studio": "remotion studio src/index.ts",
+    "render:preview": "npm run sfx && remotion render src/index.ts Preview out/preview.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.8",
+    "@fontsource/noto-serif-sc": "5.2.8",
+    "@remotion/cli": "4.0.534",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.534"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}
