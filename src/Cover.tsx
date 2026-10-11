@@ -59,3 +59,53 @@ export const Cover: React.FC = () => (
     <Watermark />
   </AbsoluteFill>
 );
+
+// 9:16 竖版封面（1080×1920）：上半部分是问题（避开底部标题区和右侧按钮区），下半部分是推石头的山坡。
+const VSL = makeSlope({x: -40, y: 1760}, {x: 1120, y: 1180});
+const V_R = 135;
+const V_U = 0.74;
+const vStone = VSL.at(V_U, V_R);
+const vDot = VSL.at(V_U - (V_R + 30 + 8) / VSL.len, 30);
+
+export const CoverVertical: React.FC = () => (
+  <AbsoluteFill style={{background: COLORS.bg, overflow: 'hidden'}}>
+    <AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 40% at 70% 68%, rgba(226,85,45,0.24) 0%, rgba(226,85,45,0.06) 50%, rgba(0,0,0,0) 80%)'}} />
+    <svg width={1080} height={1920} style={{position: 'absolute', inset: 0}}>
+      <line x1={VSL.foot.x} y1={VSL.foot.y} x2={VSL.top.x} y2={VSL.top.y} stroke={COLORS.ember} strokeWidth={26} opacity={0.14} />
+      <line x1={VSL.foot.x} y1={VSL.foot.y} x2={VSL.top.x} y2={VSL.top.y} stroke={COLORS.ink} strokeWidth={5} strokeLinecap="round" />
+      {[1, 2, 3].map((k) => {
+        const g = VSL.at(V_U - k * 0.16, V_R);
+        return <Orb key={k} x={g.x} y={g.y} r={V_R} rotation={-k * 50} opacity={0.16 - k * 0.04} />;
+      })}
+      <Orb x={vStone.x} y={vStone.y} r={V_R} rotation={20} glow={0.35} />
+      <Orb x={vDot.x} y={vDot.y} r={30} variant="ember" glow={1} />
+    </svg>
+    <div style={{position: 'absolute', left: 90, top: 300, right: 60}}>
+      <div style={{fontFamily: SERIF, fontWeight: 700, fontSize: 72, color: COLORS.ink, letterSpacing: '0.04em', textShadow: '0 0 24px rgba(0,0,0,0.9)'}}>
+        一个永远推不上山的人
+      </div>
+      <div
+        style={{
+          fontFamily: SERIF,
+          fontWeight: 900,
+          fontSize: 250,
+          lineHeight: 1.1,
+          color: COLORS.ember,
+          marginTop: 24,
+          textShadow: '0 0 60px rgba(226,85,45,0.45), 0 0 24px rgba(0,0,0,0.9)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        凭什么
+        <br />
+        幸福？
+      </div>
+      <div style={{display: 'flex', alignItems: 'center', gap: 28, marginTop: 44}}>
+        <div style={{width: 80, height: 4, background: COLORS.ember}} />
+        <div style={{fontFamily: SANS, fontWeight: 500, fontSize: 46, color: COLORS.ink, letterSpacing: '0.18em', opacity: 0.9}}>西西弗斯 · 加缪</div>
+      </div>
+    </div>
+    <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)'}} />
+    <Watermark />
+  </AbsoluteFill>
+);
