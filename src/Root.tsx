@@ -1,7 +1,8 @@
 import React from 'react';
-import {Composition} from 'remotion';
+import {Composition, Still} from 'remotion';
 import {FULL_DURATION, PREVIEW_DURATION, SCRIPT} from './data/script';
 import {Video} from './Video';
+import {Cover, COVER_H, COVER_W} from './Cover';
 
 export const Root: React.FC = () => (
   <>
@@ -23,5 +24,6 @@ export const Root: React.FC = () => (
       height={SCRIPT.height}
       defaultProps={{tail: SCRIPT.previewTail, lastScene: 's1'}}
     />
+    <Still id="Cover" component={Cover} width={COVER_W} height={COVER_H} />
   </>
 );

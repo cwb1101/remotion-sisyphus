@@ -12,7 +12,8 @@
     "frames": "bash scripts/extract-frames.sh out/preview.mp4 out/frames 2",
     "typecheck": "tsc --noEmit",
     "render:full": "bash scripts/render-full.sh out/don-quixote.mp4",
-    "frames:full": "bash scripts/extract-frames.sh out/don-quixote.mp4 out/frames-full 2"
+    "frames:full": "bash scripts/extract-frames.sh out/don-quixote.mp4 out/frames-full 2",
+    "cover": "npm run assets && remotion still Cover publish/cover-3x4.png --image-format=png"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.6",
