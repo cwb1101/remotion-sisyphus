@@ -1,0 +1,189 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "previewTail": 24,
+  "layouts": {
+    "A": "左上大字，右下留白",
+    "B": "右下角小段落",
+    "C": "竖排贴边（options.side = left | right）",
+    "D": "大小字错位（options.big = 放大的那一段）",
+    "E": "字跟着人物移动（锚点由场景提供）",
+    "F": "字被前景挡住再露出来（由场景在前景层之下绘制）",
+    "G": "杂志网格：主句 + 英文小注（options.note, options.corner）",
+    "H": "全屏巨字，居中"
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "name": "开头 · 风车平原",
+      "bed": {"sound": "wind_bed", "volume": 0.55}
+    },
+    {
+      "id": "s1",
+      "name": "第一节 · 书架长廊",
+      "bed": {"sound": "room_bed", "volume": 0.5}
+    }
+  ],
+  "screens": [
+    {
+      "id": "o1",
+      "scene": "opening",
+      "start": 0,
+      "end": 75,
+      "text": "他看见三十多个巨人。",
+      "highlight": ["巨人"],
+      "layout": "A",
+      "sfx": [
+        {"sound": "creak", "at": 0, "volume": 0.55},
+        {"sound": "whoosh_low", "at": 8, "volume": 0.55}
+      ]
+    },
+    {
+      "id": "o2",
+      "scene": "opening",
+      "start": 75,
+      "end": 150,
+      "text": "所有人都知道，那是风车。",
+      "highlight": ["风车"],
+      "layout": "B",
+      "sfx": [
+        {"sound": "metal_scrape", "at": 14, "volume": 0.6},
+        {"sound": "snort", "at": 46, "volume": 0.45}
+      ]
+    },
+    {
+      "id": "o3",
+      "scene": "opening",
+      "start": 150,
+      "end": 245,
+      "text": "我们笑了他四百多年。",
+      "highlight": ["四百多年"],
+      "layout": "H",
+      "emphasis": "slam",
+      "delay": 12,
+      "sfx": [
+        {"sound": "gallop", "at": 0, "volume": 0.5},
+        {"sound": "whoosh", "at": 4, "volume": 0.5},
+        {"sound": "boom", "at": 12, "volume": 0.6}
+      ]
+    },
+    {
+      "id": "o4",
+      "scene": "opening",
+      "start": 245,
+      "end": 345,
+      "text": "可这本书最难过的一幕，不在这里。",
+      "highlight": [],
+      "layout": "C",
+      "options": {"side": "right"},
+      "sfx": [
+        {"sound": "metal_roll", "at": 2, "volume": 0.75}
+      ]
+    },
+    {
+      "id": "o5",
+      "scene": "opening",
+      "start": 345,
+      "end": 441,
+      "text": "是他终于清醒的那一刻。为什么？",
+      "highlight": ["终于清醒"],
+      "layout": "D",
+      "emphasis": "slam",
+      "options": {"big": "终于清醒", "anchor": "lowerLeft"},
+      "sfx": [
+        {"sound": "bell", "at": 0, "volume": 0.8},
+        {"sound": "thud", "at": 0, "volume": 0.5},
+        {"sound": "whoosh_rev", "at": 74, "volume": 0.6}
+      ]
+    },
+    {
+      "id": "s1-1",
+      "scene": "s1",
+      "start": 441,
+      "end": 551,
+      "text": "西班牙，拉曼查。一个快五十岁的乡绅。",
+      "highlight": ["快五十岁"],
+      "layout": "G",
+      "options": {"corner": "bottomLeft", "note": "LA MANCHA · DON QUIXOTE, PART I, CHAPTER 1 · 1605", "index": "01"},
+      "sfx": [
+        {"sound": "page_flip", "at": 40, "volume": 0.5},
+        {"sound": "page_flip", "at": 82, "volume": 0.4}
+      ]
+    },
+    {
+      "id": "s1-2",
+      "scene": "s1",
+      "start": 551,
+      "end": 676,
+      "text": "他迷上骑士小说，为了买书，卖掉了不少耕地。",
+      "highlight": ["卖掉了不少耕地"],
+      "layout": "C",
+      "options": {"side": "left"},
+      "sfx": [
+        {"sound": "thud", "at": 30, "volume": 0.45},
+        {"sound": "thud", "at": 56, "volume": 0.5},
+        {"sound": "thud", "at": 82, "volume": 0.55},
+        {"sound": "wind_gust", "at": 40, "volume": 0.35}
+      ]
+    },
+    {
+      "id": "s1-3",
+      "scene": "s1",
+      "start": 676,
+      "end": 781,
+      "text": "睡得太少，读得太多，他的脑子干了。",
+      "highlight": ["干了"],
+      "layout": "E",
+      "sfx": [
+        {"sound": "ticks_accel", "at": 0, "volume": 0.6},
+        {"sound": "page_flurry", "at": 10, "volume": 0.45}
+      ]
+    },
+    {
+      "id": "s1-4",
+      "scene": "s1",
+      "start": 781,
+      "end": 906,
+      "text": "他翻出祖上的旧盔甲，用纸板补成一顶头盔。",
+      "highlight": ["纸板"],
+      "layout": "A",
+      "sfx": [
+        {"sound": "paper_fold", "at": 14, "volume": 0.6},
+        {"sound": "tap", "at": 34, "volume": 0.5},
+        {"sound": "paper_fold", "at": 50, "volume": 0.55},
+        {"sound": "tap", "at": 72, "volume": 0.5}
+      ]
+    },
+    {
+      "id": "s1-5",
+      "scene": "s1",
+      "start": 906,
+      "end": 981,
+      "text": "拔剑一试，头盔就碎了。",
+      "highlight": ["碎了"],
+      "layout": "F",
+      "options": {"x": 150, "y": 150},
+      "sfx": [
+        {"sound": "sword", "at": 20, "volume": 0.8},
+        {"sound": "paper_crack", "at": 27, "volume": 0.85}
+      ]
+    },
+    {
+      "id": "s1-6",
+      "scene": "s1",
+      "start": 981,
+      "end": 1086,
+      "text": "他重新做了一顶，再也没有试过。",
+      "highlight": ["再也没有试过"],
+      "layout": "D",
+      "emphasis": "slam",
+      "options": {"big": "再也没有试过", "anchor": "lowerLeft"},
+      "sfx": [
+        {"sound": "metal_ring", "at": 30, "volume": 0.7},
+        {"sound": "boom_soft", "at": 0, "volume": 0.7},
+        {"sound": "wind_gust", "at": 70, "volume": 0.4}
+      ]
+    }
+  ]
+}
