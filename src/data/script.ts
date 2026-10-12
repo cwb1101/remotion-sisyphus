@@ -53,6 +53,6 @@ export const screenAt = (frame: number): Screen | undefined =>
 export const WATERMARK = '肆号静匣Logos';
 export const CITATIONS = ['Ainsworth et al., 1978', 'Sroufe & Waters, 1977', 'Spangler & Grossmann, 1993', 'Mikulincer, Dolev & Shaver, 2004'];
 export const ALL_TEXT = Array.from(
-	new Set([...screens.map((s) => s.text).join(''), ...'回避型依恋', ...WATERMARK, ...CITATIONS.join(' ·；研究出处')])
+	new Set([...screens.map((s) => s.text).join(''), ...'回避型依恋', ...WATERMARK, ...CITATIONS.join(' ·；研究出处'), ...'心理学·依恋理论为什么你越靠近TA越想逃冷淡不等于不在乎'])
 ).join('');
 export const FULL_END: number = screens[screens.length - 1].end;

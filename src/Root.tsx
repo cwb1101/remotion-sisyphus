@@ -1,12 +1,14 @@
 import React from 'react';
-import {Composition} from 'remotion';
+import {Composition, Still} from 'remotion';
 import {FPS, FULL_END, HEIGHT, PREVIEW_END, WIDTH} from './data/script';
 import {Preview} from './Preview';
 import {Full} from './Full';
+import {Cover} from './Cover';
 
 export const RemotionRoot: React.FC = () => (
 	<>
 		<Composition id="Preview" component={Preview} durationInFrames={PREVIEW_END} fps={FPS} width={WIDTH} height={HEIGHT} />
 		<Composition id="Full" component={Full} durationInFrames={FULL_END} fps={FPS} width={WIDTH} height={HEIGHT} />
+		<Still id="Cover" component={Cover} width={1080} height={1440} />
 	</>
 );
