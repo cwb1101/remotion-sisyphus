@@ -2,7 +2,7 @@ import React from 'react';
 import {random} from 'remotion';
 import {ENTER_FRAMES, EXIT_FRAMES, SCREENS, Screen} from '../data/script';
 import {clamp, easeOut, prog, track} from '../lib/anim';
-import {C, FONT_SANS, FONT_SERIF, H, SAFE, W} from '../theme';
+import {C, FONT_SANS, FONT_SERIF, H, SAFE, W, WATERMARK_ZONE} from '../theme';
 
 /* ------------------------------------------------------------------ */
 /* 文本切分                                                            */
@@ -35,6 +35,11 @@ export const phrases = (text: string): string[] => {
   const out: string[] = [];
   let cur = '';
   for (const ch of Array.from(text)) {
+    // 后引号跟在上一行末尾，不单独成行
+    if ('”」’'.includes(ch) && !cur && out.length) {
+      out[out.length - 1] += ch;
+      continue;
+    }
     cur += ch;
     if ('，。？！：；'.includes(ch)) {
       out.push(cur);
@@ -174,14 +179,33 @@ const Lines: React.FC<{
   );
 };
 
-/** A：左上大字，右下留白 */
+/** A：左上大字，右下留白；长句自动缩小字号以免出画；关键句整块砸下来 */
+const A_SIZE = 112;
+export const aSize = (text: string) => {
+  const lines = phrases(text);
+  const need = Math.max(...lines.map((l, i) => Array.from(l).length * A_SIZE + i * 56));
+  const room = W - SAFE * 2 - 80;
+  return need > room ? Math.floor((A_SIZE * room) / need) : A_SIZE;
+};
 const LayoutA: React.FC<{s: Screen; local: number}> = ({s, local}) => {
   const left = SAFE + 40 + jitter(s.id, 'ax', 16);
   const top = SAFE + 30 + Math.abs(jitter(s.id, 'ay', 20));
   const rule = prog(local, 4, 22);
+  const size = aSize(s.text);
+  const slam = s.emphasis === 'slam';
+  const e = easeOut(clamp(local / 7));
   return (
-    <div style={{...base, left, top}}>
-      <Lines screen={s} local={local} size={112} weight={900} anim="drop" indent={56} />
+    <div
+      style={{
+        ...base,
+        left,
+        top,
+        transform: slam ? `scale(${1.32 - 0.32 * e}) translateY(${(1 - e) * -30}px)` : undefined,
+        transformOrigin: '0 0',
+        filter: slam && e < 0.97 ? `blur(${((1 - e) * 10).toFixed(2)}px)` : undefined,
+      }}
+    >
+      <Lines screen={s} local={slam ? Math.max(local, ENTER_FRAMES) : local} size={size} weight={900} anim="drop" indent={size / 2} />
       <div style={{marginTop: 26, width: 260 * rule, height: 2, background: C.accent, opacity: 0.85}} />
     </div>
   );
@@ -207,7 +231,8 @@ const LayoutC: React.FC<{s: Screen; local: number}> = ({s, local}) => {
   const size = C_SIZE;
   const cols = lineGlyphs(s, phrases(s.text));
   const stagger = staggerFor(s.text.length);
-  const top = SAFE + 20 + Math.abs(jitter(s.id, 'cy', 20));
+  // 贴右边时从水印下方开始排
+  const top = (side === 'right' ? WATERMARK_ZONE.bottom + 10 : SAFE + 20) + Math.abs(jitter(s.id, 'cy', 20));
   const lineH = prog(local, 0, 20);
   const longest = Math.max(...cols.map((c) => c.length));
   const posStyle: React.CSSProperties = side === 'right' ? {right: SAFE + 30} : {left: SAFE + 30};
@@ -315,7 +340,8 @@ const LayoutE: React.FC<{s: Screen; local: number; anchor: {x: number; y: number
   const w = Math.max(...lines.map((l) => textWidth(l, size)));
   const h = lines.length * size * 1.28;
   const x = Math.min(W - SAFE - w, Math.max(SAFE, anchor.x));
-  const y = Math.min(H - SAFE - h, Math.max(SAFE, anchor.y));
+  let y = Math.min(H - SAFE - h, Math.max(SAFE, anchor.y));
+  if (x + w > WATERMARK_ZONE.left && y < WATERMARK_ZONE.bottom) y = WATERMARK_ZONE.bottom;
   return (
     <div style={{...base, left: x, top: y}}>
       <Lines screen={s} local={local} size={size} weight={600} anim="rise" indent={34} />
@@ -346,6 +372,8 @@ const LayoutG: React.FC<{s: Screen; local: number}> = ({s, local}) => {
         ? {right: SAFE + 40, top: SAFE + 64}
         : {left: SAFE + 40, bottom: SAFE + 40};
   const ruleTop = corner === 'bottomLeft' ? H - SAFE - 8 : SAFE + 18;
+  // 顶部通栏线在水印左侧收住，页码也排在水印左边
+  const ruleRight = corner === 'bottomLeft' ? SAFE : W - WATERMARK_ZONE.left + 30;
   return (
     <>
       {/* 网格线：顶部通栏细线 + 页码 */}
@@ -354,7 +382,7 @@ const LayoutG: React.FC<{s: Screen; local: number}> = ({s, local}) => {
           position: 'absolute',
           left: SAFE,
           top: ruleTop,
-          width: (W - SAFE * 2) * draw,
+          width: (W - SAFE - ruleRight) * draw,
           height: 1,
           background: 'rgba(237,228,211,0.38)',
         }}
@@ -362,7 +390,7 @@ const LayoutG: React.FC<{s: Screen; local: number}> = ({s, local}) => {
       <div
         style={{
           position: 'absolute',
-          right: SAFE,
+          right: ruleRight,
           top: ruleTop - (corner === 'bottomLeft' ? 34 : -12),
           fontFamily: FONT_SANS,
           fontWeight: 300,
@@ -396,13 +424,20 @@ const LayoutG: React.FC<{s: Screen; local: number}> = ({s, local}) => {
   );
 };
 
-/** H：全屏巨字，砸下来 */
+/** H：全屏巨字；关键句砸下来，其余（如"他没有起来。"）缓缓浮现 */
 const LayoutH: React.FC<{s: Screen; local: number}> = ({s, local}) => {
   const size = 216;
+  const room = W - SAFE * 2 - 180;
   const hl = s.highlight[0] ?? '';
   const idx = hl ? s.text.indexOf(hl) : -1;
-  const lines = textWidth(s.text, size) > W - SAFE * 2 && idx > 0 ? [s.text.slice(0, idx), s.text.slice(idx)] : [s.text];
+  const byPhrase = phrases(s.text);
+  let lines = [s.text];
+  if (textWidth(s.text, size) > room) {
+    lines = byPhrase.length > 1 && byPhrase.every((l) => textWidth(l, size) <= room) ? byPhrase : idx > 0 ? [s.text.slice(0, idx), s.text.slice(idx)] : [s.text];
+  }
   const all = lineGlyphs(s, lines);
+  const slam = s.emphasis === 'slam';
+  const noteIn = prog(local, 14, 34);
   return (
     <div
       style={{
@@ -419,9 +454,10 @@ const LayoutH: React.FC<{s: Screen; local: number}> = ({s, local}) => {
       }}
     >
       {all.map((g, li) => {
-        const t = clamp((local - li * 4) / 6);
+        const t = clamp((local - li * 4) / (slam ? 6 : 16));
         const e = easeOut(t);
         const settle = track(local - li * 4, [[6, 1], [70, 1.04]]);
+        const scale = slam ? (1.9 - 0.9 * e) * settle : 1.06 - 0.06 * e;
         return (
           <div
             key={li}
@@ -429,8 +465,8 @@ const LayoutH: React.FC<{s: Screen; local: number}> = ({s, local}) => {
               fontSize: size,
               fontWeight: 900,
               opacity: e,
-              transform: `scale(${(1.9 - 0.9 * e) * settle}) translateY(${(1 - e) * -60}px)`,
-              filter: e < 0.97 ? `blur(${((1 - e) * 18).toFixed(2)}px)` : undefined,
+              transform: `scale(${scale}) translateY(${(1 - e) * (slam ? -60 : 16)}px)`,
+              filter: e < 0.97 ? `blur(${((1 - e) * (slam ? 18 : 8)).toFixed(2)}px)` : undefined,
               letterSpacing: '0.04em',
               paddingLeft: li === 1 ? 180 : 0,
               paddingRight: li === 0 && all.length > 1 ? 180 : 0,
@@ -444,6 +480,22 @@ const LayoutH: React.FC<{s: Screen; local: number}> = ({s, local}) => {
           </div>
         );
       })}
+      {s.options?.note ? (
+        <div
+          style={{
+            marginTop: 30,
+            fontFamily: FONT_SANS,
+            fontWeight: 300,
+            fontSize: 26,
+            letterSpacing: '0.3em',
+            color: '#CDBFA6',
+            opacity: noteIn,
+            textShadow,
+          }}
+        >
+          {s.options.note}
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -508,8 +560,8 @@ export const SlamFX: React.FC<{frame: number}> = ({frame}) => {
         const hit = s.start + (s.delay ?? 0) + 5;
         const t = frame - hit;
         if (t < 0 || t > 22) return null;
-        const cx = s.layout === 'H' ? W / 2 : SAFE + 420;
-        const cy = s.layout === 'H' ? H / 2 : H - SAFE - 200;
+        const cx = s.layout === 'H' ? W / 2 : s.layout === 'A' ? SAFE + 560 : SAFE + 420;
+        const cy = s.layout === 'H' ? H / 2 : s.layout === 'A' ? SAFE + 170 : H - SAFE - 200;
         const e = easeOut(t / 22);
         return (
           <g key={s.id} style={{mixBlendMode: 'screen'}}>

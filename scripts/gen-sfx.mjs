@@ -72,7 +72,9 @@ const env = (n, fn) => {
   for (let i = 0; i < n; i++) b[i] = fn(i / SR, i / n);
   return b;
 };
-const mul = (a, b) => a.map((v, i) => v * (typeof b === 'function' ? b(i / SR, i / a.length) : b[i]));
+/** 逐点相乘：b 可以是常数、包络函数 (t, u) 或另一段缓冲 */
+const mul = (a, b) =>
+  a.map((v, i) => v * (typeof b === 'number' ? b : typeof b === 'function' ? b(i / SR, i / a.length) : b[i]));
 const sine = (n, freq, phase = 0) => {
   const b = new Float32Array(n);
   let ph = phase;
@@ -115,6 +117,10 @@ const softClip = (b, drive = 1.5) => b.map((v) => Math.tanh(v * drive) / Math.ta
 
 const writeWav = (name, data) => {
   const n = data.length;
+  // 防止某个音效因为数值错误变成整段静音（NaN 会被写成 0）
+  let bad = 0;
+  for (let i = 0; i < n; i++) if (!Number.isFinite(data[i])) bad++;
+  if (bad > 0) throw new Error(`${name}: ${bad} 个采样不是有效数字`);
   const out = Buffer.alloc(44 + n * 2);
   out.write('RIFF', 0);
   out.writeUInt32LE(36 + n * 2, 4);
@@ -154,6 +160,44 @@ const whooshCore = (rnd, sec, f0, f1, f2, q, shape = 'bell') => {
   const x = biquad(biquad(noise, 'bp', f, q), 'bp', f, q);
   const e = (t, u) => (shape === 'bell' ? Math.pow(Math.sin(Math.PI * u), 2.2) : Math.pow(u, 3) * (u < 0.97 ? 1 : (1 - u) / 0.03));
   return mul(x, e);
+};
+
+/** 简单的 Schroeder 混响：4 个梳状 + 2 个全通，用于大厅、回忆里的声音 */
+const reverb = (input, wet = 0.4, size = 1, tailSec = 1.5) => {
+  const n = input.length + Math.round(tailSec * SR);
+  const dry = new Float32Array(n);
+  dry.set(input);
+  const out = new Float32Array(n);
+  const combs = [29.7, 37.1, 41.1, 43.7].map((ms) => Math.round((ms * size * SR) / 1000));
+  for (const d of combs) {
+    const buf2 = new Float32Array(d);
+    let idx = 0;
+    let lp = 0;
+    for (let i = 0; i < n; i++) {
+      const y = buf2[idx];
+      lp = y * 0.7 + lp * 0.3;
+      buf2[idx] = dry[i] + lp * 0.8;
+      idx = (idx + 1) % d;
+      out[i] += y * 0.25;
+    }
+  }
+  let x = out;
+  for (const ms of [5, 1.7]) {
+    const d = Math.round((ms * SR) / 1000);
+    const b2 = new Float32Array(d);
+    const y = new Float32Array(n);
+    let idx = 0;
+    for (let i = 0; i < n; i++) {
+      const bo = b2[idx];
+      const v = x[i] + bo * 0.7;
+      y[i] = bo - v * 0.7;
+      b2[idx] = v;
+      idx = (idx + 1) % d;
+    }
+    x = y;
+  }
+  for (let i = 0; i < n; i++) x[i] = dry[i] * (1 - wet) + x[i] * wet * 2.2;
+  return x;
 };
 
 const SOUNDS = {
@@ -332,6 +376,228 @@ const SOUNDS = {
     for (const [f, g, d] of [[880, 1, 1.6], [884, 0.8, 1.6], [1322, 0.5, 1.2], [1765, 0.35, 0.9], [2648, 0.2, 0.6], [3530, 0.12, 0.4]]) {
       x = mixInto(x, mul(sine(n, f), (t) => Math.min(1, t / 0.25) * Math.exp(-t / d)), 0, g);
     }
+    return fade(x, 0.01, 0.4);
+  },
+  hooves_walk: (rnd) => {
+    const out = buf(3.4);
+    for (let k = 0; k < 9; k++) {
+      mixInto(out, hoof(rnd, k % 2 ? 0.55 : 0.75), Math.round((0.05 + k * 0.37) * SR));
+      mixInto(out, hoof(rnd, 0.35), Math.round((0.22 + k * 0.37) * SR));
+    }
+    return fade(biquad(out, 'lp', 2400), 0.01, 0.3);
+  },
+  sancho_call: (rnd) => {
+    const n = Math.round(1.1 * SR);
+    const tone = mul(sine(n, (t) => 300 + 230 * Math.min(1, t / 0.5) + 6 * Math.sin(t * 34)), (t, u) => Math.sin(Math.PI * Math.min(1, u * 1.1)) * 0.7);
+    const breath = mul(biquad(white(n, rnd), 'bp', 1400, 1.2), (t, u) => 0.15 * Math.sin(Math.PI * u));
+    return fade(reverb(mixInto(tone, breath), 0.25, 0.8, 0.4), 0.02, 0.2);
+  },
+  wood_crack: (rnd) => {
+    const n = Math.round(1.6 * SR);
+    const crack = mul(biquad(white(n, rnd), 'hp', 500), (t) => Math.exp(-t * 45));
+    const body = resonate(mul(white(n, rnd), (t) => Math.exp(-t * 200)), [[180, 0.12, 1], [410, 0.08, 0.8], [760, 0.05, 0.6], [1300, 0.03, 0.4]]);
+    const tail = SOUNDS.paper_fold(rnd);
+    const thump = mul(sine(n, (t) => 55 + 60 * Math.exp(-t * 18)), (t) => 0.8 * Math.exp(-t * 6));
+    return fade(softClip(mixInto(mixInto(mixInto(crack, body, 0, 3), tail, Math.round(0.05 * SR), 0.5), thump), 1.4), 0.001, 0.2);
+  },
+  clatter: (rnd) => {
+    const out = buf(1.8);
+    let t = 0.02;
+    let g = 1;
+    let gap = 0.16;
+    while (t < 1.5 && g > 0.08) {
+      const imp = new Float32Array(Math.round(0.25 * SR));
+      imp[0] = 1;
+      mixInto(out, resonate(imp, [[620 + rnd() * 200, 0.05, 1], [1450 + rnd() * 300, 0.03, 0.6], [2900, 0.015, 0.3]]), Math.round(t * SR), g);
+      t += gap;
+      gap *= 0.82;
+      g *= 0.7;
+    }
+    return fade(out, 0.001, 0.1);
+  },
+  whinny: (rnd) => {
+    const n = Math.round(1.4 * SR);
+    let x = new Float32Array(n);
+    const f0 = (t) => (880 - 380 * t / 1.4) * (1 + 0.04 * Math.sin(t * 2 * Math.PI * 9));
+    for (let h = 1; h <= 5; h++) x = mixInto(x, sine(n, (t) => f0(t) * h), 0, 1 / h);
+    x = biquad(biquad(x, 'bp', 1100, 1.4), 'lp', 2600);
+    return fade(reverb(mul(x, (t, u) => Math.sin(Math.PI * u) * (0.7 + 0.3 * Math.sin(t * 20))), 0.3, 1, 0.6), 0.05, 0.3);
+  },
+  hall_bed: (rnd) => {
+    const n = 26 * SR;
+    const room = biquad(brown(n, rnd), 'lp', 200, 0.7);
+    let murmur = new Float32Array(n);
+    for (let v = 0; v < 6; v++) {
+      const ph = rnd() * 10;
+      const voice = mul(biquad(white(n, rnd), 'bp', 380 + v * 90, 3), (t) => Math.max(0, Math.sin(t * (2.1 + v * 0.37) + ph)) * (0.5 + 0.5 * Math.sin(t * 0.3 + v)));
+      murmur = mixInto(murmur, voice, 0, 0.5);
+    }
+    murmur = biquad(murmur, 'lp', 1100);
+    return fade(mixInto(room, reverb(murmur, 0.5, 1.6, 0).slice(0, n), 0, 0.5), 1.2, 1.5);
+  },
+  hall_steps: (rnd) => {
+    const out = buf(3.4);
+    for (let k = 0; k < 6; k++) {
+      const imp = new Float32Array(Math.round(0.2 * SR));
+      imp[0] = 1;
+      imp[Math.round(0.012 * SR)] = 0.5;
+      mixInto(out, resonate(imp, [[880, 0.03, 1], [2100, 0.015, 0.6], [240, 0.05, 0.5]]), Math.round((0.05 + k * 0.52) * SR), k % 2 ? 0.8 : 1);
+    }
+    return fade(reverb(out, 0.45, 1.8, 1.2), 0.001, 0.4);
+  },
+  rustle_wave: (rnd) => {
+    const n = Math.round(2.2 * SR);
+    const imp = new Float32Array(n);
+    for (let i = 0; i < n; i++) if (rnd() < (600 * Math.sin((Math.PI * i) / n)) / SR) imp[i] = rnd() * 2 - 1;
+    const x = biquad(resonate(imp, [[1800, 0.006, 1], [3200, 0.004, 0.7], [900, 0.008, 0.5]]), 'hp', 500);
+    const swish = mul(biquad(white(n, rnd), 'bp', 2200, 0.5), (t, u) => 0.08 * Math.sin(Math.PI * u));
+    return fade(reverb(mixInto(x, swish), 0.3, 1.4, 0.6), 0.05, 0.3);
+  },
+  laugh: (rnd) => {
+    const out = buf(2.6);
+    for (let v = 0; v < 7; v++) {
+      let t = 0.05 + rnd() * 0.4;
+      const pitch = 600 + rnd() * 700;
+      for (let k = 0; k < 6 + Math.floor(rnd() * 4); k++) {
+        const len = 0.08 + rnd() * 0.05;
+        const nn = Math.round(len * SR);
+        const ha = mul(biquad(biquad(white(nn, rnd), 'bp', pitch, 4), 'bp', pitch * 1.7, 3), (tt, u) => Math.sin(Math.PI * u));
+        mixInto(out, ha, Math.round(t * SR), 0.6 * (1 - k * 0.08));
+        t += len + 0.06 + rnd() * 0.04;
+      }
+    }
+    return fade(reverb(biquad(out, 'lp', 1800), 0.5, 1.6, 0.8), 0.02, 0.4);
+  },
+  chord_swell: (rnd) => {
+    const n = Math.round(4.2 * SR);
+    let x = new Float32Array(n);
+    for (const f0 of [146.8, 220, 293.7, 369.9, 440]) {
+      for (const det of [0.998, 1.002]) x = mixInto(x, sine(n, f0 * det), 0, 0.2);
+    }
+    x = mul(x, (t) => Math.min(1, t / 1.6) * Math.exp(-Math.max(0, t - 2.2) * 1.6));
+    return fade(reverb(biquad(x, 'lp', 2000), 0.35, 1.6, 0.8), 0.05, 0.6);
+  },
+  chimes: (rnd) => {
+    const out = buf(3);
+    for (let k = 0; k < 5; k++) {
+      const n = Math.round(1.8 * SR);
+      const f0 = [1318, 1568, 1760, 2093, 2349][k];
+      let x = new Float32Array(n);
+      for (const [r, g, d] of [[1, 1, 0.9], [2.76, 0.4, 0.4], [5.4, 0.2, 0.2]]) x = mixInto(x, mul(sine(n, f0 * r), (t) => Math.exp(-t / d)), 0, g);
+      mixInto(out, x, Math.round((0.02 + k * 0.17 + rnd() * 0.05) * SR), 0.5);
+    }
+    return fade(reverb(out, 0.3, 1.2, 0.5), 0.001, 0.4);
+  },
+  mask_clicks: (rnd) => {
+    const n = Math.round(1.6 * SR);
+    const imp = new Float32Array(n);
+    for (let i = 0; i < n; i++) if (rnd() < (90 * Math.exp(-i / SR * 2)) / SR) imp[i] = 0.5 + rnd() * 0.5;
+    return fade(reverb(resonate(imp, [[2300, 0.01, 1], [3400, 0.008, 0.6], [1200, 0.012, 0.5]]), 0.3, 1.2, 0.4), 0.001, 0.2);
+  },
+  wave_crash: (rnd) => {
+    const n = Math.round(3.4 * SR);
+    const x = biquad(white(n, rnd), 'lp', (i) => 400 + 3200 * Math.exp(-((i / SR - 0.5) ** 2) / 0.2));
+    const e = (t) => (t < 0.45 ? Math.pow(t / 0.45, 2) : Math.exp(-(t - 0.45) * 1.3));
+    const boom = mul(biquad(brown(n, rnd), 'lp', 160), (t) => e(t) * 0.8);
+    return fade(mixInto(mul(x, e), boom), 0.05, 0.6);
+  },
+  sea_bed: (rnd) => {
+    const n = 26 * SR;
+    const swell = (t) => 0.35 + 0.65 * Math.pow(0.5 + 0.5 * Math.sin((t * 2 * Math.PI) / 6.5), 2);
+    const waves = mul(biquad(brown(n, rnd), 'lp', (i) => 300 + 900 * swell(i / SR)), (t) => swell(t));
+    const hiss = mul(biquad(white(n, rnd), 'hp', 3000), (t) => 0.04 * swell(t + 0.8));
+    return fade(mixInto(waves, hiss), 1.2, 1.5);
+  },
+  hoof_sand: (rnd) => {
+    const out = buf(2.4);
+    for (let k = 0; k < 6; k++) mixInto(out, hoof(rnd, 0.6), Math.round((0.05 + k * 0.38) * SR));
+    return fade(biquad(out, 'lp', 700), 0.01, 0.3);
+  },
+  gallop_sand: (rnd) => fade(biquad(SOUNDS.gallop(rnd), 'lp', 1000), 0.01, 0.3),
+  clash: (rnd) => {
+    const n = Math.round(2 * SR);
+    const imp = mul(white(n, rnd), (t) => Math.exp(-t * 300));
+    const ring = resonate(imp, [[520, 0.5, 1], [1370, 0.35, 0.8], [2240, 0.25, 0.6], [3610, 0.15, 0.4], [5120, 0.08, 0.3]]);
+    const thump = mul(sine(n, (t) => 70 + 40 * Math.exp(-t * 20)), (t) => Math.exp(-t * 10));
+    const noise = mul(biquad(white(n, rnd), 'hp', 1500), (t) => Math.exp(-t * 30));
+    return fade(softClip(mixInto(mixInto(mul(ring, 12), thump, 0, 0.8), noise, 0, 0.6), 1.3), 0.001, 0.3);
+  },
+  metal_touch: (rnd) => {
+    const n = Math.round(1.4 * SR);
+    const imp = new Float32Array(n);
+    imp[0] = 1;
+    return fade(resonate(imp, [[2400, 0.5, 1], [3710, 0.3, 0.6], [5300, 0.15, 0.3]]), 0.001, 0.3);
+  },
+  heartbeat: (rnd) => {
+    const out = buf(4.2);
+    for (let k = 0; k < 5; k++) {
+      for (const [dt, g] of [[0, 1], [0.24, 0.7]]) {
+        const n = Math.round(0.3 * SR);
+        const b = mul(sine(n, (t) => 48 + 30 * Math.exp(-t * 30)), (t) => Math.exp(-t * 18) * Math.min(1, t / 0.008));
+        mixInto(out, b, Math.round((0.05 + k * 0.82 + dt) * SR), g);
+      }
+    }
+    return fade(biquad(out, 'lp', 200), 0.005, 0.3);
+  },
+  hooves_away: (rnd) => {
+    const out = buf(3.4);
+    for (let k = 0; k < 12; k++) mixInto(out, hoof(rnd, 0.8 * Math.pow(0.86, k)), Math.round((0.05 + k * 0.26) * SR));
+    return fade(biquad(out, 'lp', (i) => 1600 - 1100 * (i / out.length)), 0.01, 0.3);
+  },
+  run_sand: (rnd) => {
+    const out = buf(2.6);
+    for (let k = 0; k < 8; k++) {
+      const n = Math.round(0.12 * SR);
+      const step = mul(biquad(white(n, rnd), 'lp', 800), (t) => Math.exp(-t * 40));
+      mixInto(out, step, Math.round((0.05 + k * 0.29) * SR), 0.5 + 0.5 * Math.min(1, k / 4));
+    }
+    return fade(out, 0.005, 0.2);
+  },
+  clock_bed: (rnd) => {
+    const n = 26 * SR;
+    const room = biquad(brown(n, rnd), 'lp', 220, 0.7);
+    const out = mixInto(new Float32Array(n), room, 0, 1);
+    for (let k = 0; k < 26; k++) {
+      const m = Math.round(0.04 * SR);
+      const click = resonate(mul(biquad(white(m, rnd), 'hp', 2500), (t) => Math.exp(-t * 300)), [[k % 2 ? 2300 : 2650, 0.012, 1]]);
+      mixInto(out, click, Math.round((0.3 + k) * SR), 0.25);
+    }
+    return fade(out, 1.0, 1.5);
+  },
+  breath: (rnd) => {
+    const n = Math.round(1.8 * SR);
+    return fade(mul(biquad(white(n, rnd), 'bp', 900, 0.8), (t, u) => Math.pow(Math.sin(Math.PI * u), 2) * 0.6), 0.05, 0.2);
+  },
+  breath_shaky: (rnd) => {
+    const n = Math.round(3.2 * SR);
+    const x = mul(biquad(white(n, rnd), 'bp', (i) => 800 + 200 * Math.sin(i / SR * 3), 0.9), (t, u) => Math.pow(Math.sin(Math.PI * u), 1.5) * (0.6 + 0.4 * Math.sin(t * 2 * Math.PI * 7)) * (0.7 + 0.3 * Math.sin(t * 2.3)));
+    return fade(x, 0.05, 0.3);
+  },
+  gallop_ghost: (rnd) => fade(reverb(biquad(SOUNDS.gallop(rnd), 'lp', 1400), 0.6, 1.8, 1.4), 0.05, 0.6),
+  shimmer: (rnd) => {
+    const n = Math.round(2.6 * SR);
+    let x = new Float32Array(n);
+    for (const f0 of [1760, 2217, 2637, 3520]) x = mixInto(x, sine(n, (t) => f0 * (1 + 0.02 * t)), 0, 0.25);
+    x = mul(x, (t, u) => Math.sin(Math.PI * u) * (0.6 + 0.4 * Math.sin(t * 40)));
+    const sparkle = new Float32Array(n);
+    for (let i = 0; i < n; i++) if (rnd() < 40 / SR) sparkle[i] = rnd();
+    return fade(reverb(mixInto(x, resonate(sparkle, [[4200, 0.05, 1], [6100, 0.03, 0.6]]), 0, 2), 0.4, 1.3, 0.8), 0.1, 0.5);
+  },
+  tick: (rnd) => {
+    const n = Math.round(0.6 * SR);
+    const click = resonate(mul(biquad(white(Math.round(0.04 * SR), rnd), 'hp', 2500), (t) => Math.exp(-t * 300)), [[2450, 0.015, 1], [4100, 0.008, 0.5]]);
+    return fade(mixInto(new Float32Array(n), click), 0.001, 0.2);
+  },
+  book_close: (rnd) => {
+    const n = Math.round(0.8 * SR);
+    const thump = mul(sine(n, (t) => 90 + 50 * Math.exp(-t * 30)), (t) => Math.exp(-t * 14));
+    const flap = mul(biquad(white(n, rnd), 'bp', 1200, 0.7), (t) => Math.exp(-t * 25));
+    return fade(mixInto(thump, flap, 0, 0.6), 0.002, 0.1);
+  },
+  metal_decay: (rnd) => {
+    const n = Math.round(2.8 * SR);
+    let x = new Float32Array(n);
+    for (const [f0, g] of [[880, 1], [1320, 0.5], [1760, 0.35]]) x = mixInto(x, mul(sine(n, (t) => f0 * (1 - 0.06 * t)), (t) => Math.exp(-t / 0.9)), 0, g);
     return fade(x, 0.01, 0.4);
   },
 };

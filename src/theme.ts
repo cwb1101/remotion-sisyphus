@@ -17,3 +17,7 @@ export const W = 1920;
 export const H = 1080;
 /** 文字离画面边缘的最小距离 */
 export const SAFE = 80;
+
+/** 右上角水印的位置；字幕禁止进入 WATERMARK_ZONE（右上角这块矩形） */
+export const WATERMARK = {top: 40, right: 44, height: 38} as const;
+export const WATERMARK_ZONE = {left: 1600, bottom: 140} as const;

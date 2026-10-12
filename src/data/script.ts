@@ -43,6 +43,8 @@ export interface SceneDef {
   id: string;
   name: string;
   bed?: {sound: string; volume: number};
+  /** 与上一节交叠的帧数：上一节继续渲染，本节在其上淡入（0 = 物件填满画面的匹配剪辑） */
+  transitionIn?: number;
 }
 
 interface ScriptFile {
@@ -50,6 +52,7 @@ interface ScriptFile {
   width: number;
   height: number;
   previewTail: number;
+  endTail: number;
   scenes: SceneDef[];
   screens: Screen[];
 }
@@ -82,7 +85,10 @@ export const sceneRange = (sceneId: string) => {
 };
 
 export const lastFrame = Math.max(...SCREENS.map((s) => s.end));
-export const PREVIEW_DURATION = lastFrame + SCRIPT.previewTail;
+/** 预览：开头 + 第一节 */
+export const PREVIEW_DURATION = sceneRange('s1').end + SCRIPT.previewTail;
+/** 成片：最后一屏之后留一段淡出 */
+export const FULL_DURATION = lastFrame + SCRIPT.endTail;
 
 /** 屏内时间点：屏开始帧 + 屏时长 * 比例，场景动画都用它对齐字幕 */
 export const at = (id: string, fraction = 0, offsetFrames = 0) => {

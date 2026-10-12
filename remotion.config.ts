@@ -11,8 +11,6 @@ if (fs.existsSync(preinstalled)) {
 Config.setVideoImageFormat('jpeg');
 Config.setJpegQuality(92);
 Config.setCodec('h264');
-Config.setCrf(18);
-Config.setPixelFormat('yuv420p');
 Config.setConcurrency(4);
 // swangle 在无 GPU 容器里比 angle 慢约 4 倍
 Config.setChromiumOpenGlRenderer('angle');

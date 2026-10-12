@@ -17,12 +17,63 @@
     {
       "id": "opening",
       "name": "开头 · 风车平原",
-      "bed": {"sound": "wind_bed", "volume": 0.55}
+      "bed": {
+        "sound": "wind_bed",
+        "volume": 0.55
+      }
     },
     {
       "id": "s1",
       "name": "第一节 · 书架长廊",
-      "bed": {"sound": "room_bed", "volume": 0.5}
+      "bed": {
+        "sound": "room_bed",
+        "volume": 0.5
+      }
+    },
+    {
+      "id": "s2",
+      "name": "第二节 · 雾里的山脊",
+      "bed": {
+        "sound": "wind_bed",
+        "volume": 0.5
+      },
+      "transitionIn": 20
+    },
+    {
+      "id": "s3",
+      "name": "第三节 · 石柱大厅",
+      "bed": {
+        "sound": "hall_bed",
+        "volume": 0.5
+      },
+      "transitionIn": 6
+    },
+    {
+      "id": "s4",
+      "name": "第四节 · 黎明海滩",
+      "bed": {
+        "sound": "sea_bed",
+        "volume": 0.5
+      },
+      "transitionIn": 8
+    },
+    {
+      "id": "s5",
+      "name": "第五节 · 窗光空房间",
+      "bed": {
+        "sound": "clock_bed",
+        "volume": 0.5
+      },
+      "transitionIn": 12
+    },
+    {
+      "id": "ep",
+      "name": "尾声 · 风车平原",
+      "bed": {
+        "sound": "wind_bed",
+        "volume": 0.45
+      },
+      "transitionIn": 20
     }
   ],
   "screens": [
@@ -32,11 +83,21 @@
       "start": 0,
       "end": 75,
       "text": "他看见三十多个巨人。",
-      "highlight": ["巨人"],
+      "highlight": [
+        "巨人"
+      ],
       "layout": "A",
       "sfx": [
-        {"sound": "creak", "at": 0, "volume": 0.55},
-        {"sound": "whoosh_low", "at": 8, "volume": 0.55}
+        {
+          "sound": "creak",
+          "at": 0,
+          "volume": 0.4
+        },
+        {
+          "sound": "whoosh_low",
+          "at": 8,
+          "volume": 0.38
+        }
       ]
     },
     {
@@ -45,11 +106,21 @@
       "start": 75,
       "end": 150,
       "text": "所有人都知道，那是风车。",
-      "highlight": ["风车"],
+      "highlight": [
+        "风车"
+      ],
       "layout": "B",
       "sfx": [
-        {"sound": "metal_scrape", "at": 14, "volume": 0.6},
-        {"sound": "snort", "at": 46, "volume": 0.45}
+        {
+          "sound": "metal_scrape",
+          "at": 14,
+          "volume": 0.6
+        },
+        {
+          "sound": "snort",
+          "at": 46,
+          "volume": 0.45
+        }
       ]
     },
     {
@@ -58,14 +129,28 @@
       "start": 150,
       "end": 245,
       "text": "我们笑了他四百多年。",
-      "highlight": ["四百多年"],
+      "highlight": [
+        "四百多年"
+      ],
       "layout": "H",
       "emphasis": "slam",
       "delay": 12,
       "sfx": [
-        {"sound": "gallop", "at": 0, "volume": 0.5},
-        {"sound": "whoosh", "at": 4, "volume": 0.5},
-        {"sound": "boom", "at": 12, "volume": 0.6}
+        {
+          "sound": "gallop",
+          "at": 0,
+          "volume": 0.35
+        },
+        {
+          "sound": "whoosh",
+          "at": 4,
+          "volume": 0.35
+        },
+        {
+          "sound": "boom",
+          "at": 12,
+          "volume": 0.9
+        }
       ]
     },
     {
@@ -76,9 +161,15 @@
       "text": "可这本书最难过的一幕，不在这里。",
       "highlight": [],
       "layout": "C",
-      "options": {"side": "right"},
+      "options": {
+        "side": "right"
+      },
       "sfx": [
-        {"sound": "metal_roll", "at": 2, "volume": 0.75}
+        {
+          "sound": "metal_roll",
+          "at": 2,
+          "volume": 0.75
+        }
       ]
     },
     {
@@ -87,14 +178,31 @@
       "start": 345,
       "end": 441,
       "text": "是他终于清醒的那一刻。为什么？",
-      "highlight": ["终于清醒"],
+      "highlight": [
+        "终于清醒"
+      ],
       "layout": "D",
       "emphasis": "slam",
-      "options": {"big": "终于清醒", "anchor": "lowerLeft"},
+      "options": {
+        "big": "终于清醒",
+        "anchor": "lowerLeft"
+      },
       "sfx": [
-        {"sound": "bell", "at": 0, "volume": 0.8},
-        {"sound": "thud", "at": 0, "volume": 0.5},
-        {"sound": "whoosh_rev", "at": 74, "volume": 0.6}
+        {
+          "sound": "bell",
+          "at": 0,
+          "volume": 0.8
+        },
+        {
+          "sound": "thud",
+          "at": 0,
+          "volume": 0.5
+        },
+        {
+          "sound": "whoosh_rev",
+          "at": 74,
+          "volume": 0.6
+        }
       ]
     },
     {
@@ -103,12 +211,26 @@
       "start": 441,
       "end": 551,
       "text": "西班牙，拉曼查。一个快五十岁的乡绅。",
-      "highlight": ["快五十岁"],
+      "highlight": [
+        "快五十岁"
+      ],
       "layout": "G",
-      "options": {"corner": "bottomLeft", "note": "LA MANCHA · DON QUIXOTE, PART I, CHAPTER 1 · 1605", "index": "01"},
+      "options": {
+        "corner": "bottomLeft",
+        "note": "LA MANCHA · DON QUIXOTE, PART I, CHAPTER 1 · 1605",
+        "index": "01"
+      },
       "sfx": [
-        {"sound": "page_flip", "at": 40, "volume": 0.5},
-        {"sound": "page_flip", "at": 82, "volume": 0.4}
+        {
+          "sound": "page_flip",
+          "at": 40,
+          "volume": 0.5
+        },
+        {
+          "sound": "page_flip",
+          "at": 82,
+          "volume": 0.4
+        }
       ]
     },
     {
@@ -117,14 +239,34 @@
       "start": 551,
       "end": 676,
       "text": "他迷上骑士小说，为了买书，卖掉了不少耕地。",
-      "highlight": ["卖掉了不少耕地"],
+      "highlight": [
+        "卖掉了不少耕地"
+      ],
       "layout": "C",
-      "options": {"side": "left"},
+      "options": {
+        "side": "left"
+      },
       "sfx": [
-        {"sound": "thud", "at": 30, "volume": 0.45},
-        {"sound": "thud", "at": 56, "volume": 0.5},
-        {"sound": "thud", "at": 82, "volume": 0.55},
-        {"sound": "wind_gust", "at": 40, "volume": 0.35}
+        {
+          "sound": "thud",
+          "at": 30,
+          "volume": 0.45
+        },
+        {
+          "sound": "thud",
+          "at": 56,
+          "volume": 0.5
+        },
+        {
+          "sound": "thud",
+          "at": 82,
+          "volume": 0.55
+        },
+        {
+          "sound": "wind_gust",
+          "at": 40,
+          "volume": 0.35
+        }
       ]
     },
     {
@@ -133,11 +275,21 @@
       "start": 676,
       "end": 781,
       "text": "睡得太少，读得太多，他的脑子干了。",
-      "highlight": ["干了"],
+      "highlight": [
+        "干了"
+      ],
       "layout": "E",
       "sfx": [
-        {"sound": "ticks_accel", "at": 0, "volume": 0.6},
-        {"sound": "page_flurry", "at": 10, "volume": 0.45}
+        {
+          "sound": "ticks_accel",
+          "at": 0,
+          "volume": 0.6
+        },
+        {
+          "sound": "page_flurry",
+          "at": 10,
+          "volume": 0.45
+        }
       ]
     },
     {
@@ -146,13 +298,31 @@
       "start": 781,
       "end": 906,
       "text": "他翻出祖上的旧盔甲，用纸板补成一顶头盔。",
-      "highlight": ["纸板"],
+      "highlight": [
+        "纸板"
+      ],
       "layout": "A",
       "sfx": [
-        {"sound": "paper_fold", "at": 14, "volume": 0.6},
-        {"sound": "tap", "at": 34, "volume": 0.5},
-        {"sound": "paper_fold", "at": 50, "volume": 0.55},
-        {"sound": "tap", "at": 72, "volume": 0.5}
+        {
+          "sound": "paper_fold",
+          "at": 14,
+          "volume": 0.6
+        },
+        {
+          "sound": "tap",
+          "at": 34,
+          "volume": 0.5
+        },
+        {
+          "sound": "paper_fold",
+          "at": 50,
+          "volume": 0.55
+        },
+        {
+          "sound": "tap",
+          "at": 72,
+          "volume": 0.5
+        }
       ]
     },
     {
@@ -161,12 +331,25 @@
       "start": 906,
       "end": 981,
       "text": "拔剑一试，头盔就碎了。",
-      "highlight": ["碎了"],
+      "highlight": [
+        "碎了"
+      ],
       "layout": "F",
-      "options": {"x": 150, "y": 150},
+      "options": {
+        "x": 150,
+        "y": 150
+      },
       "sfx": [
-        {"sound": "sword", "at": 20, "volume": 0.8},
-        {"sound": "paper_crack", "at": 27, "volume": 0.85}
+        {
+          "sound": "sword",
+          "at": 20,
+          "volume": 0.8
+        },
+        {
+          "sound": "paper_crack",
+          "at": 27,
+          "volume": 0.85
+        }
       ]
     },
     {
@@ -175,15 +358,763 @@
       "start": 981,
       "end": 1086,
       "text": "他重新做了一顶，再也没有试过。",
-      "highlight": ["再也没有试过"],
+      "highlight": [
+        "再也没有试过"
+      ],
       "layout": "D",
       "emphasis": "slam",
-      "options": {"big": "再也没有试过", "anchor": "lowerLeft"},
+      "options": {
+        "big": "再也没有试过",
+        "anchor": "lowerLeft"
+      },
       "sfx": [
-        {"sound": "metal_ring", "at": 30, "volume": 0.7},
-        {"sound": "boom_soft", "at": 0, "volume": 0.7},
-        {"sound": "wind_gust", "at": 70, "volume": 0.4}
+        {
+          "sound": "metal_ring",
+          "at": 30,
+          "volume": 0.7
+        },
+        {
+          "sound": "boom_soft",
+          "at": 0,
+          "volume": 0.7
+        },
+        {
+          "sound": "wind_gust",
+          "at": 70,
+          "volume": 0.4
+        }
+      ]
+    },
+    {
+      "id": "s2-1",
+      "scene": "s2",
+      "start": 1086,
+      "end": 1181,
+      "text": "他找了个邻居农夫当侍从：桑丘。",
+      "highlight": [
+        "桑丘"
+      ],
+      "layout": "G",
+      "options": {
+        "corner": "topLeft",
+        "note": "SANCHO PANZA · LABOURER, NEIGHBOUR, SQUIRE",
+        "index": "02"
+      },
+      "sfx": [
+        {
+          "sound": "hooves_walk",
+          "at": 0,
+          "volume": 0.45
+        }
+      ]
+    },
+    {
+      "id": "s2-2",
+      "scene": "s2",
+      "start": 1181,
+      "end": 1256,
+      "text": "前方，立着三四十架风车。",
+      "highlight": [
+        "风车"
+      ],
+      "layout": "C",
+      "options": {
+        "side": "right"
+      },
+      "sfx": [
+        {
+          "sound": "creak",
+          "at": 6,
+          "volume": 0.5
+        },
+        {
+          "sound": "wind_gust",
+          "at": 30,
+          "volume": 0.4
+        }
+      ]
+    },
+    {
+      "id": "s2-3",
+      "scene": "s2",
+      "start": 1256,
+      "end": 1346,
+      "text": "桑丘喊：那是风车，不是巨人！",
+      "highlight": [],
+      "layout": "E",
+      "sfx": [
+        {
+          "sound": "sancho_call",
+          "at": 8,
+          "volume": 0.5
+        },
+        {
+          "sound": "snort",
+          "at": 50,
+          "volume": 0.3
+        }
+      ]
+    },
+    {
+      "id": "s2-4",
+      "scene": "s2",
+      "start": 1346,
+      "end": 1436,
+      "text": "他没有停。",
+      "highlight": [
+        "停"
+      ],
+      "layout": "F",
+      "options": {
+        "x": 150,
+        "y": 170
+      },
+      "sfx": [
+        {
+          "sound": "gallop",
+          "at": 0,
+          "volume": 0.5
+        },
+        {
+          "sound": "whoosh",
+          "at": 26,
+          "volume": 0.5
+        },
+        {
+          "sound": "wood_crack",
+          "at": 52,
+          "volume": 0.75
+        },
+        {
+          "sound": "boom_soft",
+          "at": 52,
+          "volume": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s2-5",
+      "scene": "s2",
+      "start": 1436,
+      "end": 1531,
+      "text": "长矛碎了，人和马一起滚了出去。",
+      "highlight": [
+        "滚了出去"
+      ],
+      "layout": "B",
+      "sfx": [
+        {
+          "sound": "clatter",
+          "at": 4,
+          "volume": 0.55
+        },
+        {
+          "sound": "thud",
+          "at": 30,
+          "volume": 0.45
+        },
+        {
+          "sound": "whinny",
+          "at": 48,
+          "volume": 0.35
+        }
+      ]
+    },
+    {
+      "id": "s2-6",
+      "scene": "s2",
+      "start": 1531,
+      "end": 1661,
+      "text": "倒在地上，他还说：是魔法师把巨人变成了风车。",
+      "highlight": [
+        "变成了风车"
+      ],
+      "layout": "D",
+      "options": {
+        "big": "变成了风车",
+        "anchor": "lowerLeft"
+      },
+      "sfx": [
+        {
+          "sound": "creak",
+          "at": 0,
+          "volume": 0.45
+        },
+        {
+          "sound": "creak",
+          "at": 64,
+          "volume": 0.4
+        }
+      ]
+    },
+    {
+      "id": "s2-7",
+      "scene": "s2",
+      "start": 1661,
+      "end": 1766,
+      "text": "他不是看不清。他是不肯只看见风车。",
+      "highlight": [
+        "不肯"
+      ],
+      "layout": "A",
+      "emphasis": "slam",
+      "sfx": [
+        {
+          "sound": "boom",
+          "at": 0,
+          "volume": 0.95
+        },
+        {
+          "sound": "wind_gust",
+          "at": 24,
+          "volume": 0.35
+        }
+      ]
+    },
+    {
+      "id": "s2-8",
+      "scene": "s2",
+      "start": 1766,
+      "end": 1891,
+      "text": "后来，他把理发师的铜盆，认作传说中的头盔。",
+      "highlight": [
+        "铜盆"
+      ],
+      "layout": "C",
+      "options": {
+        "side": "left"
+      },
+      "sfx": [
+        {
+          "sound": "shimmer",
+          "at": 18,
+          "volume": 0.55
+        },
+        {
+          "sound": "whoosh_rev",
+          "at": 98,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s3-1",
+      "scene": "s3",
+      "start": 1891,
+      "end": 2023,
+      "text": "十年后的续集里，许多人读过他的故事。",
+      "highlight": [
+        "读过他的故事"
+      ],
+      "layout": "G",
+      "delay": 18,
+      "options": {
+        "corner": "bottomLeft",
+        "note": "DON QUIXOTE, PART II · 1615",
+        "index": "03"
+      },
+      "sfx": [
+        {
+          "sound": "hall_steps",
+          "at": 0,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s3-2",
+      "scene": "s3",
+      "start": 2023,
+      "end": 2148,
+      "text": "一对公爵夫妇，照着骑士小说的排场接待他。",
+      "highlight": [
+        "排场"
+      ],
+      "layout": "F",
+      "options": {
+        "x": 150,
+        "y": 150
+      },
+      "sfx": [
+        {
+          "sound": "hall_steps",
+          "at": 0,
+          "volume": 0.4
+        },
+        {
+          "sound": "rustle_wave",
+          "at": 44,
+          "volume": 0.5
+        },
+        {
+          "sound": "laugh",
+          "at": 78,
+          "volume": 0.35
+        }
+      ]
+    },
+    {
+      "id": "s3-3",
+      "scene": "s3",
+      "start": 2148,
+      "end": 2273,
+      "text": "书里说，那是他第一次真正相信自己是骑士。",
+      "highlight": [
+        "真正相信"
+      ],
+      "layout": "D",
+      "options": {
+        "big": "真正相信",
+        "anchor": "lowerLeft"
+      },
+      "sfx": [
+        {
+          "sound": "chimes",
+          "at": 0,
+          "volume": 0.45
+        },
+        {
+          "sound": "chord_swell",
+          "at": 8,
+          "volume": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s3-4",
+      "scene": "s3",
+      "start": 2273,
+      "end": 2371,
+      "text": "而这一切，只是一场玩笑。",
+      "highlight": [
+        "玩笑"
+      ],
+      "layout": "H",
+      "emphasis": "slam",
+      "delay": 18,
+      "sfx": [
+        {
+          "sound": "boom",
+          "at": 18,
+          "volume": 1
+        },
+        {
+          "sound": "mask_clicks",
+          "at": 26,
+          "volume": 0.55
+        },
+        {
+          "sound": "laugh",
+          "at": 34,
+          "volume": 0.5
+        },
+        {
+          "sound": "whoosh_rev",
+          "at": 74,
+          "volume": 0.45
+        }
+      ]
+    },
+    {
+      "id": "s4-1",
+      "scene": "s4",
+      "start": 2371,
+      "end": 2481,
+      "text": "巴塞罗那的海滩上，来了一位白月骑士。",
+      "highlight": [
+        "白月骑士"
+      ],
+      "layout": "G",
+      "options": {
+        "corner": "topLeft",
+        "note": "BARCELONA · DON QUIXOTE, PART II, CHAPTER 64",
+        "index": "04"
+      },
+      "sfx": [
+        {
+          "sound": "hoof_sand",
+          "at": 30,
+          "volume": 0.4
+        }
+      ]
+    },
+    {
+      "id": "s4-2",
+      "scene": "s4",
+      "start": 2481,
+      "end": 2611,
+      "text": "他提出：堂吉诃德若输了，就回乡，一年不碰兵器。",
+      "highlight": [
+        "一年不碰兵器"
+      ],
+      "layout": "B",
+      "sfx": [
+        {
+          "sound": "metal_scrape",
+          "at": 22,
+          "volume": 0.4
+        },
+        {
+          "sound": "snort",
+          "at": 70,
+          "volume": 0.3
+        }
+      ]
+    },
+    {
+      "id": "s4-3",
+      "scene": "s4",
+      "start": 2611,
+      "end": 2711,
+      "text": "他落了马。枪尖抵住面甲，要他认输。",
+      "highlight": [
+        "认输"
+      ],
+      "layout": "E",
+      "sfx": [
+        {
+          "sound": "gallop_sand",
+          "at": 0,
+          "volume": 0.5
+        },
+        {
+          "sound": "clash",
+          "at": 40,
+          "volume": 0.75
+        },
+        {
+          "sound": "thud",
+          "at": 50,
+          "volume": 0.5
+        },
+        {
+          "sound": "metal_touch",
+          "at": 78,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s4-4",
+      "scene": "s4",
+      "start": 2711,
+      "end": 2831,
+      "text": "他说：杜尔西内娅仍是世上最美的人。刺吧。",
+      "highlight": [
+        "刺吧"
+      ],
+      "layout": "A",
+      "emphasis": "slam",
+      "sfx": [
+        {
+          "sound": "heartbeat",
+          "at": 0,
+          "volume": 0.55
+        },
+        {
+          "sound": "boom",
+          "at": 0,
+          "volume": 0.9
+        }
+      ]
+    },
+    {
+      "id": "s4-5",
+      "scene": "s4",
+      "start": 2831,
+      "end": 2966,
+      "text": "对方是他的同乡，一个想把他治好、带回家的学士。",
+      "highlight": [
+        "治好"
+      ],
+      "layout": "D",
+      "options": {
+        "big": "治好",
+        "anchor": "lowerLeft"
+      },
+      "sfx": [
+        {
+          "sound": "hooves_away",
+          "at": 24,
+          "volume": 0.4
+        },
+        {
+          "sound": "run_sand",
+          "at": 64,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s4-6",
+      "scene": "s4",
+      "start": 2966,
+      "end": 3056,
+      "text": "他答应回家，却没有改口。",
+      "highlight": [
+        "没有改口"
+      ],
+      "layout": "C",
+      "options": {
+        "side": "right"
+      },
+      "sfx": [
+        {
+          "sound": "wave_crash",
+          "at": 22,
+          "volume": 0.6
+        },
+        {
+          "sound": "whoosh_rev",
+          "at": 62,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s5-1",
+      "scene": "s5",
+      "start": 3056,
+      "end": 3181,
+      "text": "回家后，他发烧六天，沉睡很久，醒来时清醒了。",
+      "highlight": [
+        "清醒"
+      ],
+      "layout": "B",
+      "sfx": [
+        {
+          "sound": "ticks_accel",
+          "at": 0,
+          "volume": 0.45
+        },
+        {
+          "sound": "breath",
+          "at": 96,
+          "volume": 0.35
+        }
+      ]
+    },
+    {
+      "id": "s5-2",
+      "scene": "s5",
+      "start": 3181,
+      "end": 3256,
+      "text": "“我不再是堂吉诃德了。”",
+      "highlight": [],
+      "layout": "A",
+      "sfx": [
+        {
+          "sound": "bell",
+          "at": 0,
+          "volume": 0.45
+        }
+      ]
+    },
+    {
+      "id": "s5-3",
+      "scene": "s5",
+      "start": 3256,
+      "end": 3361,
+      "text": "“我是阿隆索·吉哈诺，人们叫我善人。”",
+      "highlight": [
+        "善人"
+      ],
+      "layout": "G",
+      "options": {
+        "corner": "bottomLeft",
+        "note": "ALONSO QUIJANO, THE GOOD · PART II, CHAPTER 74",
+        "index": "05"
+      },
+      "sfx": [
+        {
+          "sound": "page_flip",
+          "at": 50,
+          "volume": 0.25
+        }
+      ]
+    },
+    {
+      "id": "s5-4",
+      "scene": "s5",
+      "start": 3361,
+      "end": 3466,
+      "text": "他说，那些骑士小说，如今他全都厌恶。",
+      "highlight": [
+        "全都厌恶"
+      ],
+      "layout": "F",
+      "options": {
+        "x": 150,
+        "y": 150
+      },
+      "sfx": [
+        {
+          "sound": "metal_decay",
+          "at": 8,
+          "volume": 0.45
+        },
+        {
+          "sound": "book_close",
+          "at": 44,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s5-5",
+      "scene": "s5",
+      "start": 3466,
+      "end": 3571,
+      "text": "桑丘哭着求他：起来，我们去当牧羊人。",
+      "highlight": [
+        "当牧羊人"
+      ],
+      "layout": "C",
+      "options": {
+        "side": "right"
+      },
+      "sfx": [
+        {
+          "sound": "breath_shaky",
+          "at": 8,
+          "volume": 0.45
+        }
+      ]
+    },
+    {
+      "id": "s5-6",
+      "scene": "s5",
+      "start": 3571,
+      "end": 3646,
+      "text": "他没有起来。",
+      "highlight": [],
+      "layout": "H",
+      "sfx": [
+        {
+          "sound": "tick",
+          "at": 2,
+          "volume": 0.55
+        },
+        {
+          "sound": "whoosh_rev",
+          "at": 50,
+          "volume": 0.4
+        }
+      ]
+    },
+    {
+      "id": "ep-1",
+      "scene": "ep",
+      "start": 3646,
+      "end": 3721,
+      "text": "风车，当然只是风车。",
+      "highlight": [],
+      "layout": "C",
+      "options": {
+        "side": "left"
+      },
+      "sfx": [
+        {
+          "sound": "creak",
+          "at": 4,
+          "volume": 0.45
+        }
+      ]
+    },
+    {
+      "id": "ep-2",
+      "scene": "ep",
+      "start": 3721,
+      "end": 3803,
+      "text": "可那个肯为它冲上去的人，",
+      "highlight": [],
+      "layout": "E",
+      "sfx": [
+        {
+          "sound": "gallop_ghost",
+          "at": 0,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "ep-3",
+      "scene": "ep",
+      "start": 3803,
+      "end": 3893,
+      "text": "在被治好的那一天，就不在了。",
+      "highlight": [
+        "治好"
+      ],
+      "layout": "D",
+      "emphasis": "slam",
+      "options": {
+        "big": "治好",
+        "anchor": "lowerLeft"
+      },
+      "sfx": [
+        {
+          "sound": "boom",
+          "at": 0,
+          "volume": 0.95
+        },
+        {
+          "sound": "shimmer",
+          "at": 14,
+          "volume": 0.55
+        }
+      ]
+    },
+    {
+      "id": "ep-4",
+      "scene": "ep",
+      "start": 3893,
+      "end": 3998,
+      "text": "愿你身上，也留着一点治不好的东西。",
+      "highlight": [
+        "治不好"
+      ],
+      "layout": "A",
+      "sfx": [
+        {
+          "sound": "metal_ring",
+          "at": 26,
+          "volume": 0.6
+        },
+        {
+          "sound": "bell",
+          "at": 30,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "ep-5",
+      "scene": "ep",
+      "start": 3998,
+      "end": 4088,
+      "text": "堂吉诃德",
+      "highlight": [
+        "堂吉诃德"
+      ],
+      "layout": "H",
+      "emphasis": "slam",
+      "options": {
+        "note": "DON QUIXOTE · MIGUEL DE CERVANTES · 1605 / 1615"
+      },
+      "sfx": [
+        {
+          "sound": "boom_soft",
+          "at": 0,
+          "volume": 0.8
+        },
+        {
+          "sound": "bell",
+          "at": 0,
+          "volume": 0.55
+        }
       ]
     }
-  ]
+  ],
+  "endTail": 36
 }

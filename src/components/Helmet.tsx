@@ -1,6 +1,7 @@
 import React from 'react';
 import {random} from 'remotion';
 import {C} from '../theme';
+import {Windmill} from './Windmill';
 
 /**
  * 贯穿全片的物件：头盔 ⇄ 铜盆。
@@ -18,6 +19,9 @@ export interface HelmetState {
   /** 灰尘蒙蔽 0..1（祖上旧物，无光泽） */
   dust?: number;
   seed?: string;
+  /** 铜盆表面映出的风车 0..1 */
+  reflection?: number;
+  reflectRot?: number;
 }
 
 export const HELMET_DEFAULT: HelmetState = {morph: 0, glow: 0.8, visor: 1, scatter: 0, dust: 0};
@@ -88,6 +92,22 @@ export const HelmetShape: React.FC<{state: HelmetState; flat?: string | null}> =
         </linearGradient>
       </defs>
       <path d={d} fill={`url(#${uid}b)`} />
+      {/* 铜盆曲面上映出的风车（被盆面压扁、弯曲） */}
+      {(state.reflection ?? 0) > 0.01 ? (
+        <g opacity={(state.reflection ?? 0) * 0.85}>
+          <clipPath id={`${uid}r`}>
+            <path d={d} />
+          </clipPath>
+          <g clipPath={`url(#${uid}r)`}>
+            {[[-20, -2, 0.016, -14], [2, -6, 0.02, 0], [21, -1, 0.015, 14]].map(([x, y, k, sk], i) => (
+              <g key={i} transform={`translate(${x} ${y}) skewX(${sk}) scale(${k} ${k * 0.8})`}>
+                <Windmill x={0} y={0} scale={1} rot={(state.reflectRot ?? 0) + i * 30} fill="#1E140A" detail={false} />
+              </g>
+            ))}
+            <path d={d} fill="none" stroke="#F4D49A" strokeWidth={1} opacity={0.4} />
+          </g>
+        </g>
+      ) : null}
       {/* 高光带 */}
       <path
         d={`M ${-domeW * 0.62} ${-domeH * 0.35} Q ${-domeW * 0.15} ${-domeH * 1.02} ${domeW * 0.5} ${-domeH * 0.62}`}

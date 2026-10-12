@@ -18,6 +18,10 @@ const phrases = (t) => {
   const out = [];
   let cur = '';
   for (const ch of Array.from(t)) {
+    if ('”」’'.includes(ch) && !cur && out.length) {
+      out[out.length - 1] += ch;
+      continue;
+    }
     cur += ch;
     if ('，。？！：；'.includes(ch)) {
       out.push(cur);

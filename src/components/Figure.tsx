@@ -253,3 +253,29 @@ export const handOffset = (p: Pose, side: 'F' | 'B' = 'F', build: Build = 'quixo
   const h = rot(0, LEN[build].fore - 1 + 6, a2);
   return {x: s.x + e.x + h.x, y: s.y + e.y + h.y, angle: a2};
 };
+
+/** 走 / 跑的步态：phase 每增加 1 走完一个完整步伐；返回需要覆盖的关节角度 */
+export const gait = (phase: number, amp = 1, run = false): Partial<Pose> => {
+  const a = phase * Math.PI * 2;
+  const s = Math.sin(a);
+  const c = Math.cos(a);
+  const A = (run ? 40 : 24) * amp;
+  const K = (run ? 86 : 42) * amp;
+  return {
+    hipF: s * A,
+    hipB: -s * A,
+    knF: Math.max(0, -c) * K + 4,
+    knB: Math.max(0, c) * K + 4,
+    anF: 0,
+    anB: 0,
+    shF: -s * (run ? 52 : 22) * amp,
+    shB: s * (run ? 52 : 22) * amp,
+    elF: run ? 84 : 14,
+    elB: run ? 84 : 14,
+    torso: run ? 16 : 5,
+  };
+};
+
+/** 步态里骨盆的上下起伏（世界单位，向上为正的高度修正） */
+export const gaitBob = (phase: number, amp = 1, run = false) =>
+  -(1 - Math.abs(Math.cos(phase * Math.PI * 2))) * (run ? 6 : 2.5) * amp;

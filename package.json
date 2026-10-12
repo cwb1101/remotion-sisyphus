@@ -8,9 +8,11 @@
     "studio": "remotion studio",
     "assets": "node scripts/gen-sfx.mjs && node scripts/gen-grain.mjs",
     "check": "node scripts/check-subtitles.mjs",
-    "render:preview": "npm run assets && npm run check && remotion render Preview out/preview.mp4",
+    "render:preview": "npm run assets && npm run check && remotion render Preview out/preview.mp4 --crf=18 --pixel-format=yuv420p",
     "frames": "bash scripts/extract-frames.sh out/preview.mp4 out/frames 2",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "render:full": "bash scripts/render-full.sh out/don-quixote.mp4",
+    "frames:full": "bash scripts/extract-frames.sh out/don-quixote.mp4 out/frames-full 2"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.6",

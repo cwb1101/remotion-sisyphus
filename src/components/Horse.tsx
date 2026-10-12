@@ -26,6 +26,7 @@ const NECK = 'M -8 6 C -6 -14 2 -38 12 -54 L 30 -50 C 26 -32 22 -12 20 10 Z';
 const HEAD =
   'M 10 -58 C 16 -66 28 -64 34 -58 C 42 -48 52 -34 56 -24 C 58 -18 52 -14 46 -17 C 38 -22 26 -34 16 -42 C 11 -46 8 -52 10 -58 Z';
 const EARS = 'M 14 -60 L 15 -73 L 20 -62 Z M 19 -61 L 23 -72 L 25 -60 Z';
+const EARS_DONKEY = 'M 13 -60 L 6 -86 L 19 -62 Z M 19 -61 L 18 -88 L 26 -60 Z';
 const MANE = 'M -6 2 C -6 -14 2 -38 12 -56 L 8 -50 L 5 -40 L 0 -32 L -2 -22 L -6 -12 Z';
 
 export const HorseBody: React.FC<{
@@ -34,7 +35,9 @@ export const HorseBody: React.FC<{
   farFill?: string;
   /** 骑手等附在马鞍上的东西，在马的坐标系里画（人立时随马身转动） */
   rider?: React.ReactNode;
-}> = ({state, fill, farFill, rider}) => {
+  /** 驴：长耳朵、短脖子（桑丘的坐骑） */
+  donkey?: boolean;
+}> = ({state, fill, farFill, rider, donkey}) => {
   const far = farFill ?? fill;
   const ph = state.phase * Math.PI * 2;
   let amp = 0;
@@ -95,7 +98,7 @@ export const HorseBody: React.FC<{
         <path d={NECK} fill={fill} />
         <path d={MANE} fill={fill} />
         <path d={HEAD} fill={fill} />
-        <path d={EARS} fill={fill} />
+        <path d={donkey ? EARS_DONKEY : EARS} fill={fill} />
       </g>
       {front(32, 0, fill)}
       {hind(-44, 0, fill)}

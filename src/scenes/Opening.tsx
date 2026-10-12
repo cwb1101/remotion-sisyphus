@@ -32,15 +32,15 @@ const COVER_OUT1 = o4.start + 16;
 /* 世界里的位置 */
 const RIDER = {x: -150, z: 1500};
 const GIANT = {x: 1250, z: 3100};
-const GIANT_B = {x: 1560, z: 3150};
+export const GIANT_B = {x: 1560, z: 3150};
 const NEAR_MILL = {x: 820, z: 240};
-const FALL = {x: 900, z: 2760};
-const HELM_Z = 2320;
-const HELM_W = 48; // 世界宽度
-const CAM_B = {x: 1000, y: 26, z: 2200};
+export const FALL = {x: 900, z: 2760};
+export const HELM_Z = 2320;
+export const HELM_W = 48; // 世界宽度
+export const CAM_B = {x: 1000, y: 26, z: 2200};
 
 const sB = 1000 / (HELM_Z - CAM_B.z);
-const HELM_X_END = CAM_B.x + (1170 - 960) / sB;
+export const HELM_X_END = CAM_B.x + (1170 - 960) / sB;
 const HELM_X_START = CAM_B.x + (-380 - 960) / sB;
 
 /* ------------------------------------------------------------------ */
@@ -72,9 +72,25 @@ export const openingCam = (frame: number): Cam => {
 /* ------------------------------------------------------------------ */
 /* 天空、远山、雾                                                      */
 /* ------------------------------------------------------------------ */
-const Sky: React.FC<{cam: Cam; frame: number; dim: number}> = ({cam, frame, dim}) => {
+/** 天空色调；默认是开头的逆光黄昏，其它场景可以换成黎明、阴天 */
+export interface SkyTone {
+  top: string;
+  upper: string;
+  mid: string;
+  horizon: string;
+  ground: string;
+  groundDark: string;
+  /** 太阳光晕强度 */
+  sun: number;
+  sunX: number;
+}
+export const SKY_DUSK: SkyTone = {
+  top: '#0C0A08', upper: '#1B1510', mid: '#3E3123', horizon: '#8E6C3E', ground: '#3A2E21', groundDark: '#1A140F', sun: 1, sunX: 1260,
+};
+
+export const Sky: React.FC<{cam: Cam; frame: number; dim: number; tone?: SkyTone}> = ({cam, frame, dim, tone = SKY_DUSK}) => {
   const cy = cam.cy + (cam.panY ?? 0);
-  const sunX = 1260 + (cam.panX ?? 0) * 0.25;
+  const sunX = tone.sunX + (cam.panX ?? 0) * 0.25;
   const sunY = cy - 70;
   const pulse = 0.94 + 0.06 * Math.sin(frame * 0.05);
   return (
@@ -83,25 +99,28 @@ const Sky: React.FC<{cam: Cam; frame: number; dim: number}> = ({cam, frame, dim}
         style={{
           position: 'absolute',
           inset: 0,
-          background: `linear-gradient(180deg, #0C0A08 0px, #1B1510 ${cy - 420}px, #3E3123 ${cy - 170}px, #8E6C3E ${cy - 6}px, #3A2E21 ${cy + 4}px, #1A140F ${cy + 170}px, #0B0907 ${H}px)`,
+          background: `linear-gradient(180deg, ${tone.top} 0px, ${tone.upper} ${cy - 420}px, ${tone.mid} ${cy - 170}px, ${tone.horizon} ${cy - 6}px, ${tone.ground} ${cy + 4}px, ${tone.groundDark} ${cy + 170}px, #0B0907 ${H}px)`,
         }}
       />
-      <div
-        style={{
-          position: 'absolute',
-          left: sunX - 640,
-          top: sunY - 420,
-          width: 1280,
-          height: 840,
-          background: `radial-gradient(closest-side, rgba(244,205,128,${0.75 * pulse}) 0%, rgba(217,164,65,0.42) 18%, rgba(160,110,50,0.16) 45%, rgba(0,0,0,0) 100%)`,
-          mixBlendMode: 'screen',
-        }}
-      />
+      {tone.sun > 0.01 ? (
+        <div
+          style={{
+            position: 'absolute',
+            left: sunX - 640,
+            top: sunY - 420,
+            width: 1280,
+            height: 840,
+            opacity: tone.sun,
+            background: `radial-gradient(closest-side, rgba(244,205,128,${0.75 * pulse}) 0%, rgba(217,164,65,0.42) 18%, rgba(160,110,50,0.16) 45%, rgba(0,0,0,0) 100%)`,
+            mixBlendMode: 'screen',
+          }}
+        />
+      ) : null}
     </div>
   );
 };
 
-const ridge = (cam: Cam, z: number, amp: number, freq: number, seed: number, color: string, fogD: number) => {
+export const ridge = (cam: Cam, z: number, amp: number, freq: number, seed: number, color: string, fogD: number) => {
   const pts: string[] = [];
   for (let x = -40000; x <= 40000; x += 500) {
     const y =
@@ -121,14 +140,14 @@ const ridge = (cam: Cam, z: number, amp: number, freq: number, seed: number, col
   );
 };
 
-const ridgeHeight = (x: number, amp: number, freq: number, seed: number) =>
+export const ridgeHeight = (x: number, amp: number, freq: number, seed: number) =>
   amp * (0.55 + 0.45 * Math.sin(x * freq + seed)) + amp * 0.35 * Math.sin(x * freq * 2.7 + seed * 3.1);
 
-const FAR_MILLS = [
+export const FAR_MILLS = [
   [-2700, 6200], [-1800, 5700], [-1000, 6500], [300, 5900], [2200, 6200], [3100, 5600], [4100, 6400], [5200, 6000],
 ] as const;
 
-const FogBands: React.FC<{cam: Cam; frame: number; strength: number}> = ({cam, frame, strength}) => {
+export const FogBands: React.FC<{cam: Cam; frame: number; strength: number}> = ({cam, frame, strength}) => {
   const cy = cam.cy + (cam.panY ?? 0);
   return (
     <>
@@ -157,7 +176,7 @@ const FogBands: React.FC<{cam: Cam; frame: number; strength: number}> = ({cam, f
 /* ------------------------------------------------------------------ */
 /* 草丛和石块                                                          */
 /* ------------------------------------------------------------------ */
-interface Clump {
+export interface Clump {
   x: number;
   z: number;
   n: number;
@@ -165,7 +184,7 @@ interface Clump {
   seed: string;
 }
 
-const makeClumps = (seed: string, count: number, x0: number, x1: number, z0: number, z1: number): Clump[] =>
+export const makeClumps = (seed: string, count: number, x0: number, x1: number, z0: number, z1: number): Clump[] =>
   Array.from({length: count}).map((_, i) => ({
     x: x0 + random(`${seed}x${i}`) * (x1 - x0),
     z: z0 + random(`${seed}z${i}`) * (z1 - z0),
@@ -175,9 +194,9 @@ const makeClumps = (seed: string, count: number, x0: number, x1: number, z0: num
   }));
 
 const CLUMPS_A = makeClumps('ga', 70, -2200, 2600, -260, 2800);
-const CLUMPS_B = makeClumps('gb', 46, 700, 1500, 2235, 3200);
+export const CLUMPS_B = makeClumps('gb', 46, 700, 1500, 2235, 3200);
 
-const Grass: React.FC<{cam: Cam; clumps: Clump[]; frame: number; filter: (d: number) => boolean; fogD: number}> = ({
+export const Grass: React.FC<{cam: Cam; clumps: Clump[]; frame: number; filter: (d: number) => boolean; fogD: number}> = ({
   cam, clumps, frame, filter, fogD,
 }) => (
   <>
@@ -205,7 +224,7 @@ const Grass: React.FC<{cam: Cam; clumps: Clump[]; frame: number; filter: (d: num
   </>
 );
 
-const STONES = Array.from({length: 7}).map((_, i) => ({
+export const STONES = Array.from({length: 7}).map((_, i) => ({
   x: 700 + random(`st${i}`) * 1000,
   z: 2520 + random(`sz${i}`) * 600,
   r: 5 + random(`sr${i}`) * 12,
@@ -214,12 +233,12 @@ const STONES = Array.from({length: 7}).map((_, i) => ({
 /* ------------------------------------------------------------------ */
 /* 骑手                                                                */
 /* ------------------------------------------------------------------ */
-const RIDE: Pose = pose({
+export const RIDE: Pose = pose({
   torso: 3, neck: 4, hipF: 78, knF: 84, anF: -6, hipB: 70, knB: 80, anB: -4,
   shF: 28, elF: 70, shB: 24, elB: 58,
 });
 
-const Lance: React.FC<{angle: number; handAngle: number; tip: number; pass: 'rim' | 'body'; fill: string}> = ({
+export const Lance: React.FC<{angle: number; handAngle: number; tip: number; pass: 'rim' | 'body'; fill: string}> = ({
   angle, handAngle, tip, pass, fill,
 }) => (
   <g transform={`rotate(${angle - handAngle})`}>

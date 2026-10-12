@@ -6,7 +6,7 @@ mkdir -p out/stills
 npx remotion bundle src/index.ts --out-dir=out/bundle --log=error >/dev/null 2>&1 || true
 inputs=(); filters=""; i=0; layout=""
 for f in "$@"; do
-  npx remotion still out/bundle Preview "out/stills/${prefix}${f}.jpg" --frame="$f" --log=error 2>&1 | grep -v "^$" | tail -2 || true
+  npx remotion still out/bundle ${COMP:-Full} "out/stills/${prefix}${f}.jpg" --frame="$f" --log=error 2>&1 | grep -v "^$" | tail -2 || true
   inputs+=(-i "out/stills/${prefix}${f}.jpg")
   filters+="[$i]scale=640:360,drawtext=text='${f}':x=8:y=8:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.6[v$i];"
   col=$((i % 3)); row=$((i / 3))
