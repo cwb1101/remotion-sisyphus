@@ -6,6 +6,7 @@
  *  - l = 远侧（侧面视角时被身体挡住的一侧），r = 近侧
  *  - turn：头转向身后（0 = 朝前，1 = 回头）
  *  - seat：0 = 脚踩地，1 = 坐在 seatY 高度上
+ *  - shake：正面 / 背面视角下头部左右偏转（度），用来摇头
  */
 export type Pose = {
   lean: number;
@@ -22,6 +23,7 @@ export type Pose = {
   armOut: number;
   seat: number;
   seatY: number;
+  shake: number;
 };
 
 export const STAND: Pose = {
@@ -39,6 +41,7 @@ export const STAND: Pose = {
   armOut: 5,
   seat: 0,
   seatY: 0.46,
+  shake: 0,
 };
 
 export const pose = (p: Partial<Pose>): Pose => ({...STAND, ...p});
@@ -49,6 +52,27 @@ export const LOOK_BACK = pose({turn: 1, neck: 6, lean: 1, rSh: -6, lSh: 6});
 /** 近侧手拿手机举到胸前，低头看 */
 export const PHONE = pose({rSh: 16, rEl: 112, neck: 36, lean: 7, lSh: 2, lEl: 12});
 export const PHONE_HAND_DOWN = pose({rSh: 10, rEl: 30, neck: 18, lean: 4});
+
+/** 坐在椅子上（椅面 0.475m），seatY 是髋关节高度 */
+export const SIT = pose({seat: 1, seatY: 0.56, lean: 4, neck: 6, lHip: 86, lKn: 88, rHip: 84, rKn: 86, lSh: 8, lEl: 40, rSh: 10, rEl: 44});
+/** 坐着往前看（海边、楼梯） */
+export const SIT_UP = pose({seat: 1, seatY: 0.56, lean: 0, neck: -2, lHip: 86, lKn: 86, rHip: 84, rKn: 84, lSh: 12, lEl: 46, rSh: 14, rEl: 48});
+/** 坐着蜷起来：上身前倾，手肘撑膝 */
+export const CURL = pose({seat: 1, seatY: 0.56, lean: 38, neck: 34, lHip: 92, lKn: 96, rHip: 90, rKn: 94, lSh: 48, lEl: 58, rSh: 52, rEl: 62});
+/** 坐着低头（还没完全蜷起来） */
+export const SIT_DOWN = pose({seat: 1, seatY: 0.56, lean: 18, neck: 30, lHip: 88, lKn: 90, rHip: 86, rKn: 88, lSh: 30, lEl: 50, rSh: 32, rEl: 54});
+/** 坐在台阶上（台阶比椅子低） */
+export const SIT_STEP = pose({seat: 1, seatY: 0.34, lean: 30, neck: 30, lHip: 100, lKn: 120, rHip: 98, rKn: 118, lSh: 50, lEl: 50, rSh: 52, rEl: 54});
+/** 蹲下捡东西 */
+export const SQUAT = pose({seat: 1, seatY: 0.42, lean: 30, neck: 20, lHip: 100, lKn: 130, rHip: 70, rKn: 110, lSh: 30, lEl: 10, rSh: 60, rEl: 10});
+/** 近侧手向前平伸（握绳、伸手） */
+export const REACH = pose({rSh: 78, rEl: 6, lean: 3, neck: 2});
+/** 近侧手往前伸到一半停住 */
+export const REACH_HALF = pose({rSh: 52, rEl: 18, lean: 4, neck: 8});
+/** 坐着把手伸向身边 */
+export const SIT_REACH = pose({seat: 1, seatY: 0.56, lean: 10, neck: 14, lHip: 86, lKn: 88, rHip: 84, rKn: 86, lSh: 8, lEl: 40, rSh: 70, rEl: 10});
+/** 镜头前摇头时用：正面 / 背面视角 */
+export const shakeHead = (f: number, amp = 14) => pose({shake: Math.sin(f / 3.2) * amp, neck: 4});
 
 /** 走路循环：phase 0..1 一个完整步态（两步），amp 调幅度（0 = 原地站） */
 export const walk = (phase: number, amp = 1): Pose => {
@@ -91,6 +115,7 @@ const KEYS: (keyof Pose)[] = [
   'armOut',
   'seat',
   'seatY',
+  'shake',
 ];
 
 export const lerpPose = (a: Pose, b: Pose, t: number): Pose => {

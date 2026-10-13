@@ -9,10 +9,12 @@
     "sfx": "tsx scripts/synth-sfx.ts",
     "check": "tsx scripts/check-script.ts && python3 -I scripts/check-glyphs.py",
     "prepare-assets": "npm run fonts && npm run sfx && npm run check",
-    "render:preview": "npm run prepare-assets && remotion render Preview out/preview.mp4",
+    "render:preview": "npm run prepare-assets && remotion render Preview out/preview.mp4 --crf=20",
     "qa": "python3 -I scripts/qa-frames.py out/preview.mp4 out/qa",
     "typecheck": "tsc --noEmit",
-    "stills": "tsx scripts/stills.ts"
+    "stills": "tsx scripts/stills.ts",
+    "render:film": "bash scripts/render-film.sh",
+    "qa:film": "python3 -I scripts/qa-frames.py out/film.mp4 out/qa-film"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",

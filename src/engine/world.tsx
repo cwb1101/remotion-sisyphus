@@ -16,8 +16,10 @@ export const DepthLayers: React.FC<{
   near: number;
   farBlur?: number;
   nearBlur?: number;
+  /** 中景模糊（转移焦点时用，默认 0） */
+  midBlur?: number;
   children?: React.ReactNode;
-}> = ({items, far, near, farBlur = 3, nearBlur = 12, children}) => {
+}> = ({items, far, near, farBlur = 3, nearBlur = 12, midBlur = 0, children}) => {
   const sorted = [...items].sort((a, b) => b.z - a.z);
   const farI = sorted.filter((i) => i.z >= far);
   const midI = sorted.filter((i) => i.z < far && i.z >= near);
@@ -32,7 +34,7 @@ export const DepthLayers: React.FC<{
   return (
     <>
       {svg(farI, farBlur)}
-      {svg(midI, 0)}
+      {svg(midI, midBlur)}
       {children}
       {svg(nearI, nearBlur)}
     </>
@@ -76,11 +78,13 @@ export const spline = (t: number, xs: number[], ys: number[]) => {
   );
 };
 
-export type CamKey = {f: number; x: number; y: number; z: number; yaw: number; pitch?: number};
+export type CamKey = {f: number; x: number; y: number; z: number; yaw: number; pitch?: number; focal?: number};
 export const camPath = (frame: number, keys: CamKey[], f = 1500): Cam => {
   const xs = keys.map((k) => k.f);
   const g = (k: keyof CamKey) => spline(frame, xs, keys.map((q) => (q[k] as number) ?? 0));
-  return {x: g('x'), y: g('y'), z: g('z'), yaw: g('yaw'), pitch: g('pitch'), f};
+  // focal：可选焦距（推长焦特写用）；没给就用默认 f
+  const focal = keys.some((k) => k.focal !== undefined) ? spline(frame, xs, keys.map((q) => q.focal ?? f)) : f;
+  return {x: g('x'), y: g('y'), z: g('z'), yaw: g('yaw'), pitch: g('pitch'), f: focal};
 };
 
 /** 投影一个物件的落脚点：返回屏幕位置、每米像素、相机深度 */

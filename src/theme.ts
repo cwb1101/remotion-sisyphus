@@ -42,3 +42,6 @@ export const mix = (a: string, b: string, t: number) => {
   const c = A.map((v, i) => Math.round(v + (B[i] - v) * k));
   return `rgb(${c[0]},${c[1]},${c[2]})`;
 };
+
+/** 右上角固定水印 */
+export const WATERMARK = '肆号静匣Logos';

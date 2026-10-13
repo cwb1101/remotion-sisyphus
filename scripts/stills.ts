@@ -7,10 +7,11 @@ import {renderStill, selectComposition} from '@remotion/renderer';
 const SHELL = process.env.REMOTION_BROWSER ?? '/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell';
 
 (async () => {
+  const comp = process.env.COMP ?? 'Film';
   const frames = process.argv.slice(2).map(Number);
   const serveUrl = await bundle({entryPoint: path.join(__dirname, '..', 'src', 'index.ts')});
   const browserExecutable = fs.existsSync(SHELL) ? SHELL : undefined;
-  const composition = await selectComposition({serveUrl, id: 'Preview', browserExecutable});
+  const composition = await selectComposition({serveUrl, id: comp, browserExecutable});
   fs.mkdirSync('out/stills', {recursive: true});
   for (const frame of frames) {
     const output = `out/stills/f${String(frame).padStart(4, '0')}.png`;

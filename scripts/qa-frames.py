@@ -78,6 +78,21 @@ for i, name in enumerate(frames):
     d.text((x + 6, y + 6), f"{t // 60:02d}:{t % 60:02d}  (frame {t * 30})", fill=(20, 20, 20))
 sheet_path = os.path.join(out, "contact-sheet.png")
 sheet.save(sheet_path)
+# 分页总览（每页 16 张，方便逐页检查）
+per = 16
+for pg in range(0, len(frames), per):
+    sub = frames[pg : pg + per]
+    rows_p = (len(sub) + cols - 1) // cols
+    page = Image.new("RGB", (cols * tw, rows_p * (th + pad)), (245, 245, 245))
+    dp = ImageDraw.Draw(page)
+    for j, name in enumerate(sub):
+        i = pg + j
+        t = 1 + i * 2
+        im = Image.open(os.path.join(out, name)).convert("RGB").resize((tw, th))
+        x, y = (j % cols) * tw, (j // cols) * (th + pad)
+        page.paste(im, (x, y + pad))
+        dp.text((x + 6, y + 6), f"{t // 60:02d}:{t % 60:02d}  (frame {t * 30})", fill=(20, 20, 20))
+    page.save(os.path.join(out, f"sheet-{pg // per + 1:02d}.png"))
 
 print(f"抽帧 {len(frames)} 张 → {sheet_path}")
 print("时间   强调色  偏色    右上角  变化量  问题")
@@ -109,3 +124,32 @@ silent = [i for i, v in enumerate(levels) if v < -60]
 peak = max(abs(x) for x in samples) / 32768
 print(f"音轨：{len(levels)}s，峰值 {20 * math.log10(max(peak, 1e-9)):.1f} dBFS，逐秒响度 {min(levels):.0f} ~ {max(levels):.0f} dB")
 print("音轨检查：", "无静音段" if not silent else f"这些秒几乎无声：{silent}")
+
+# —— 静止画面检测：每 0.2 秒取一帧 64×36 灰度图，连续 3 秒变化量都很小就报警
+raw = subprocess.run(
+    ["ffmpeg", "-loglevel", "error", "-i", src, "-vf", "fps=5,scale=64:36:flags=area,format=gray", "-f", "rawvideo", "-"],
+    check=True,
+    capture_output=True,
+).stdout
+fw = 64 * 36
+nf = len(raw) // fw
+diffs = []
+for i in range(1, nf):
+    a = raw[(i - 1) * fw : i * fw]
+    b = raw[i * fw : (i + 1) * fw]
+    diffs.append(sum(abs(a[k] - b[k]) for k in range(fw)) / fw)
+TH = 0.55
+runs = []
+start = None
+for i, d in enumerate(diffs):
+    if d < TH:
+        start = i if start is None else start
+    else:
+        if start is not None and (i - start) / 5 >= 3:
+            runs.append((start / 5, i / 5))
+        start = None
+if start is not None and (len(diffs) - start) / 5 >= 3:
+    runs.append((start / 5, len(diffs) / 5))
+srt = sorted(diffs)
+print(f"画面变化量：中位数 {srt[len(srt) // 2]:.2f}，最低 10% {srt[len(srt) // 10]:.2f}（阈值 {TH}）")
+print("静止检查：", "没有超过 3 秒的静止段" if not runs else "；".join(f"{a:.1f}s–{b:.1f}s" for a, b in runs))

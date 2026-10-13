@@ -5,7 +5,6 @@ Config.setEntryPoint('./src/index.ts');
 Config.setVideoImageFormat('jpeg');
 Config.setJpegQuality(92);
 Config.setCodec('h264');
-Config.setCrf(20);
 Config.setOverwriteOutput(true);
 
 // 云端容器里预装了 headless shell；本机没有就用 Remotion 自己下载的

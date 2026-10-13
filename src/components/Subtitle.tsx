@@ -150,7 +150,10 @@ export const Subtitle: React.FC<SubtitleProps> = ({s, followX}) => {
               {s.note}
             </div>
           ) : null}
-          <Line line={lines.join('')} s={s} size={main} family={FONT.serif} frame={frame} />
+          {/* 一行太长时可在 script.ts 里用 \n 手动折成两行 */}
+          {lines.map((l, i) => (
+            <Line key={i} line={l} s={s} size={main} family={FONT.serif} frame={frame} />
+          ))}
         </div>
       );
       break;

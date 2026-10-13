@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {SCREENS} from '../src/data/script';
+import {WATERMARK} from '../src/theme';
 
 const serif = new Set<string>();
 const sans = new Set<string>();
@@ -11,6 +12,7 @@ for (const s of SCREENS) {
   if (s.layout.startsWith('stagger')) for (const ch of s.text.split('\n')[0]) sans.add(ch);
   for (const ch of s.note ?? '') sans.add(ch);
 }
+for (const ch of WATERMARK) sans.add(ch);
 const ascii = Array.from({length: 95}, (_, i) => String.fromCharCode(32 + i)).join('');
 const extra = '，。、：；？！“”‘’——…·→≈%（）《》【】';
 const out = path.join(__dirname, '..', 'public', 'fonts');

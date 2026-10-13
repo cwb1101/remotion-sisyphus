@@ -158,6 +158,8 @@ export type FigureProps = {
   /** 是否由人物组件画出机身（特写时由场景另画带界面的屏幕） */
   phoneDevice?: boolean;
   coatSway?: number;
+  /** 体型：man（长大衣）/ woman（肩更窄，长发） */
+  variant?: 'man' | 'woman';
 };
 
 export const Figure: React.FC<FigureProps> = ({
@@ -176,7 +178,11 @@ export const Figure: React.FC<FigureProps> = ({
   phone = 0,
   phoneDevice = true,
   coatSway = 0,
+  variant = 'man',
 }) => {
+  const woman = variant === 'woman';
+  // 女性体型：肩、腰略窄（男性 bw = 1，与预览完全一致）
+  const bw = woman ? 0.86 : 1;
   const j = solve(p, view, facing);
   const side = view === 'side';
   const f = side ? facing : 1;
@@ -222,7 +228,7 @@ export const Figure: React.FC<FigureProps> = ({
     const back = Math.min(j.kn[0].x, j.kn[1].x) * f;
     parts.push(
       smoothPath(
-        frame(j.hip, p.lean, f, [
+        frame(j.hip, p.lean, f, ([
           [0.045, 0.545],
           [0.125, 0.43],
           [0.105, 0.22],
@@ -233,14 +239,14 @@ export const Figure: React.FC<FigureProps> = ({
           [-0.105, 0.22],
           [-0.12, 0.43],
           [-0.065, 0.53],
-        ]),
+        ] as [number, number][]).map(([a, b]) => [a * bw, b] as [number, number])),
       ),
     );
   } else {
     const spread = Math.abs(j.kn[0].x - j.kn[1].x) * 0.5;
     parts.push(
       smoothPath(
-        frame(j.hip, p.lean * 0.15, 1, [
+        frame(j.hip, p.lean * 0.15, 1, ([
           [0.06, 0.565],
           [0.2, 0.505],
           [0.215, 0.43],
@@ -256,7 +262,7 @@ export const Figure: React.FC<FigureProps> = ({
           [-0.215, 0.43],
           [-0.2, 0.505],
           [-0.06, 0.565],
-        ]),
+        ] as [number, number][]).map(([a, b]) => [a * bw, b] as [number, number])),
       ),
     );
   }
@@ -287,8 +293,23 @@ export const Figure: React.FC<FigureProps> = ({
     ];
     const pts = frame(j.head, p.lean + p.neck * 0.7, hf, prof.map(([a, b]) => [a * squash, b]));
     parts.push(smoothPath(pts));
+    if (woman) {
+      // 长发：从头顶沿后脑垂到肩
+      const hair: [number, number][] = [
+        [0.02, 0.135],
+        [0.075, 0.09],
+        [0.05, 0.02],
+        [-0.02, -0.06],
+        [-0.03, -0.24],
+        [-0.12, -0.26],
+        [-0.135, -0.05],
+        [-0.12, 0.07],
+      ];
+      parts.push(smoothPath(frame(j.head, p.lean + p.neck * 0.7, hf, hair.map(([a, b]) => [a * squash, b]))));
+    }
   } else {
-    const h = j.head;
+    // shake：正面 / 背面摇头时头部左右偏移（预览里恒为 0）
+    const h = {x: j.head.x + Math.sin(rad(p.shake)) * 0.035, y: j.head.y};
     const yk = Math.cos(rad(Math.min(60, Math.abs(p.neck)))) * 0.15 + 0.85;
     parts.push(
       smoothPath(
@@ -308,6 +329,24 @@ export const Figure: React.FC<FigureProps> = ({
         ].map(([a, b]) => ({x: h.x + a, y: h.y + b * yk})),
       ),
     );
+    if (woman) {
+      parts.push(
+        smoothPath(
+          [
+            [0, 0.14],
+            [0.1, 0.09],
+            [0.115, -0.05],
+            [0.13, -0.24],
+            [0.06, -0.22],
+            [0.0, -0.1],
+            [-0.06, -0.22],
+            [-0.13, -0.24],
+            [-0.115, -0.05],
+            [-0.1, 0.09],
+          ].map(([a, b]) => ({x: h.x + a, y: h.y + b * yk})),
+        ),
+      );
+    }
   }
 
   // —— 近侧手臂、正面双臂（画在躯干前面）

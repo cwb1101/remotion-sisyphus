@@ -99,3 +99,39 @@ export const keyed = (frame: number, fs: number[], vs: number[], ease = Easing.i
   }
   return vs[vs.length - 1];
 };
+
+/** 相机坐标 → 世界坐标（toCam 的逆变换），用来把物件钉在「此刻镜头前某个位置」 */
+export const camToWorld = (q: V3, c: Cam): V3 => {
+  const cp = Math.cos(rad(c.pitch));
+  const sp = Math.sin(rad(c.pitch));
+  const y1 = cp * q.y + sp * q.z;
+  const z1 = -sp * q.y + cp * q.z;
+  const cy = Math.cos(rad(c.yaw));
+  const sy = Math.sin(rad(c.yaw));
+  const dx = cy * q.x + sy * z1;
+  const dz = -sy * q.x + cy * z1;
+  return {x: dx + c.x, y: y1 + c.y, z: dz + c.z};
+};
+
+/** 长方体：返回朝向镜头的面（已裁剪、按顶光算好明暗） */
+export const boxFaces = (c: V3, s: V3, cam: Cam, base: string, lightK = 1) => {
+  const h = {x: s.x / 2, y: s.y / 2, z: s.z / 2};
+  const P = (dx: number, dy: number, dz: number): V3 => ({x: c.x + dx * h.x, y: c.y + dy * h.y, z: c.z + dz * h.z});
+  const faces: {pts: V3[]; n: V3; shade: number}[] = [
+    {pts: [P(-1, -1, -1), P(1, -1, -1), P(1, 1, -1), P(-1, 1, -1)], n: {x: 0, y: 0, z: -1}, shade: 0.35},
+    {pts: [P(-1, -1, 1), P(1, -1, 1), P(1, 1, 1), P(-1, 1, 1)], n: {x: 0, y: 0, z: 1}, shade: 0.3},
+    {pts: [P(-1, -1, -1), P(-1, -1, 1), P(-1, 1, 1), P(-1, 1, -1)], n: {x: -1, y: 0, z: 0}, shade: 0.45},
+    {pts: [P(1, -1, -1), P(1, -1, 1), P(1, 1, 1), P(1, 1, -1)], n: {x: 1, y: 0, z: 0}, shade: 0.25},
+    {pts: [P(-1, 1, -1), P(1, 1, -1), P(1, 1, 1), P(-1, 1, 1)], n: {x: 0, y: 1, z: 0}, shade: 0.75},
+  ];
+  const out: {d: string; shade: number}[] = [];
+  for (const f of faces) {
+    // 背面剔除：面中心指向镜头的向量与法线同向才画
+    const fc = f.pts.reduce((a, p) => ({x: a.x + p.x / 4, y: a.y + p.y / 4, z: a.z + p.z / 4}), {x: 0, y: 0, z: 0});
+    const v = {x: cam.x - fc.x, y: cam.y - fc.y, z: cam.z - fc.z};
+    if (v.x * f.n.x + v.y * f.n.y + v.z * f.n.z <= 0) continue;
+    const pp = projectPoly(f.pts, cam);
+    if (pp) out.push({d: pathOf(pp), shade: f.shade * lightK});
+  }
+  return {faces: out, base};
+};
