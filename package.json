@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "stills": "tsx scripts/stills.ts",
     "render:film": "bash scripts/render-film.sh",
-    "qa:film": "python3 -I scripts/qa-frames.py out/film.mp4 out/qa-film"
+    "qa:film": "python3 -I scripts/qa-frames.py out/film.mp4 out/qa-film",
+    "cover": "npm run fonts && remotion still Cover out/cover-3x4.png"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",
