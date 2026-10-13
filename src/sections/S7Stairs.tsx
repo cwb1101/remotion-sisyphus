@@ -89,8 +89,8 @@ export const cameraS7 = (frame: number): Cam =>
     {f: S.s51.end - 6, ...aim({x: 1.85, y: 1.15, z: -1.65}, {x: -0.05, y: 0.75, z: 0}, 1500)},
     {f: S.s52.start + 40, ...aim({x: 1.2, y: 1.05, z: -1.15}, {x: 0, y: 0.95, z: 0}, 1600)},
     {f: S.s52.end - 6, ...aim({x: 1.1, y: 1.05, z: -1.1}, {x: 0.02, y: 1.0, z: 0}, 1650)},
-    {f: S.s53.start + 36, ...aim({x: 1.35, y: 1.25, z: -1.35}, {x: 0, y: 1.1, z: 0}, 2000)},
-    {f: S.s53.end - 6, ...aim({x: 1.3, y: 1.25, z: -1.3}, {x: 0, y: 1.12, z: 0}, 2100)},
+    {f: S.s53.start + 36, ...aim({x: 1.35, y: 1.25, z: -1.35}, {x: 0.08, y: 1.05, z: 0}, 2900)},
+    {f: S.s53.end - 6, ...aim({x: 1.3, y: 1.25, z: -1.3}, {x: 0.1, y: 1.08, z: 0}, 3100)},
     {f: S.s54.start + 50, x: 0.02, y: 5.5, z: -0.01, yaw: 90, pitch: -89, focal: 1500},
     {f: S.s55.start + 20, x: 0.02, y: 11, z: -0.01, yaw: 130, pitch: -89, focal: 1500},
   ]);
@@ -227,8 +227,9 @@ const F_HERO: V3 = {x: -0.5, y: 0, z: 9}; // 他在开场站的位置
 const F_FRIEND: V3 = {x: 0.32, y: 0, z: 9.2}; // 开场那把空椅子的位置
 const finaleCam = (frame: number): Cam =>
   camPath(frame, [
-    {f: S.s55.start - 20, x: -0.12, y: 1.75, z: 6.35, yaw: 0, pitch: 0, focal: 1500},
-    {f: S.s55.end + 40, x: -0.1, y: 1.72, z: 6.6, yaw: 0, pitch: 0, focal: 1500},
+    {f: S.s55.start - 20, x: -0.35, y: 1.8, z: 6.1, yaw: 2.5, pitch: 0.5, focal: 1500},
+    {f: S.s55.start + 70, x: -0.1, y: 1.74, z: 6.45, yaw: 0, pitch: 0, focal: 1500},
+    {f: S.s55.end + 40, x: 0.25, y: 1.7, z: 6.9, yaw: -2, pitch: 0, focal: 1500},
   ]);
 
 const Finale: React.FC<{frame: number}> = ({frame}) => {
@@ -263,11 +264,13 @@ const Finale: React.FC<{frame: number}> = ({frame}) => {
     items.push({key: `cr${k}`, z: q.z, node: <Figure pose={addPose(STAND, {neck: 6, lean: Math.sin(frame / 40 + k)})} view="front" x={q.x} y={q.y} scale={q.s} height={0.95 + random(`fh${k}`) * 0.1} rim={0.8} light={0} fog={fogAt(q.z, fogD, 3)} fogColor={FOGH} opacity={op} />});
   }
   // 两把椅子，两个人侧身相对；他抬着头
+  // 他先抬头看灯，再转向身边的人；对面的人在说话（身体和手有起伏）
   const heroPose = poseAt(frame, [
     {from: 0, pose: pose({...SIT_UP, neck: -18, lean: -2})},
-    {from: S.s55.start + 70, pose: pose({...SIT_UP, neck: -4, lean: 4}), blend: 40},
+    {from: S.s55.start + 60, pose: (ff) => pose({...SIT_UP, neck: -2 + Math.sin(ff / 17) * 3, lean: 5 + Math.sin(ff / 23) * 2}), blend: 40},
   ]);
-  const friendP = pose({...SIT_UP, lean: 8, neck: 8, rSh: 30, rEl: 50});
+  const talk = Math.sin(frame / 7) * Math.max(0, Math.sin(frame / 31));
+  const friendP = pose({...SIT_UP, lean: 9 + talk * 4, neck: 8 + talk * 5, rSh: 34 + talk * 18, rEl: 52 + talk * 20});
   for (const [p, pz, face, k, chairYaw] of [
     [F_HERO, heroPose, 1, 'h', 90],
     [F_FRIEND, friendP, -1, 'f', -90],
@@ -298,7 +301,7 @@ const Finale: React.FC<{frame: number}> = ({frame}) => {
       </svg>
       <DepthLayers items={items} far={17} near={1.5} farBlur={2.6} nearBlur={12}>
         <svg width={1920} height={1080} style={{position: 'absolute', inset: 0, filter: 'blur(10px)'}}>
-          <LightCone id="s7fin" src={LAMP} floor={{x: -0.1, y: 0, z: 9.1}} radius={1.9} cam={cam} intensity={0.95} />
+          <LightCone id="s7fin" src={LAMP} floor={{x: -0.1, y: 0, z: 9.1}} radius={1.9} cam={cam} intensity={0.9 + 0.08 * Math.sin(frame / 9)} />
         </svg>
         <svg width={1920} height={1080} style={{position: 'absolute', inset: 0}}>
           <defs>
@@ -308,7 +311,7 @@ const Finale: React.FC<{frame: number}> = ({frame}) => {
               <stop offset="1" stopColor={C.accent} stopOpacity={0} />
             </radialGradient>
           </defs>
-          {lampP.z > 0.3 ? <circle cx={lampP.x} cy={lampP.y} r={lampP.s * 0.15} fill="url(#s7bulb)" /> : null}
+          {lampP.z > 0.3 ? <circle cx={lampP.x} cy={lampP.y} r={lampP.s * (0.15 + 0.012 * Math.sin(frame / 5))} fill="url(#s7bulb)" /> : null}
           <Dust seed="s7fdust" n={70} box={{x0: LAMP.x - 2, x1: LAMP.x + 2, y0: 0.2, y1: 4, z0: LAMP.z - 2.5, z1: LAMP.z + 2}} cam={cam} frame={frame} bright={(p) => Math.max(0, 1 - Math.hypot(p.x - LAMP.x, p.z - LAMP.z) / (0.5 + (LAMP.y - p.y) * 0.32)) * 0.8} />
         </svg>
       </DepthLayers>

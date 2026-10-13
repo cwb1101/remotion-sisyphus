@@ -70,7 +70,7 @@ export const cameraS6 = (frame: number): Cam => {
     {f: S.s44.end - 8, ...aim({x: hc.x + 0.4, y: hc.y + 0.02, z: hc.z - 0.66}, hc, 2000)},
     {f: S.s45.start + 40, ...aim({x: 0.5, y: crest(6) + 1.7, z: manZ(S.s45.start + 40) - 5}, m(S.s45.start + 40))},
     {f: S.s45.end - 6, ...aim({x: 0.4, y: crest(9) + 1.6, z: manZ(S.s45.start + 40) - 3.6}, m(S.s45.end))},
-    {f: S.s46.start + 4, ...aim({x: 1.1, y: crest(STOP_Z) + 1.55, z: STOP_Z - 1.6}, {x: 0, y: crest(STOP_Z) + 1.2, z: STOP_Z})},
+    {f: S.s46.start + 4, ...aim({x: 1.1, y: crest(STOP_Z) + 1.55, z: STOP_Z - 1.6}, {x: -0.75, y: crest(STOP_Z) + 1.2, z: STOP_Z + 0.4})},
     {f: S.s46.start + 34, ...aim({x: 1.55, y: crest(STOP_Z) + 1.45, z: STOP_Z + 0.4}, {x: 0, y: crest(STOP_Z) + 1.1, z: STOP_Z - 0.6})},
     {f: S.s46.end - 26, ...aim({x: 1.5, y: crest(STOP_Z) + 1.5, z: STOP_Z + 0.5}, {x: 0, y: crest(STOP_Z) + 1.2, z: STOP_Z - 0.8})},
     {f: S.s46.end + 14, x: 1.3, y: crest(STOP_Z) + 2.4, z: STOP_Z + 0.2, yaw: -120, pitch: 48, focal: 1500},

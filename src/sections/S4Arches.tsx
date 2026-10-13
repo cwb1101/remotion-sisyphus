@@ -71,7 +71,7 @@ export const cameraS4 = (frame: number): Cam => {
     {f: S.s29.start + 26, x: 1.02, y: 1.3, z: m(S.s29.start + 26) - 0.85, yaw: -35, pitch: -4, focal: 2200},
     {f: S.s29.end - 16, x: 0.45, y: 1.2, z: m(S.s29.end) - 0.6, yaw: -1, pitch: -1, focal: 4000},
     {f: S.s30.start + 34, x: 1.4, y: 1.3, z: m(S.s30.start) - 1.9, yaw: -20, pitch: -1, focal: 1500},
-    {f: S.s31.end - 10, x: 1.35, y: 1.3, z: m(S.s31.end) - 1.6, yaw: -18, pitch: -1, focal: 1500},
+    {f: S.s31.end - 10, x: 0.85, y: 1.35, z: m(S.s31.end) - 1.0, yaw: -14, pitch: -2, focal: 1900},
     {f: S.s32.start + 30, x: 0.5, y: 1.45, z: STOP_Z - 3.0, yaw: -1.5, pitch: 1, focal: 2300},
     {f: S.s32.end - 6, x: 0.45, y: 1.45, z: STOP_Z - 2.7, yaw: -1.5, pitch: 1, focal: 2300},
     {f: S.s33.start + 12, x: 1.45, y: 1.05, z: STOP_Z - 1.9, yaw: -32, pitch: -9, focal: 1150},

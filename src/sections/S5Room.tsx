@@ -23,7 +23,8 @@ const FOG = '#222222';
 const HW = 3.0;
 const BACK = 8;
 const CEIL = 3.2;
-const WIN = {x: -0.9, w: 1.0, y0: 0.95, spring: 2.25, r: 0.5}; // 拱形窗：宽 1m，起拱 2.25m
+// 拱形窗：宽 1m，起拱 2.25m；放在后墙偏左，镜头侧拍时不会落进右上角水印区
+const WIN = {x: -2.45, w: 1.0, y0: 0.95, spring: 2.25, r: 0.5};
 const MAN: V3 = {x: 0, y: 0, z: 4.6};
 const TABLE: V3 = {x: 0.72, y: 0, z: 4.45};
 // 钟放在窗右侧偏低处，远离右上角水印区
@@ -145,7 +146,7 @@ const PhoneUI: React.FC<{x: number; y: number; s: number; frame: number; on: num
     <g transform={`translate(${x - w * 0.5},${y - h * 0.62}) rotate(4 ${w / 2} ${h / 2})`} opacity={on > 0 ? 1 : 0}>
       <defs>
         <radialGradient id={`${id}g`}>
-          <stop offset="0" stopColor={C.accent} stopOpacity={0.28 * on} />
+          <stop offset="0" stopColor={C.accent} stopOpacity={0.14 * on} />
           <stop offset="1" stopColor={C.accent} stopOpacity={0} />
         </radialGradient>
         <clipPath id={`${id}c`}>
@@ -155,7 +156,7 @@ const PhoneUI: React.FC<{x: number; y: number; s: number; frame: number; on: num
       <ellipse cx={w / 2} cy={h / 2} rx={w * 0.85} ry={h * 0.62} fill={`url(#${id}g)`} style={{mixBlendMode: 'screen'}} />
       <rect x={-w * 0.04} y={-w * 0.04} width={w * 1.08} height={h + w * 0.08} rx={w * 0.15} fill={C.black} />
       <g clipPath={`url(#${id}c)`}>
-        <rect width={w} height={h} fill={mix('#1A1814', C.accent, 0.16 * on)} />
+        <rect width={w} height={h} fill={mix('#1A1814', C.accent, 0.07 * on)} />
         {/* 输入框 */}
         <rect x={w * 0.08} y={h * 0.7} width={w * 0.84} height={h * 0.1} rx={h * 0.03} fill="none" stroke={C.mid} strokeWidth={Math.max(1, w * 0.012)} opacity={on} />
         {Array.from({length: chars}, (_, i) => (
@@ -236,7 +237,7 @@ export const S5Room: React.FC<{opacity?: number}> = ({opacity = 1}) => {
     const mp = manPose(frame);
     if (q.z > 0.3) {
       const chair = <Chair key="c" x={q.x} y={q.y} scale={q.s} yaw={0 - cam.yaw - view} tilt={tilt} lit={0.55} light={-1} fog={fogAt(q.z, fogD, 2)} fogColor={FOG} />;
-      const fig = <Figure key="m" pose={mp} view={v} facing={facing} x={q.x} y={q.y} scale={q.s} rim={1} light={v === 'side' ? -facing : 0} fog={fogAt(q.z, fogD, 2) * 0.3} fogColor={FOG} phone={v === 'side' && frame > S.s37.start && frame < putDown ? 0.7 : 0} phoneDevice={false} />;
+      const fig = <Figure key="m" pose={mp} view={v} facing={facing} x={q.x} y={q.y} scale={q.s} rim={1} light={v === 'side' ? -facing : 0} fog={fogAt(q.z, fogD, 2) * 0.3} fogColor={FOG} phone={v === 'side' && frame > S.s37.start && frame < putDown ? 0.35 : 0} phoneDevice={false} />;
       items.push({key: 'man', z: q.z, node: <g>{v === 'back' ? [fig, chair] : [chair, fig]}</g>});
       // 手机（手上 → 扣在桌上）
       const on = interpolate(frame, [S.s37.start + 8, S.s37.start + 20, putDown - 8, putDown], [0, 1, 1, 0], clamp);

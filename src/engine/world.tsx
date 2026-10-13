@@ -25,7 +25,7 @@ export const DepthLayers: React.FC<{
   const midI = sorted.filter((i) => i.z < far && i.z >= near);
   const nearI = sorted.filter((i) => i.z < near);
   const svg = (list: Item[], blur: number) => (
-    <svg width={1920} height={1080} style={{position: 'absolute', inset: 0, filter: blur > 0 ? `blur(${blur}px)` : undefined, overflow: 'visible'}}>
+    <svg width={1920} height={1080} style={{position: 'absolute', inset: 0, filter: blur > 0 ? `blur(${blur}px)` : undefined, overflow: 'hidden'}}>
       {list.map((i) => (
         <React.Fragment key={i.key}>{i.node}</React.Fragment>
       ))}

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # 完整片分段渲染：每个场景单独渲一段（静音）→ 无损拼接 → 整片混音 → 响度统一 → 合成 out/film.mp4
 # 用法：npm run render:film            全部重渲
-#       SEG=03-seawall npm run render:film  只重渲某一段（其余用已有的分段文件）
+#       SEGS=03-seawall,05-room npm run render:film  只重渲列出的段（其余用已有的分段文件）
 set -euo pipefail
 cd "$(dirname "$0")/.."
 npm run prepare-assets
 mkdir -p out/seg
 npx tsx scripts/segments.ts > out/seg/segments.txt
 while read -r name a b; do
-  if [[ -n "${SEG:-}" && "$SEG" != "$name" && -f "out/seg/$name.mp4" ]]; then continue; fi
+  if [[ -n "${SEGS:-}" && ",$SEGS," != *",$name,"* && -f "out/seg/$name.mp4" ]]; then continue; fi
   echo "▶ 渲染 $name（第 $a–$b 帧）"
-  npx remotion render Film "out/seg/$name.mp4" --frames="$a-$b" --muted --crf=20 --log=error
+  npx remotion render Film "out/seg/$name.mp4" --frames="$a-$b" --muted --crf=20 --concurrency=${CONCURRENCY:-4} --log=error
 done < out/seg/segments.txt
 # 无损拼接
 : > out/seg/list.txt

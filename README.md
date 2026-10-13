@@ -2,14 +2,17 @@
 
 抖音横屏知识短视频（1920×1080 / 30fps），画面全部用 Remotion 代码绘制：逆光剪影人物、石柱大厅、长廊、贯穿全片的木椅，没有任何实拍、图库或音频素材。
 
-当前进度：**预览版**，只做了 §0 开头 + §1 长廊（约 38 秒），确认风格后再做完整片。
+当前进度：**完整片**（8 个场景，3:07），`Film` 合成；`Preview` 合成保留预览版（§0 + §1）。
 
 ## 快速开始
 
 ```bash
 npm install
-npm run render:preview   # 子集化字体 → 合成音效 → 校验字幕稿 → 渲染 out/preview.mp4
-npm run qa               # 每 2 秒抽一帧，拼成 out/qa/contact-sheet.png，并自动检查颜色 / 右上角水印区 / 静止画面
+npm run render:film      # 字体子集化 → 合成音效 → 校验 → 8 段分段渲染（静音）→ 拼接 → 整片混音 + 响度统一 → out/film.mp4
+SEGS=03-seawall,05-room npm run render:film   # 只重渲列出的段，其余沿用已有分段
+npm run qa:film          # 每 2 秒抽一帧拼成 out/qa-film/contact-sheet.png（另有分页 sheet-NN.png），
+                         # 自动检查颜色、右上角水印区、超过 3 秒的静止段、音轨静音 / 削顶
+npm run render:preview   # 只渲预览版（§0 + §1）
 npm run studio           # 交互预览（先跑一次 npm run sfx 生成音效）
 ```
 
@@ -43,6 +46,16 @@ npm run render:preview
 | `src/components/SfxTrack.tsx` | 按字幕稿把合成音效放上时间轴 |
 | `src/sections/S0Opening.tsx` | §0 石柱大厅 |
 | `src/sections/S1Corridor.tsx` | §1 长廊 |
+| `src/sections/S2Mirrors.tsx` | §2 无限镜面 |
+| `src/sections/S3Seawall.tsx` | §3 海边 |
+| `src/sections/S4Arches.tsx` | §4 拱门 |
+| `src/sections/S5Room.tsx` | §5 空房间 |
+| `src/sections/S6Ridge.tsx` | §6 雾中山脊 |
+| `src/sections/S7Stairs.tsx` | §7 旋转楼梯 + 片尾回到开场大厅 |
+| `src/Film.tsx` | 完整片合成（场景交叠过渡、字幕、胶片质感、水印） |
+| `src/components/Watermark.tsx` | 右上角固定水印 |
+| `scripts/render-film.sh` | 分段渲染 + 拼接 + 混音合成 |
+| `scripts/mix-audio.ts` | 按字幕稿时间轴离线混音 |
 | `scripts/synth-sfx.ts` | 用代码合成全部 wav |
 | `scripts/subset-fonts.py`, `check-glyphs.py` | 字体子集化与缺字检查 |
 | `scripts/check-script.ts` | 字幕稿规则校验 |
