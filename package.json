@@ -1,0 +1,31 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "《他身边有人，但没人可说》— 代码动画知识短视频（Remotion）",
+  "scripts": {
+    "studio": "remotion studio",
+    "fonts": "tsx scripts/dump-chars.ts && python3 -I scripts/subset-fonts.py",
+    "sfx": "tsx scripts/synth-sfx.ts",
+    "check": "tsx scripts/check-script.ts && python3 -I scripts/check-glyphs.py",
+    "prepare-assets": "npm run fonts && npm run sfx && npm run check",
+    "render:preview": "npm run prepare-assets && remotion render Preview out/preview.mp4",
+    "qa": "python3 -I scripts/qa-frames.py out/preview.mp4 out/qa",
+    "typecheck": "tsc --noEmit",
+    "stills": "tsx scripts/stills.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.2",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3",
+    "@remotion/bundler": "4.0.535",
+    "@remotion/renderer": "4.0.535"
+  }
+}
