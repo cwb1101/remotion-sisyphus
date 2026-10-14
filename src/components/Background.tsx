@@ -12,7 +12,17 @@ export const Background: React.FC<{
 	spot: number;
 	under: number;
 	flash: number;
-}> = ({frame, stage, spot, under, flash}) => {
+	flashX?: number;
+	flashY?: number;
+	/** 第三节：横贯画面的神经光带 */
+	neural?: number;
+	/** 第五节：人物背后的暖光 */
+	warm?: number;
+	/** 第六节：顶部渐亮的晨光 */
+	dawn?: number;
+	/** 第六节结尾：右侧门光 */
+	door?: number;
+}> = ({frame, stage, spot, under, flash, flashX = 42, flashY = 56, neural = 0, warm = 0, dawn = 0, door = 0}) => {
 	const sway = Math.sin(frame * 0.02) * 30;
 	return (
 		<AbsoluteFill style={{backgroundColor: C.bg}}>
@@ -58,9 +68,41 @@ export const Background: React.FC<{
 					opacity: under,
 				}}
 			/>
+			{neural > 0 ? (
+				<AbsoluteFill
+					style={{
+						background: `radial-gradient(ellipse 1100px 260px at ${960 + Math.sin(frame * 0.02) * 60}px 470px, rgba(92,200,255,0.16) 0%, rgba(30,61,94,0.35) 45%, rgba(14,26,43,0) 100%)`,
+						opacity: neural,
+					}}
+				/>
+			) : null}
+			{warm > 0 ? (
+				<AbsoluteFill
+					style={{
+						background: `radial-gradient(ellipse 760px 520px at ${880 + Math.sin(frame * 0.017) * 40}px 520px, rgba(255,181,71,0.10) 0%, rgba(58,53,80,0.35) 45%, rgba(14,26,43,0) 100%)`,
+						opacity: warm,
+					}}
+				/>
+			) : null}
+			{dawn > 0 ? (
+				<AbsoluteFill
+					style={{
+						background: `linear-gradient(to bottom, rgba(64,110,150,0.42) 0%, rgba(30,61,94,0.22) 35%, rgba(14,26,43,0) 70%)`,
+						opacity: dawn * (0.9 + 0.1 * Math.sin(frame * 0.03)),
+					}}
+				/>
+			) : null}
+			{door > 0 ? (
+				<AbsoluteFill
+					style={{
+						background: `radial-gradient(ellipse 900px 700px at 88% 52%, rgba(200,236,255,0.30) 0%, rgba(92,200,255,0.10) 40%, rgba(14,26,43,0) 100%)`,
+						opacity: door,
+					}}
+				/>
+			) : null}
 			<AbsoluteFill
 				style={{
-					background: `radial-gradient(circle at 42% 56%, rgba(190,235,255,0.55) 0%, rgba(92,200,255,0.18) 35%, rgba(14,26,43,0) 75%)`,
+					background: `radial-gradient(circle at ${flashX}% ${flashY}%, rgba(190,235,255,0.55) 0%, rgba(92,200,255,0.18) 35%, rgba(14,26,43,0) 75%)`,
 					opacity: flash,
 				}}
 			/>

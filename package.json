@@ -9,7 +9,8 @@
     "studio": "npm run sfx && remotion studio",
     "render:preview": "npm run check && npm run sfx && remotion render Preview out/preview.mp4",
     "qa:audio": "bash scripts/qa-audio.sh out/preview.mp4",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "render:full": "bash scripts/render-full.sh"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.8",

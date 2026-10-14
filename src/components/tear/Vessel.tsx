@@ -22,6 +22,13 @@ export const Vessel: React.FC<{
 	dim?: number;
 	opacity?: number;
 	clipId: string;
+	/** 底部轮子（推车水箱） */
+	wheels?: boolean;
+	/** 侧壁底部的放水阀：出现程度 0..1 与转角 */
+	valve?: {show: number; angle: number};
+	valveSide?: 'left' | 'right';
+	/** 水面晃动幅度倍数 */
+	slosh?: number;
 }> = ({
 	frame,
 	cx,
@@ -36,13 +43,17 @@ export const Vessel: React.FC<{
 	dim = 0,
 	opacity = 1,
 	clipId,
+	wheels = false,
+	valve,
+	valveSide = 'right',
+	slosh = 1,
 }) => {
 	const left = cx - width / 2;
 	const top = bottom - height;
 	const waterTop = bottom - height * level;
 	const holeY = bottom - height * hole;
 	const wave = (x: number) =>
-		3 * Math.sin(x * 0.05 + frame * 0.18) + 2 * Math.sin(x * 0.09 - frame * 0.11);
+		slosh * (3 * Math.sin(x * 0.05 + frame * 0.18) + 2 * Math.sin(x * 0.09 - frame * 0.11));
 	const surf: string[] = [];
 	for (let x = left; x <= left + width; x += 8) {
 		surf.push(`${x},${waterTop + wave(x)}`);
@@ -81,6 +92,28 @@ export const Vessel: React.FC<{
 			/>
 			{/* 玻璃高光 */}
 			<rect x={left + 16} y={top + 24} width={7} height={height * 0.55} rx={3.5} fill="#FFFFFF" opacity={0.18} />
+			{wheels ? (
+				<g>
+					{[left + 26, left + width - 26].map((wx) => (
+						<g key={wx} transform={`translate(${wx},${bottom + 11}) rotate(${frame * 6})`}>
+							<circle r={11} fill={C.bg} stroke={stroke} strokeWidth={3} />
+							<line x1={-7} x2={7} y1={0} y2={0} stroke={stroke} strokeWidth={2} />
+						</g>
+					))}
+				</g>
+			) : null}
+			{valve && valve.show > 0 ? (
+				<g
+					transform={`translate(${valveSide === 'left' ? left - 4 : left + width + 4},${bottom - 26}) scale(${(valveSide === 'left' ? -1 : 1) * valve.show},${valve.show})`}
+				>
+					<rect x={0} y={-6} width={18} height={12} rx={3} fill={stroke} />
+					<g transform={`translate(26,0) rotate(${valve.angle})`}>
+						<circle r={13} fill={C.bg} stroke={C.figureRim} strokeWidth={3} />
+						<line x1={-13} x2={13} y1={0} y2={0} stroke={C.figureRim} strokeWidth={3} />
+						<line x1={0} x2={0} y1={-13} y2={13} stroke={C.figureRim} strokeWidth={3} />
+					</g>
+				</g>
+			) : null}
 			{/* 门槛：虚线 + 侧壁小孔 */}
 			<g opacity={marks}>
 				<line

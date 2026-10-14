@@ -126,16 +126,17 @@ const V = {
 	},
 	pad(_tier, len = 4.0) {
 		const b = buf(len);
-		const notes = [146.83, 220.0, 293.66, 369.99];
+		// 根音为主、五度和八度很轻：峰值因数低
+		const notes = [146.83, 220.0, 293.66];
 		const rel = Math.min(1.6, len * 0.4);
 		const env = (t) => {
-			const a = Math.min(1, t / 1.2);
+			const a = Math.min(1, t / Math.min(1.2, len * 0.3));
 			const r = t > len - rel ? Math.max(0, (len - t) / rel) : 1;
 			return Math.sin((a * Math.PI) / 2) ** 2 * Math.sin((r * Math.PI) / 2) ** 2;
 		};
 		// 每个音只用一个声部（不做失谐），避免拍频造成的峰值堆叠
 		notes.forEach((n, i) => {
-			const g = [0.5, 0.36, 0.26, 0.16][i];
+			const g = [1.0, 0.3, 0.15][i];
 			sweep(b, () => n, (t) => g * env(t), 0, i * 1.3);
 		});
 		return {b, pre: 0};
@@ -156,17 +157,22 @@ const V = {
 		return {b, pre: 0};
 	},
 	impact() {
+		// 关键句：预先上扬 → 落地 → 和弦稳住约 1.2 秒再慢慢收尾。
+		// 只用根音 + 五度 + 八度（峰值因数低），在不超过强档峰值的前提下给足响度，又不刺耳。
 		const pre = 0.6;
-		const b = buf(pre + 3.4);
-		// 预先上扬的柔和和弦，落地后慢慢收尾
-		[146.83, 220.0, 293.66, 369.99].forEach((n, i) => {
-			const g = [0.5, 0.38, 0.28, 0.18][i];
+		const hold = 1.8;
+		const b = buf(pre + 4.2);
+		[
+			[146.83, 1.0],
+			[220.0, 0.25],
+		].forEach(([n, g], i) => {
 			sweep(
 				b,
 				() => n,
 				(t) => {
 					const u = t - pre;
-					return 0.6 * g * (u < 0 ? (t / pre) ** 2 : Math.exp(-u / 2.0));
+					if (u < 0) return 0.7 * g * (t / pre) ** 2;
+					return 0.7 * g * (u < hold ? 1 : Math.exp(-(u - hold) / 1.3));
 				},
 				0,
 				i * 1.3,
@@ -175,9 +181,8 @@ const V = {
 		// 落地的“身体”：220→147Hz，柔和不轰
 		const body = buf(1.2);
 		sweep(body, (t) => 147 + 73 * Math.exp(-t / 0.03), (t) => attackEnv(t, 0.012) * Math.exp(-t / 0.35));
-		sweep(body, (t) => 2 * (147 + 73 * Math.exp(-t / 0.03)), (t) => 0.25 * attackEnv(t, 0.012) * Math.exp(-t / 0.2));
-		mixInto(b, body, 0.7, pre);
-		mixInto(b, V.glass().b, 0.45, pre);
+		mixInto(b, body, 0.15, pre);
+		mixInto(b, V.glass().b, 0.15, pre);
 		return {b, pre};
 	},
 	spray() {
@@ -318,6 +323,60 @@ for (const s of screens) {
 			events.push({screen: s.id, type: sfx.type, tier: sfx.tier, frame: fr, sec: +(fr / fps).toFixed(2), peakDb, x});
 		}
 	}
+}
+
+// ---------- 完整片：连续环境垫音（弱档） ----------
+// 每节一个和弦（根音 + 五度），节与节之间 1 秒交叉淡化；全片不留意外静音。
+// 只用正弦、无噪声；整体峰值归一到弱档。
+if (comp === 'full' && data.ambience) {
+	const amb = data.ambience;
+	const bed = new Float64Array(totalSamples);
+	const sections = [...new Set(screens.map((s) => s.section))].sort((a, b) => a - b);
+	const startOf = (sec) => Math.min(...screens.filter((s) => s.section === sec).map((s) => s.startFrame)) / fps;
+	const xf = 1.0;
+	sections.forEach((sec, i) => {
+		const chord = amb.chords[String(sec)];
+		const t0 = startOf(sec);
+		const t1 = i + 1 < sections.length ? startOf(sections[i + 1]) : totalSamples / SR;
+		const a0 = Math.max(0, t0 - xf / 2);
+		const a1 = Math.min(totalSamples / SR, t1 + xf / 2);
+		const n0 = Math.round(a0 * SR);
+		const n1 = Math.round(a1 * SR);
+		const seg = new Float64Array(n1 - n0);
+		chord.forEach((hz, k) => {
+			// 以根音为主、五度很轻：峰值因数低，同样的峰值下更“满”
+			const g = k === 0 ? 1 : 0.18;
+			let ph = k * 1.3;
+			for (let j = 0; j < seg.length; j++) {
+				ph += (2 * Math.PI * hz) / SR;
+				const t = a0 + j / SR;
+				const breathe = 1 + 0.03 * Math.sin(2 * Math.PI * 0.11 * t + k);
+				seg[j] += g * Math.sin(ph) * breathe;
+			}
+		});
+		// 交叉淡化（等增益：两个和弦的振幅之和恒为 1，交接处不会冒峰）
+		const fadeN = Math.round(xf * SR);
+		for (let j = 0; j < seg.length; j++) {
+			let e = 1;
+			if (i > 0 && j < fadeN) e *= j / fadeN;
+			const fromEnd = seg.length - 1 - j;
+			if (i + 1 < sections.length && fromEnd < fadeN) e *= fromEnd / fadeN;
+			bed[n0 + j] += seg[j] * e;
+		}
+	});
+	let bp = 0;
+	for (const v of bed) bp = Math.max(bp, Math.abs(v));
+	const g = dbToLin(TIER_DB[amb.tier]) / bp;
+	const fin = Math.round((amb.fadeInFrames / fps) * SR);
+	const fout = Math.round((amb.fadeOutFrames / fps) * SR);
+	for (let j = 0; j < totalSamples; j++) {
+		let e = 1;
+		if (j < fin) e = 0.5 - 0.5 * Math.cos((Math.PI * j) / fin);
+		const fromEnd = totalSamples - 1 - j;
+		if (fromEnd < fout) e *= 0.5 - 0.5 * Math.cos((Math.PI * fromEnd) / fout);
+		bus[j] += bed[j] * g * e;
+	}
+	events.push({screen: 0, type: 'ambience', tier: amb.tier, frame: 0, sec: 0, peakDb: TIER_DB[amb.tier], x: bed.map((v, j) => v * g)});
 }
 
 // ---------- 总线前瞻限幅 ----------

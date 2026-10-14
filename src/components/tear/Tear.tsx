@@ -16,7 +16,9 @@ export const Tear: React.FC<{
 	opacity?: number;
 	glow?: boolean;
 	rotate?: number;
-}> = ({x, y, r, stretch = 1, opacity = 1, glow = true, rotate = 0}) => {
+	/** 深色泪滴（憋着的委屈） */
+	dark?: boolean;
+}> = ({x, y, r, stretch = 1, opacity = 1, glow = true, rotate = 0, dark = false}) => {
 	if (r <= 0.2 || opacity <= 0) {
 		return null;
 	}
@@ -28,7 +30,7 @@ export const Tear: React.FC<{
 			{glow ? (
 				<path d={tearPath(r * 1.5)} fill="#5CC8FF" opacity={0.35} filter="url(#softGlow)" />
 			) : null}
-			<path d={tearPath(r)} fill="url(#tearFill)" />
+			<path d={tearPath(r)} fill={dark ? 'url(#tearDark)' : 'url(#tearFill)'} />
 			<ellipse cx={-r * 0.35} cy={-r * 0.25} rx={r * 0.18} ry={r * 0.32} fill="#FFFFFF" opacity={0.75} />
 		</g>
 	);
@@ -41,6 +43,11 @@ export const TearDefs: React.FC = () => (
 			<stop offset="0" stopColor="#D8F3FF" />
 			<stop offset="0.45" stopColor="#5CC8FF" />
 			<stop offset="1" stopColor="#2A7FB8" />
+		</radialGradient>
+		<radialGradient id="tearDark" cx="0.4" cy="0.65" r="0.75">
+			<stop offset="0" stopColor="#8FB3D9" />
+			<stop offset="0.5" stopColor="#3B5F86" />
+			<stop offset="1" stopColor="#1C2C40" />
 		</radialGradient>
 		<filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
 			<feGaussianBlur stdDeviation="6" />
@@ -78,7 +85,10 @@ export const FallingTear: React.FC<{
 	land: number;
 	/** 悬挂时圆心相对挂点的下垂量（按 r 计） */
 	hang?: number;
-}> = ({frame, x, y0, groundY, r, formStart, detach, land, hang = 1.1}) => {
+	dark?: boolean;
+	/** 下落时的水平终点（默认竖直下落） */
+	x1?: number;
+}> = ({frame, x, y0, groundY, r, formStart, detach, land, hang = 1.1, dark = false, x1}) => {
 	if (frame < formStart || frame > land + 1) {
 		return null;
 	}
@@ -86,10 +96,11 @@ export const FallingTear: React.FC<{
 		const t = (frame - formStart) / (detach - formStart);
 		const rr = r * Math.sqrt(Math.max(0, t));
 		const wobble = 1 + 0.06 * Math.sin(frame * 0.9) * t;
-		return <Tear x={x} y={y0 + rr * hang} r={rr} stretch={wobble} />;
+		return <Tear x={x} y={y0 + rr * hang} r={rr} stretch={wobble} dark={dark} />;
 	}
 	const t = (frame - detach) / (land - detach);
 	const startY = y0 + r * hang;
 	const y = startY + (groundY - r - startY) * t * t;
-	return <Tear x={x} y={y} r={r} stretch={1 + 0.35 * t} />;
+	const xx = x1 === undefined ? x : x + (x1 - x) * t;
+	return <Tear x={xx} y={y} r={r} stretch={1 + 0.35 * t} dark={dark} />;
 };

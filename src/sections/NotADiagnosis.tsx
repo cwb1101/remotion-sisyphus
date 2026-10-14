@@ -99,7 +99,8 @@ export const section2Splashes = (): Splash[] => {
 	];
 };
 
-export const NotADiagnosis: React.FC<{frame: number}> = ({frame: f}) => {
+/** drainAt：完整片里，第 9 屏容器 A 的水被“提”出来变成大泪滴（预览不传） */
+export const NotADiagnosis: React.FC<{frame: number; drainAt?: number}> = ({frame: f, drainAt}) => {
 	const T = t();
 	if (f < T.s4) {
 		return null;
@@ -119,6 +120,9 @@ export const NotADiagnosis: React.FC<{frame: number}> = ({frame: f}) => {
 	const b = sideCard(f, SIDE_B, T.s6 + SIDE_B_RISE, T.sinkB);
 
 	const lv = levels(f);
+	if (drainAt !== undefined) {
+		lv.a = lerp(lv.a, 0.015, prog(f, drainAt, drainAt + 16));
+	}
 	const marks = prog(f, T.s8 + 30, T.s8 + 48);
 	const flashT = f - T.thresholdHit;
 	const flash = flashT >= 0 && flashT < 30 ? Math.exp(-flashT / 9) : 0;
@@ -160,7 +164,14 @@ export const NotADiagnosis: React.FC<{frame: number}> = ({frame: f}) => {
 				/>
 			) : null}
 			{/* 水面以下的遮罩：让沉下去的卡片“进水” */}
-			<rect x={-2000} y={WATER_Y + 2} width={9000} height={900} fill={C.bg} opacity={0.8 * prog(f, T.s4, T.s4 + 24)} />
+			<rect
+				x={-2000}
+				y={WATER_Y + 2}
+				width={9000}
+				height={900}
+				fill={C.bg}
+				opacity={0.8 * prog(f, T.s4, T.s4 + 24) * (drainAt === undefined ? 1 : 1 - prog(f, drainAt, drainAt + 40))}
+			/>
 
 			{/* 主卡片 / 容器 A */}
 			{morph < 1 ? (

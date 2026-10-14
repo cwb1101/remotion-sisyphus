@@ -70,3 +70,6 @@ const previewScreens = SCREENS.filter((s) =>
 /** 预览片长：预览各节最后一屏结束 + 尾巴 */
 export const PREVIEW_DURATION =
 	Math.max(...previewScreens.map((s) => s.endFrame)) + data.preview.tailFrames;
+
+/** 完整片长：最后一屏结束 + 尾巴 */
+export const FULL_DURATION = Math.max(...SCREENS.map((s) => s.endFrame)) + data.full.tailFrames;

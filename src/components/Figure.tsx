@@ -76,7 +76,8 @@ export interface FigureProps {
 	x: number;
 	y: number;
 	height: number;
-	facing?: 1 | -1;
+	/** 1 = 面朝右，-1 = 面朝左；中间值用于转身（纸片式翻转） */
+	facing?: number;
 	pose: Pose;
 	color?: string;
 	backColor?: string;
@@ -102,6 +103,37 @@ export const headCenter = (
 	const [hx, hy] = rot(0, -NECK, ps.lean + ps.pitch);
 	return [p.x + f * (sx + hx) * s, p.y + (HIP_Y + sy + hy) * s];
 };
+
+/** 前手（靠近观众那只手）末端的世界坐标，用于让人物拿卡片、拧阀门 */
+export const handPosition = (
+	p: Pick<FigureProps, 'x' | 'y' | 'height' | 'facing'>,
+	ps: Pose,
+): [number, number] => {
+	const s = p.height / 100;
+	const f = p.facing ?? 1;
+	const [ex, ey] = rot(0, FOREARM, -ps.elbowF);
+	const [ax, ay] = rot(0 + ex, UPPER_ARM + ey, -ps.shoulderF);
+	const [bx, by] = rot(ax, -TORSO + 3 + ay, ps.lean);
+	return [p.x + f * bx * s, p.y + (HIP_Y + by) * s];
+};
+
+/** 走路姿态：phase 每增加 1 走一步 */
+export const walkPose = (phase: number, base: Partial<Pose> = {}, stride = 1): Pose => {
+	const a = Math.sin(phase * Math.PI);
+	const b = Math.sin(phase * Math.PI + Math.PI);
+	const lift = (v: number) => Math.max(0, -v);
+	return pose({
+		...base,
+		hipF: (base.hipF ?? 0) + 20 * a * stride,
+		kneeF: (base.kneeF ?? 0) + 6 + 26 * lift(a) * stride,
+		hipB: (base.hipB ?? 0) + 20 * b * stride,
+		kneeB: (base.kneeB ?? 0) + 6 + 26 * lift(b) * stride,
+	});
+};
+
+/** 坐在地上：髋关节在地面高度，腿向前伸。配合 y = 地面 + SIT_DROP * 身高 使用 */
+export const SIT_DROP = 0.4;
+export const SIT: Partial<Pose> = {hipF: 84, kneeF: 18, hipB: 80, kneeB: 24, lean: 6};
 
 const Leg: React.FC<{hip: number; knee: number; color: string; dx: number}> = ({
 	hip,
