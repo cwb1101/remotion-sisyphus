@@ -1,0 +1,242 @@
+{
+  "fps": 30,
+  "note": "db = 相对环境底的目标电平（合成时按 K 计权、400ms 窗的最大值校准；成串脚步因步间空隙需多给约 3dB）。实测值见 out/qc/audio-check.json。ambience 的 db 为 0，即参考电平。duck = 重音前把环境底压低。",
+  "cues": [
+    {
+      "id": "amb-00",
+      "frame": 0,
+      "type": "ambience",
+      "sound": "room",
+      "action": "环境底①窗边室内：房间底噪 + 55Hz 柔和长音",
+      "db": 0,
+      "crossfadeFrames": 12
+    },
+    {
+      "id": "act-01",
+      "frame": 114,
+      "type": "action",
+      "sound": "drop-on-wood",
+      "action": "水滴沿杯壁滑下，落在木桌上",
+      "db": 7
+    },
+    {
+      "id": "acc-01",
+      "frame": 114,
+      "type": "accent",
+      "sound": "low-thud",
+      "action": "关键句①“它就满了”：与水滴落桌同帧",
+      "db": 9,
+      "duck": {
+        "from": 90,
+        "db": -6,
+        "releaseFrames": 24
+      }
+    },
+    {
+      "id": "amb-01",
+      "frame": 378,
+      "type": "ambience",
+      "sound": "arcade",
+      "action": "环境底②拱廊：混响房间底 + 穿过拱洞的风",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "act-02",
+      "frame": 404,
+      "type": "action",
+      "sound": "footsteps-stone",
+      "action": "人物在平移移入的拱廊里出现，沿拱廊走到第三道拱门的光里（8 步）",
+      "db": 10,
+      "steps": 8,
+      "interval": 16
+    },
+    {
+      "id": "act-03",
+      "frame": 690,
+      "type": "action",
+      "sound": "door-wood",
+      "action": "尽头木门被穿堂风推开一寸",
+      "db": 6
+    },
+    {
+      "id": "act-04",
+      "frame": 810,
+      "type": "action",
+      "sound": "sleeve-rustle",
+      "action": "人物抬起手背擦眼睛",
+      "db": 6
+    },
+    {
+      "id": "amb-02",
+      "frame": 918,
+      "type": "ambience",
+      "sound": "stairwell",
+      "action": "环境底③楼梯井：D2 低频长音 + 五度泛音",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "act-05",
+      "frame": 948,
+      "type": "action",
+      "sound": "footsteps-stair",
+      "action": "人物沿石阶下行",
+      "db": 6,
+      "steps": 5,
+      "interval": 18
+    },
+    {
+      "id": "act-06",
+      "frame": 1230,
+      "type": "action",
+      "sound": "rope-knock",
+      "action": "铅锤绳碰到木扶手",
+      "db": 7
+    },
+    {
+      "id": "amb-03",
+      "frame": 1482,
+      "type": "ambience",
+      "sound": "empty-room",
+      "action": "环境底④空房间：房间底 + 失谐 pad 慢拍频",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "act-07",
+      "frame": 1536,
+      "type": "action",
+      "sound": "chair-sit",
+      "action": "人物坐到木椅上",
+      "db": 7
+    },
+    {
+      "id": "act-08",
+      "frame": 1788,
+      "type": "action",
+      "sound": "cloth-grip",
+      "action": "双手攥紧膝上的衣料",
+      "db": 6
+    },
+    {
+      "id": "act-09",
+      "frame": 1974,
+      "type": "action",
+      "sound": "window-rattle",
+      "action": "窗框轻震，杯中水面起纹",
+      "db": 6
+    },
+    {
+      "id": "amb-04",
+      "frame": 2178,
+      "type": "ambience",
+      "sound": "sea",
+      "action": "环境底⑤海：滤波噪声海浪 + 低 pad",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "acc-02",
+      "frame": 2226,
+      "type": "accent",
+      "sound": "low-bell",
+      "action": "关键句②“替你踩刹车”：光带铺过海面",
+      "db": 10,
+      "duck": {
+        "from": 2154,
+        "db": -6,
+        "releaseFrames": 60
+      }
+    },
+    {
+      "id": "act-10",
+      "frame": 2484,
+      "type": "action",
+      "sound": "steps-shallow-water",
+      "action": "人物在浅水里走两步",
+      "db": 6
+    },
+    {
+      "id": "act-11",
+      "frame": 2754,
+      "type": "action",
+      "sound": "wave-on-stone",
+      "action": "一道浪拍上石块",
+      "db": 8
+    },
+    {
+      "id": "amb-05",
+      "frame": 2952,
+      "type": "ambience",
+      "sound": "ridge",
+      "action": "环境底⑥雾中山脊：风 + 暖 pad（叠一次轻空气声过渡）",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "act-12",
+      "frame": 2982,
+      "type": "action",
+      "sound": "footsteps-gravel",
+      "action": "人物沿山脊碎石往上走",
+      "db": 6,
+      "steps": 4,
+      "interval": 17
+    },
+    {
+      "id": "act-13",
+      "frame": 3120,
+      "type": "action",
+      "sound": "cloth-turn",
+      "action": "人物回头时衣料轻响",
+      "db": 6
+    },
+    {
+      "id": "act-14",
+      "frame": 3300,
+      "type": "action",
+      "sound": "paper-flutter",
+      "action": "纸页被风掀起",
+      "db": 6
+    },
+    {
+      "id": "act-15",
+      "frame": 3420,
+      "type": "action",
+      "sound": "paper-fold",
+      "action": "把纸对折收进口袋",
+      "db": 6
+    },
+    {
+      "id": "amb-06",
+      "frame": 3558,
+      "type": "ambience",
+      "sound": "room-return",
+      "action": "环境底⑦回到窗边：房间底 + pad 落到主和弦",
+      "db": 0,
+      "crossfadeFrames": 60
+    },
+    {
+      "id": "act-16",
+      "frame": 3588,
+      "type": "action",
+      "sound": "window-open",
+      "action": "人物推开木窗",
+      "db": 7
+    },
+    {
+      "id": "acc-03",
+      "frame": 3774,
+      "type": "accent",
+      "sound": "far-bell",
+      "action": "关键句③“话可以晚一点到”：墙上光斑显形",
+      "db": 6,
+      "duck": {
+        "from": 3732,
+        "db": -6,
+        "releaseFrames": 45
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+ "integratedLUFS": -18.0,
+ "truePeakDBTP": -2.4,
+ "maxShortTerm": -14.3,
+ "shortTermOverI": 3.7,
+ "events": [
+  {
+   "time": 3.8,
+   "type": "action",
+   "sound": "drop-on-wood",
+   "target_db": 7,
+   "measured_db": 7.6
+  },
+  {
+   "time": 3.8,
+   "type": "accent",
+   "sound": "low-thud",
+   "target_db": 9,
+   "measured_db": 7.5
+  },
+  {
+   "time": 13.47,
+   "type": "action",
+   "sound": "footsteps-stone",
+   "target_db": 10,
+   "measured_db": 6.1
+  },
+  {
+   "time": 23.0,
+   "type": "action",
+   "sound": "door-wood",
+   "target_db": 6,
+   "measured_db": 7.7
+  },
+  {
+   "time": 27.0,
+   "type": "action",
+   "sound": "sleeve-rustle",
+   "target_db": 6,
+   "measured_db": 6.7
+  }
+ ]
+}

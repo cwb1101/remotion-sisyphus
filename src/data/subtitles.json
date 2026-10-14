@@ -1,0 +1,374 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "durationInFrames": 3960,
+  "preview": {
+    "from": 0,
+    "to": 918
+  },
+  "sections": [
+    {
+      "id": "00",
+      "name": "满",
+      "en": "OVERFLOW",
+      "scene": "window",
+      "from": 0,
+      "to": 378
+    },
+    {
+      "id": "01",
+      "name": "现象",
+      "en": "THE TEARS",
+      "scene": "arcade",
+      "from": 378,
+      "to": 918
+    },
+    {
+      "id": "02",
+      "name": "通路",
+      "en": "THE PATH",
+      "scene": "stairwell",
+      "from": 918,
+      "to": 1482
+    },
+    {
+      "id": "03",
+      "name": "阈值",
+      "en": "THRESHOLD",
+      "scene": "room",
+      "from": 1482,
+      "to": 2178
+    },
+    {
+      "id": "04",
+      "name": "刹车",
+      "en": "THE BRAKE",
+      "scene": "sea",
+      "from": 2178,
+      "to": 2952
+    },
+    {
+      "id": "05",
+      "name": "共处",
+      "en": "STAY",
+      "scene": "ridge",
+      "from": 2952,
+      "to": 3558
+    },
+    {
+      "id": "06",
+      "name": "晚一点",
+      "en": "LATER",
+      "scene": "window-return",
+      "from": 3558,
+      "to": 3960
+    }
+  ],
+  "screens": [
+    {
+      "id": "s01",
+      "section": "00",
+      "scene": "window",
+      "from": 26,
+      "to": 104,
+      "text": "什么都还没发生，",
+      "emphasis": [],
+      "layout": "bottom-left-en",
+      "en": "NOTHING HAS HAPPENED YET"
+    },
+    {
+      "id": "s02",
+      "section": "00",
+      "scene": "window",
+      "from": 114,
+      "to": 198,
+      "text": "它就满了。",
+      "emphasis": [
+        "满"
+      ],
+      "layout": "bottom-center",
+      "key": 1
+    },
+    {
+      "id": "s03",
+      "section": "00",
+      "scene": "window",
+      "from": 210,
+      "to": 366,
+      "text": "为什么话还没说出口，\n眼泪先到了？",
+      "emphasis": [],
+      "layout": "top-center"
+    },
+    {
+      "id": "s04",
+      "section": "01",
+      "scene": "arcade",
+      "from": 416,
+      "to": 524,
+      "text": "有人把这叫作\n泪失禁体质。",
+      "emphasis": [
+        "泪失禁体质"
+      ],
+      "layout": "offset"
+    },
+    {
+      "id": "s05",
+      "section": "01",
+      "scene": "arcade",
+      "from": 532,
+      "to": 648,
+      "text": "它不是医学诊断，只是一种说法。",
+      "emphasis": [],
+      "layout": "bottom-left-en",
+      "en": "NOT A DIAGNOSIS — JUST A NAME"
+    },
+    {
+      "id": "s06",
+      "section": "01",
+      "scene": "arcade",
+      "from": 672,
+      "to": 780,
+      "text": "情绪一强，眼泪就自己往外走。",
+      "emphasis": [],
+      "layout": "bottom-center"
+    },
+    {
+      "id": "s07",
+      "section": "01",
+      "scene": "arcade",
+      "from": 792,
+      "to": 916,
+      "text": "委屈、生气、被批评，\n甚至被夸的时候。",
+      "emphasis": [],
+      "layout": "left-paragraph"
+    },
+    {
+      "id": "s08",
+      "section": "02",
+      "scene": "stairwell",
+      "from": 936,
+      "to": 1038,
+      "text": "眼泪，不太听意志的话。",
+      "emphasis": [],
+      "layout": "bottom-center"
+    },
+    {
+      "id": "s09",
+      "section": "02",
+      "scene": "stairwell",
+      "from": 1056,
+      "to": 1188,
+      "text": "管泪腺的，是自主神经。",
+      "emphasis": [
+        "自主神经"
+      ],
+      "layout": "bottom-left-en",
+      "en": "AUTONOMIC NERVOUS SYSTEM"
+    },
+    {
+      "id": "s10",
+      "section": "02",
+      "scene": "stairwell",
+      "from": 1212,
+      "to": 1296,
+      "text": "就像心跳和出汗，",
+      "emphasis": [],
+      "layout": "top-left"
+    },
+    {
+      "id": "s11",
+      "section": "02",
+      "scene": "stairwell",
+      "from": 1308,
+      "to": 1470,
+      "text": "它走的那条路，\n不经过“我决定”。",
+      "emphasis": [
+        "我决定"
+      ],
+      "layout": "reveal"
+    },
+    {
+      "id": "s12",
+      "section": "03",
+      "scene": "room",
+      "from": 1500,
+      "to": 1632,
+      "text": "为什么偏偏是吵架、被批评的时候？",
+      "emphasis": [],
+      "layout": "top-left"
+    },
+    {
+      "id": "s13",
+      "section": "03",
+      "scene": "room",
+      "from": 1644,
+      "to": 1746,
+      "text": "这些时刻，情绪又急又强。",
+      "emphasis": [],
+      "layout": "bottom-left-en",
+      "en": "HIGH AROUSAL"
+    },
+    {
+      "id": "s14",
+      "section": "03",
+      "scene": "room",
+      "from": 1770,
+      "to": 1938,
+      "text": "身体先绷紧，\n想好的话，一句也说不出来。",
+      "emphasis": [],
+      "layout": "offset"
+    },
+    {
+      "id": "s15",
+      "section": "03",
+      "scene": "room",
+      "from": 1962,
+      "to": 2064,
+      "text": "每个人都有一条看不见的阈值，",
+      "emphasis": [
+        "阈值"
+      ],
+      "layout": "bottom-center"
+    },
+    {
+      "id": "s16",
+      "section": "03",
+      "scene": "room",
+      "from": 2076,
+      "to": 2160,
+      "text": "有人的，就是低一些。",
+      "emphasis": [],
+      "layout": "bottom-left-en",
+      "en": "SOME OVERFLOW SOONER"
+    },
+    {
+      "id": "s17",
+      "section": "04",
+      "scene": "sea",
+      "from": 2220,
+      "to": 2442,
+      "text": "眼泪不是你输了，\n是身体在替你踩刹车。",
+      "emphasis": [
+        "刹车"
+      ],
+      "layout": "center",
+      "key": 2
+    },
+    {
+      "id": "s18",
+      "section": "04",
+      "scene": "sea",
+      "from": 2472,
+      "to": 2562,
+      "text": "有研究认为，哭泣本身，",
+      "emphasis": [],
+      "layout": "bottom-left-en",
+      "en": "GRAČANIN, BYLSMA & VINGERHOETS, 2014"
+    },
+    {
+      "id": "s19",
+      "section": "04",
+      "scene": "sea",
+      "from": 2574,
+      "to": 2724,
+      "text": "可能是身体安抚自己的一种方式。",
+      "emphasis": [
+        "安抚"
+      ],
+      "layout": "bottom-center"
+    },
+    {
+      "id": "s20",
+      "section": "04",
+      "scene": "sea",
+      "from": 2748,
+      "to": 2832,
+      "text": "眼泪也是一种信号，",
+      "emphasis": [
+        "信号"
+      ],
+      "layout": "reveal"
+    },
+    {
+      "id": "s21",
+      "section": "04",
+      "scene": "sea",
+      "from": 2844,
+      "to": 2940,
+      "text": "让旁人看见：\n你需要缓一缓。",
+      "emphasis": [],
+      "layout": "offset"
+    },
+    {
+      "id": "s22",
+      "section": "05",
+      "scene": "ridge",
+      "from": 2970,
+      "to": 3090,
+      "text": "不必硬忍。停几秒，慢慢呼一口气。",
+      "emphasis": [
+        "停几秒"
+      ],
+      "layout": "bottom-center"
+    },
+    {
+      "id": "s23",
+      "section": "05",
+      "scene": "ridge",
+      "from": 3102,
+      "to": 3258,
+      "text": "可以先说一句：\n“我容易掉眼泪，\n但我想把话说完。”",
+      "emphasis": [],
+      "layout": "left-paragraph"
+    },
+    {
+      "id": "s24",
+      "section": "05",
+      "scene": "ridge",
+      "from": 3282,
+      "to": 3378,
+      "text": "要紧的话，\n提前写下来。",
+      "emphasis": [
+        "写下来"
+      ],
+      "layout": "offset"
+    },
+    {
+      "id": "s25",
+      "section": "05",
+      "scene": "ridge",
+      "from": 3390,
+      "to": 3546,
+      "text": "如果常常无故失控、影响到生活，\n可以找医生聊聊。",
+      "emphasis": [],
+      "layout": "left-paragraph-small"
+    },
+    {
+      "id": "s26",
+      "section": "06",
+      "scene": "window-return",
+      "from": 3576,
+      "to": 3708,
+      "text": "杯子还是满的，只是静下来了。",
+      "emphasis": [
+        "静"
+      ],
+      "layout": "bottom-left-en",
+      "en": "STILL FULL. NOW STILL."
+    },
+    {
+      "id": "s27",
+      "section": "06",
+      "scene": "window-return",
+      "from": 3768,
+      "to": 3900,
+      "text": "眼泪先到，\n话可以晚一点到。",
+      "emphasis": [
+        "晚一点"
+      ],
+      "layout": "center",
+      "key": 3
+    }
+  ]
+}

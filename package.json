@@ -1,0 +1,24 @@
+{
+  "name": "tears-film",
+  "private": true,
+  "version": "0.1.0",
+  "description": "泪失禁体质 — Remotion 知识短片",
+  "scripts": {
+    "fonts": "python3 scripts/build-fonts.py",
+    "audio": "node scripts/synth-audio.mjs",
+    "studio": "remotion studio src/index.ts",
+    "render:preview": "remotion render src/index.ts Preview out/preview.mp4 --codec=h264 --crf=18 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "@remotion/fonts": "4.0.535",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}

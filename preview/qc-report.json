@@ -1,0 +1,177 @@
+{
+  "yavg": {
+    "mean": 120.3,
+    "min": 107.1,
+    "max": 128.9,
+    "framesBelow90": [],
+    "framesAbove135": [],
+    "countAbove135": 0
+  },
+  "colorIssues": [],
+  "subtitles": [
+    {
+      "id": "s01",
+      "layout": "bottom-left-en",
+      "frame": 52,
+      "bbox": [
+        162,
+        851,
+        670,
+        976
+      ],
+      "contrastText_p10": 5.18,
+      "contrastAccent_p10": null,
+      "bgLumMedian": 0.334,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.47
+    },
+    {
+      "id": "s02",
+      "layout": "bottom-center",
+      "frame": 160,
+      "bbox": [
+        765,
+        885,
+        1105,
+        971
+      ],
+      "contrastText_p10": 7.19,
+      "contrastAccent_p10": 4.96,
+      "bgLumMedian": 0.459,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 2.12
+    },
+    {
+      "id": "s03",
+      "layout": "top-center",
+      "frame": 236,
+      "bbox": [
+        609,
+        142,
+        1258,
+        307
+      ],
+      "contrastText_p10": 4.95,
+      "contrastAccent_p10": null,
+      "bgLumMedian": 0.398,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.03
+    },
+    {
+      "id": "s04",
+      "layout": "offset",
+      "frame": 442,
+      "bbox": [
+        162,
+        824,
+        776,
+        970
+      ],
+      "contrastText_p10": 6.46,
+      "contrastAccent_p10": 5.32,
+      "bgLumMedian": 0.481,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.65
+    },
+    {
+      "id": "s05",
+      "layout": "bottom-left-en",
+      "frame": 558,
+      "bbox": [
+        162,
+        851,
+        1171,
+        976
+      ],
+      "contrastText_p10": 4.83,
+      "contrastAccent_p10": null,
+      "bgLumMedian": 0.382,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.96
+    },
+    {
+      "id": "s06",
+      "layout": "bottom-center",
+      "frame": 698,
+      "bbox": [
+        466,
+        905,
+        1406,
+        976
+      ],
+      "contrastText_p10": 5.41,
+      "contrastAccent_p10": null,
+      "bgLumMedian": 0.406,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.98
+    },
+    {
+      "id": "s07",
+      "layout": "left-paragraph",
+      "frame": 818,
+      "bbox": [
+        162,
+        814,
+        773,
+        969
+      ],
+      "contrastText_p10": 4.89,
+      "contrastAccent_p10": null,
+      "bgLumMedian": 0.353,
+      "inMargins": true,
+      "topRightClear": true,
+      "rightThird": false,
+      "charsPerSec": 3.94
+    }
+  ],
+  "adjacentSameLayout": [],
+  "soundEvents": [
+    {
+      "frame": 114,
+      "time": 3.8,
+      "type": "action",
+      "action": "水滴沿杯壁滑下，落在木桌上",
+      "db": 7
+    },
+    {
+      "frame": 114,
+      "time": 3.8,
+      "type": "accent",
+      "action": "关键句①“它就满了”：与水滴落桌同帧",
+      "db": 9
+    },
+    {
+      "frame": 404,
+      "time": 13.47,
+      "type": "action",
+      "action": "人物在平移移入的拱廊里出现，沿拱廊走到第三道拱门的光里（8 步）",
+      "db": 10
+    },
+    {
+      "frame": 690,
+      "time": 23.0,
+      "type": "action",
+      "action": "尽头木门被穿堂风推开一寸",
+      "db": 6
+    },
+    {
+      "frame": 810,
+      "time": 27.0,
+      "type": "action",
+      "action": "人物抬起手背擦眼睛",
+      "db": 6
+    }
+  ]
+}
