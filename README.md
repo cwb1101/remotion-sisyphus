@@ -23,6 +23,7 @@ npm install
 npm run check            # 字幕稿规范检查（读速、高亮数、行数）
 npm run render:preview   # 检查 → 合成音效 → 渲染 out/preview.mp4
 npm run render:full      # 完整片：分段渲染并合成 out/full/泪失禁体质_完整版.mp4
+npm run render:cover     # 3:4 封面（1080×1440）：out/cover/cover_3x4.png，文字在 src/Cover.tsx 的 COVER_TEXT
 npm run qa:audio         # 预览响度 / 峰值 / 削波检查（完整片：bash scripts/qa-audio.sh out/full/泪失禁体质_完整版.mp4）
 npm run studio           # 本地预览
 ```

@@ -10,7 +10,8 @@
     "render:preview": "npm run check && npm run sfx && remotion render Preview out/preview.mp4",
     "qa:audio": "bash scripts/qa-audio.sh out/preview.mp4",
     "typecheck": "tsc --noEmit",
-    "render:full": "bash scripts/render-full.sh"
+    "render:full": "bash scripts/render-full.sh",
+    "render:cover": "remotion still Cover3x4 out/cover/cover_3x4.png"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.8",
