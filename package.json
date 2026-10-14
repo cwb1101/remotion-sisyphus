@@ -1,0 +1,25 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "泪失禁体质 — Remotion 横屏知识短视频",
+  "scripts": {
+    "sfx": "node scripts/build-sfx.mjs",
+    "check": "node scripts/check-script.mjs",
+    "studio": "npm run sfx && remotion studio",
+    "render:preview": "npm run check && npm run sfx && remotion render Preview out/preview.mp4",
+    "qa:audio": "bash scripts/qa-audio.sh out/preview.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.8",
+    "@remotion/cli": "4.0.525",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.525"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "typescript": "5.9.2"
+  }
+}

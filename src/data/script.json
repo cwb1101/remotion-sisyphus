@@ -1,0 +1,1018 @@
+{
+ "_说明": "全片字幕定稿。画面与音效的时间都从这里取：startFrame/endFrame 为绝对帧（30fps）；cues 为相对本屏 startFrame 的帧偏移（可为数组）；sfx.cue 指向 cues 中的名字或 start。改字幕只改此文件，然后重新运行 npm run sfx。",
+ "fps": 30,
+ "width": 1920,
+ "height": 1080,
+ "accents": {
+  "body": "#5CC8FF",
+  "action": "#FFB547"
+ },
+ "sfxTiersDbfs": {
+  "weak": -24,
+  "mid": -16,
+  "strong": -8
+ },
+ "preview": {
+  "sections": [
+   1,
+   2
+  ],
+  "tailFrames": 36
+ },
+ "screens": [
+  {
+   "id": 1,
+   "section": 1,
+   "startFrame": 0,
+   "endFrame": 72,
+   "text": "话还没说出口",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "pad",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {
+    "step": 4,
+    "lookUp": 20,
+    "bubble": 26
+   }
+  },
+  {
+   "id": 2,
+   "section": 1,
+   "startFrame": 72,
+   "endFrame": 150,
+   "text": "眼泪已经先到了",
+   "highlights": [
+    {
+     "word": "眼泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "drop",
+     "tier": "mid",
+     "cue": "tearLand"
+    }
+   ],
+   "cues": {
+    "tearForm": 0,
+    "tearFall": 44,
+    "tearLand": 63
+   }
+  },
+  {
+   "id": 3,
+   "section": 1,
+   "startFrame": 150,
+   "endFrame": 240,
+   "text": "这有个说法：泪失禁体质",
+   "highlights": [
+    {
+     "word": "泪失禁体质",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "impact",
+     "tier": "strong",
+     "cue": "titleHit"
+    },
+    {
+     "type": "spray",
+     "tier": "weak",
+     "cue": "titleHit",
+     "gainDb": -4
+    }
+   ],
+   "cues": {
+    "titleDrop": 4,
+    "titleHit": 18
+   }
+  },
+  {
+   "id": 4,
+   "section": 2,
+   "startFrame": 240,
+   "endFrame": 312,
+   "text": "这是个网络说法，不是诊断",
+   "highlights": [
+    {
+     "word": "网络说法",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "slide",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {
+    "panEnd": 60,
+    "cardDraw": 40
+   }
+  },
+  {
+   "id": 5,
+   "section": 2,
+   "startFrame": 312,
+   "endFrame": 408,
+   "text": "说的是：一有情绪，眼泪就特别容易掉",
+   "highlights": [
+    {
+     "word": "特别容易",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "drop",
+     "tier": "weak",
+     "cue": "drip"
+    }
+   ],
+   "cues": {
+    "drip": [
+     8,
+     26,
+     44,
+     62,
+     80
+    ]
+   }
+  },
+  {
+   "id": 6,
+   "section": 2,
+   "startFrame": 408,
+   "endFrame": 492,
+   "text": "它不是泪道不通引起的溢泪",
+   "highlights": [
+    {
+     "word": "溢泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "thud",
+     "tier": "weak",
+     "cue": "sinkA"
+    }
+   ],
+   "cues": {
+    "cardsIn": 0,
+    "sinkA": 44
+   }
+  },
+  {
+   "id": 7,
+   "section": 2,
+   "startFrame": 492,
+   "endFrame": 588,
+   "text": "也不是脑部疾病带来的病理性哭笑",
+   "highlights": [
+    {
+     "word": "病理性哭笑",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "thud",
+     "tier": "weak",
+     "cue": "sinkB"
+    }
+   ],
+   "cues": {
+    "sinkB": 46
+   }
+  },
+  {
+   "id": 8,
+   "section": 2,
+   "startFrame": 588,
+   "endFrame": 684,
+   "text": "它更像一种体质：门槛比别人低一点",
+   "highlights": [
+    {
+     "word": "门槛",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "rise",
+     "tier": "weak",
+     "cue": "fillStart"
+    },
+    {
+     "type": "drop",
+     "tier": "weak",
+     "cue": "leak"
+    }
+   ],
+   "cues": {
+    "morph": 0,
+    "fillStart": 24,
+    "thresholdHit": 64,
+    "leak": [
+     86,
+     104,
+     122
+    ]
+   }
+  },
+  {
+   "id": 9,
+   "section": 3,
+   "startFrame": 684,
+   "endFrame": 744,
+   "text": "眼泪，其实有三种",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "drops",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 10,
+   "section": 3,
+   "startFrame": 744,
+   "endFrame": 822,
+   "text": "基础泪让眼睛保持湿润",
+   "highlights": [
+    {
+     "word": "基础泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "chord",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 11,
+   "section": 3,
+   "startFrame": 822,
+   "endFrame": 900,
+   "text": "反射泪负责冲走灰尘和刺激",
+   "highlights": [
+    {
+     "word": "反射泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "bubble",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 12,
+   "section": 3,
+   "startFrame": 900,
+   "endFrame": 960,
+   "text": "第三种，是情绪泪",
+   "highlights": [
+    {
+     "word": "情绪泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "chord",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 13,
+   "section": 3,
+   "startFrame": 960,
+   "endFrame": 1038,
+   "text": "它从大脑管情绪的区域出发",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "pulse",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 14,
+   "section": 3,
+   "startFrame": 1038,
+   "endFrame": 1116,
+   "text": "经过自主神经，直通泪腺",
+   "highlights": [
+    {
+     "word": "泪腺",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "drop",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 15,
+   "section": 3,
+   "startFrame": 1116,
+   "endFrame": 1188,
+   "text": "这一路，不用经过“我同意”",
+   "highlights": [
+    {
+     "word": "“我同意”",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "slide",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 16,
+   "section": 3,
+   "startFrame": 1188,
+   "endFrame": 1284,
+   "text": "说话却要先想清楚、组织语言，再开口",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "ticks",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 17,
+   "section": 3,
+   "startFrame": 1284,
+   "endFrame": 1344,
+   "text": "两条路同时出发",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "ticks",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 18,
+   "section": 3,
+   "startFrame": 1344,
+   "endFrame": 1410,
+   "text": "眼泪，往往先到",
+   "highlights": [
+    {
+     "word": "眼泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "impact",
+     "tier": "strong",
+     "cue": "hit"
+    }
+   ],
+   "cues": {
+    "hit": 12
+   }
+  },
+  {
+   "id": 19,
+   "section": 3,
+   "startFrame": 1410,
+   "endFrame": 1506,
+   "text": "不是你故意哭，是身体比嘴快一步",
+   "highlights": [
+    {
+     "word": "比嘴快一步",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "thud",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 20,
+   "section": 4,
+   "startFrame": 1506,
+   "endFrame": 1584,
+   "text": "那为什么，有人哭得特别快？",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "steps",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 21,
+   "section": 4,
+   "startFrame": 1584,
+   "endFrame": 1662,
+   "text": "因为每个人的门槛不一样",
+   "highlights": [
+    {
+     "word": "门槛",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "steps",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 22,
+   "section": 4,
+   "startFrame": 1662,
+   "endFrame": 1728,
+   "text": "有的人，本来就更敏感",
+   "highlights": [
+    {
+     "word": "敏感",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "bubble",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 23,
+   "section": 4,
+   "startFrame": 1728,
+   "endFrame": 1824,
+   "text": "没睡好、太累的时候，水位会悄悄变高",
+   "highlights": [
+    {
+     "word": "水位",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "drops",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 24,
+   "section": 4,
+   "startFrame": 1824,
+   "endFrame": 1896,
+   "text": "还有那些，憋着没说的委屈",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "swell",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 25,
+   "section": 4,
+   "startFrame": 1896,
+   "endFrame": 1962,
+   "text": "这时，有人轻轻问一句",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "steps",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 26,
+   "section": 4,
+   "startFrame": 1962,
+   "endFrame": 2022,
+   "text": "“你还好吗？”",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "glass",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 27,
+   "section": 4,
+   "startFrame": 2022,
+   "endFrame": 2106,
+   "text": "最后一滴落进去，水就满了",
+   "highlights": [
+    {
+     "word": "最后一滴",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "impact",
+     "tier": "strong",
+     "cue": "hit"
+    }
+   ],
+   "cues": {
+    "hit": 10
+   }
+  },
+  {
+   "id": 28,
+   "section": 4,
+   "startFrame": 2106,
+   "endFrame": 2196,
+   "text": "不是这句话太重，是水早就快满了",
+   "highlights": [
+    {
+     "word": "早就快满了",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "pad",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 29,
+   "section": 5,
+   "startFrame": 2196,
+   "endFrame": 2274,
+   "text": "很多人哭完，第一反应是自责",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "thud",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 30,
+   "section": 5,
+   "startFrame": 2274,
+   "endFrame": 2346,
+   "text": "可是，哭不等于输",
+   "highlights": [
+    {
+     "word": "不等于输",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "impact",
+     "tier": "strong",
+     "cue": "hit"
+    }
+   ],
+   "cues": {
+    "hit": 10
+   }
+  },
+  {
+   "id": 31,
+   "section": 5,
+   "startFrame": 2346,
+   "endFrame": 2418,
+   "text": "也不代表你不理性、不专业",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "bubble",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 32,
+   "section": 5,
+   "startFrame": 2418,
+   "endFrame": 2484,
+   "text": "有研究发现，哭完之后",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "slide",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 33,
+   "section": 5,
+   "startFrame": 2484,
+   "endFrame": 2568,
+   "text": "情绪会先低落一阵，再慢慢回升",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "arc",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 34,
+   "section": 5,
+   "startFrame": 2568,
+   "endFrame": 2646,
+   "text": "眼泪，可能也在帮你缓过来",
+   "highlights": [
+    {
+     "word": "缓过来",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "pad",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 35,
+   "section": 5,
+   "startFrame": 2646,
+   "endFrame": 2730,
+   "text": "等水位落下来，再开口也不迟",
+   "highlights": [
+    {
+     "word": "再开口",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "chord",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 36,
+   "section": 6,
+   "startFrame": 2730,
+   "endFrame": 2808,
+   "text": "跟它相处，可以试试三件小事",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "tick",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 37,
+   "section": 6,
+   "startFrame": 2808,
+   "endFrame": 2886,
+   "text": "第一，把要说的话提前写下来",
+   "highlights": [
+    {
+     "word": "提前写下来",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "tick",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 38,
+   "section": 6,
+   "startFrame": 2886,
+   "endFrame": 2946,
+   "text": "眼泪来了，卡片还在",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "drop",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 39,
+   "section": 6,
+   "startFrame": 2946,
+   "endFrame": 3018,
+   "text": "第二，先说一句“给我一分钟”",
+   "highlights": [
+    {
+     "word": "“给我一分钟”",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "glass",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 40,
+   "section": 6,
+   "startFrame": 3018,
+   "endFrame": 3090,
+   "text": "然后，慢慢呼气",
+   "highlights": [
+    {
+     "word": "慢慢呼气",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "breath",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 41,
+   "section": 6,
+   "startFrame": 3090,
+   "endFrame": 3168,
+   "text": "第三，事后复盘，别急着自责",
+   "highlights": [
+    {
+     "word": "别急着自责",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "steps",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 42,
+   "section": 6,
+   "startFrame": 3168,
+   "endFrame": 3246,
+   "text": "看看是哪几滴，让水位涨上来",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "ticks",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 43,
+   "section": 6,
+   "startFrame": 3246,
+   "endFrame": 3312,
+   "text": "下次，就能早一点放水",
+   "highlights": [
+    {
+     "word": "放水",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "valve",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 44,
+   "section": 6,
+   "startFrame": 3312,
+   "endFrame": 3420,
+   "text": "如果哭和情绪对不上，或者长期控制不住",
+   "highlights": [
+    {
+     "word": "长期控制不住",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "pad",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 45,
+   "section": 6,
+   "startFrame": 3420,
+   "endFrame": 3480,
+   "text": "别硬扛，去看看医生",
+   "highlights": [
+    {
+     "word": "去看看医生",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "rise",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 46,
+   "section": 7,
+   "startFrame": 3480,
+   "endFrame": 3546,
+   "text": "眼泪还是先到了",
+   "highlights": [
+    {
+     "word": "眼泪",
+     "color": "#5CC8FF"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "drop",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 47,
+   "section": 7,
+   "startFrame": 3546,
+   "endFrame": 3618,
+   "text": "但这一次，话也说出来了",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "chord",
+     "tier": "mid",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  },
+  {
+   "id": 48,
+   "section": 7,
+   "startFrame": 3618,
+   "endFrame": 3714,
+   "text": "眼泪先到，话可以后到",
+   "highlights": [
+    {
+     "word": "话可以后到",
+     "color": "#FFB547"
+    }
+   ],
+   "sfx": [
+    {
+     "type": "impact",
+     "tier": "strong",
+     "cue": "hit"
+    }
+   ],
+   "cues": {
+    "hit": 12
+   }
+  },
+  {
+   "id": 49,
+   "section": 7,
+   "startFrame": 3714,
+   "endFrame": 3798,
+   "text": "本片仅作科普，不构成医疗建议",
+   "highlights": [],
+   "sfx": [
+    {
+     "type": "pad",
+     "tier": "weak",
+     "cue": "start"
+    }
+   ],
+   "cues": {}
+  }
+ ]
+}
