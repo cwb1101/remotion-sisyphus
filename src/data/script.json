@@ -1,0 +1,1070 @@
+{
+ "_readme": "字幕定稿数据。画面与音效的时间全部从这里取：改字幕只改这个文件。帧号基于 fps；sfx.offset 是相对本屏 startFrame 的帧数；level: weak≈-24 dBFS / mid≈-16 dBFS / strong≈-8 dBFS 峰值。impact 是砸到画面中部偏左的大字。",
+ "fps": 30,
+ "width": 1920,
+ "height": 1080,
+ "colors": {
+  "text": "#FFFFFF",
+  "gold": "#FFC24A",
+  "blue": "#8FA8FF",
+  "white": "#FFFFFF"
+ },
+ "sfxLevelsDbfs": {
+  "weak": -24,
+  "mid": -16,
+  "strong": -8
+ },
+ "preview": {
+  "lastScreen": 13,
+  "tailFrames": 36
+ },
+ "screens": [
+  {
+   "id": 1,
+   "section": "opening",
+   "startFrame": 0,
+   "endFrame": 60,
+   "text": "同样被生活击垮",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "whoosh",
+     "level": "weak"
+    },
+    {
+     "offset": 26,
+     "type": "impact",
+     "level": "strong",
+     "mood": "dark"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "section": "opening",
+   "startFrame": 60,
+   "endFrame": 144,
+   "text": "有人越陷越深，有人更有力量",
+   "highlights": [
+    {
+     "word": "越陷越深",
+     "color": "blue"
+    },
+    {
+     "word": "更有力量",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "slideDown",
+     "level": "mid",
+     "pan": -0.6
+    },
+    {
+     "offset": 30,
+     "type": "bell",
+     "level": "mid",
+     "pan": 0.6
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "section": "opening",
+   "startFrame": 144,
+   "endFrame": 204,
+   "text": "差别，到底在哪里？",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "heartbeat",
+     "level": "weak"
+    },
+    {
+     "offset": 44,
+     "type": "whoosh",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "section": "s1",
+   "startFrame": 219,
+   "endFrame": 315,
+   "text": "有人把这种力量，叫作黑色生命力",
+   "highlights": [
+    {
+     "word": "黑色生命力",
+     "color": "gold"
+    }
+   ],
+   "impact": {
+    "text": "黑色生命力",
+    "color": "gold",
+    "offset": 3
+   },
+   "sfx": [
+    {
+     "offset": 9,
+     "type": "impact",
+     "level": "strong"
+    },
+    {
+     "offset": 66,
+     "type": "whoosh",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "section": "s1",
+   "startFrame": 315,
+   "endFrame": 399,
+   "text": "尝过生活的苦，仍认真去尝甜",
+   "highlights": [
+    {
+     "word": "苦",
+     "color": "blue"
+    },
+    {
+     "word": "甜",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 12,
+     "type": "pluck",
+     "level": "weak",
+     "note": 0
+    },
+    {
+     "offset": 48,
+     "type": "pluck",
+     "level": "weak",
+     "note": 1
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "section": "s1",
+   "startFrame": 399,
+   "endFrame": 465,
+   "text": "经历过绝望，也失去过",
+   "highlights": [
+    {
+     "word": "绝望",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 2,
+     "type": "droneDown",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "section": "s1",
+   "startFrame": 465,
+   "endFrame": 525,
+   "text": "却从没被真正打败",
+   "highlights": [
+    {
+     "word": "从没被真正打败",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "bell",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "section": "s1",
+   "startFrame": 525,
+   "endFrame": 585,
+   "text": "它不是天生的",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "whoosh",
+     "level": "weak"
+    },
+    {
+     "offset": 24,
+     "type": "drone",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "section": "s1",
+   "startFrame": 585,
+   "endFrame": 669,
+   "text": "是在黑暗里，一点点长出来的",
+   "highlights": [
+    {
+     "word": "黑暗",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "arpUp",
+     "level": "weak"
+    },
+    {
+     "offset": 78,
+     "type": "whoosh",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "section": "s2",
+   "startFrame": 684,
+   "endFrame": 762,
+   "text": "每个人，都会撞上那么一刻",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 2,
+     "type": "droneDown",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "section": "s2",
+   "startFrame": 762,
+   "endFrame": 822,
+   "text": "也许是一场失恋",
+   "highlights": [],
+   "impact": {
+    "text": "失恋",
+    "color": "white",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "thud",
+     "level": "mid"
+    },
+    {
+     "offset": 22,
+     "type": "grain",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "section": "s2",
+   "startFrame": 822,
+   "endFrame": 882,
+   "text": "也许是一次被诬陷",
+   "highlights": [],
+   "impact": {
+    "text": "被诬陷",
+    "color": "white",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "thud",
+     "level": "mid",
+     "pitch": 0.85
+    },
+    {
+     "offset": 22,
+     "type": "grain",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "section": "s2",
+   "startFrame": 882,
+   "endFrame": 954,
+   "text": "也许，是被生活整个击垮",
+   "highlights": [],
+   "impact": {
+    "text": "击垮",
+    "color": "white",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "thud",
+     "level": "mid",
+     "pitch": 0.8
+    },
+    {
+     "offset": 14,
+     "type": "grain",
+     "level": "weak"
+    },
+    {
+     "offset": 28,
+     "type": "roll",
+     "level": "weak"
+    },
+    {
+     "offset": 62,
+     "type": "impact",
+     "level": "strong",
+     "mood": "dark"
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "section": "s2",
+   "startFrame": 954,
+   "endFrame": 1038,
+   "text": "那一刻，最黑的情绪会扑上来",
+   "highlights": [
+    {
+     "word": "最黑的情绪",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "droneUp",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "section": "s2",
+   "startFrame": 1038,
+   "endFrame": 1122,
+   "text": "你是选择沉下去，还是站起来？",
+   "highlights": [
+    {
+     "word": "沉下去",
+     "color": "blue"
+    },
+    {
+     "word": "站起来",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "pluck",
+     "level": "weak",
+     "note": -1,
+     "pan": -0.5
+    },
+    {
+     "offset": 30,
+     "type": "pluck",
+     "level": "weak",
+     "note": 1,
+     "pan": 0.5
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "section": "s3",
+   "startFrame": 1140,
+   "endFrame": 1224,
+   "text": "很多人的第一反应，是压下去",
+   "highlights": [
+    {
+     "word": "压下去",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 10,
+     "type": "slideDown",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "section": "s3",
+   "startFrame": 1224,
+   "endFrame": 1296,
+   "text": "不去看，不去想，假装没事",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 20,
+     "type": "thud",
+     "level": "weak",
+     "pitch": 1.2
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "section": "s3",
+   "startFrame": 1296,
+   "endFrame": 1368,
+   "text": "心理学家做过一个实验",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "pluck",
+     "level": "weak",
+     "note": 0
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "section": "s3",
+   "startFrame": 1368,
+   "endFrame": 1452,
+   "text": "让人在五分钟里，别去想白熊",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "drone",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "section": "s3",
+   "startFrame": 1452,
+   "endFrame": 1524,
+   "text": "白熊，还是一次次冒出来",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 8,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    },
+    {
+     "offset": 30,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    },
+    {
+     "offset": 52,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "section": "s3",
+   "startFrame": 1524,
+   "endFrame": 1626,
+   "text": "后来放开想，他们比另一组想得更多",
+   "highlights": [
+    {
+     "word": "想得更多",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 10,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    },
+    {
+     "offset": 22,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    },
+    {
+     "offset": 34,
+     "type": "bell",
+     "level": "weak",
+     "pitch": 1.5
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "section": "s3",
+   "startFrame": 1626,
+   "endFrame": 1710,
+   "text": "压下去的东西，往往不会消失",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "heartbeat",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "section": "s3",
+   "startFrame": 1710,
+   "endFrame": 1794,
+   "text": "它在暗处长大，让人越陷越深",
+   "highlights": [
+    {
+     "word": "越陷越深",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "droneUp",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "section": "s4",
+   "startFrame": 1818,
+   "endFrame": 1914,
+   "text": "有黑色生命力的人，做了另一件事",
+   "highlights": [
+    {
+     "word": "黑色生命力",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "heartbeat",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "section": "s4",
+   "startFrame": 1914,
+   "endFrame": 1974,
+   "text": "他们转过身，看着它",
+   "highlights": [
+    {
+     "word": "转过身",
+     "color": "gold"
+    }
+   ],
+   "impact": {
+    "text": "转过身",
+    "color": "gold",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "impact",
+     "level": "strong"
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "section": "s4",
+   "startFrame": 1974,
+   "endFrame": 2034,
+   "text": "叫出它的名字",
+   "highlights": [
+    {
+     "word": "名字",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "bell",
+     "level": "mid"
+    },
+    {
+     "offset": 30,
+     "type": "bell",
+     "level": "mid",
+     "pitch": 1.26
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "section": "s4",
+   "startFrame": 2034,
+   "endFrame": 2100,
+   "text": "一项脑成像研究发现",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "heartbeat",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "section": "s4",
+   "startFrame": 2100,
+   "endFrame": 2160,
+   "text": "把情绪用词说出来",
+   "highlights": [
+    {
+     "word": "说出来",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 10,
+     "type": "pluck",
+     "level": "weak",
+     "note": 1
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "section": "s4",
+   "startFrame": 2160,
+   "endFrame": 2232,
+   "text": "大脑的情绪反应，会变弱",
+   "highlights": [
+    {
+     "word": "变弱",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "droneDown",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "section": "s4",
+   "startFrame": 2232,
+   "endFrame": 2310,
+   "text": "悲痛没有消失，但被看见了",
+   "highlights": [
+    {
+     "word": "看见了",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "pad",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "section": "s4",
+   "startFrame": 2310,
+   "endFrame": 2388,
+   "text": "被理解，被接纳，被慢慢消化",
+   "highlights": [
+    {
+     "word": "消化",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "arpUp",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "section": "s4",
+   "startFrame": 2388,
+   "endFrame": 2478,
+   "text": "这才是对命运不公，真正的反抗",
+   "highlights": [
+    {
+     "word": "反抗",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "thud",
+     "level": "mid",
+     "pitch": 1.1
+    },
+    {
+     "offset": 30,
+     "type": "thud",
+     "level": "mid",
+     "pitch": 1.1
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "section": "s4",
+   "startFrame": 2478,
+   "endFrame": 2574,
+   "text": "加缪写过西西弗，一次次推石上山",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 30,
+     "type": "roll",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "section": "s4",
+   "startFrame": 2574,
+   "endFrame": 2664,
+   "text": "他写：应该认为，西西弗是幸福的",
+   "highlights": [
+    {
+     "word": "幸福的",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "pad",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "section": "s5",
+   "startFrame": 2679,
+   "endFrame": 2751,
+   "text": "被消化过的黑，会透出光",
+   "highlights": [
+    {
+     "word": "光",
+     "color": "gold"
+    }
+   ],
+   "impact": {
+    "text": "光",
+    "color": "gold",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "impact",
+     "level": "strong"
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "section": "s5",
+   "startFrame": 2751,
+   "endFrame": 2811,
+   "text": "他们见过太多黑暗",
+   "highlights": [
+    {
+     "word": "黑暗",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "drone",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "section": "s5",
+   "startFrame": 2811,
+   "endFrame": 2889,
+   "text": "却仍愿意，为别人点一盏灯",
+   "highlights": [
+    {
+     "word": "点一盏灯",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 20,
+     "type": "bell",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "section": "s5",
+   "startFrame": 2889,
+   "endFrame": 2949,
+   "text": "那份善良，不掺算计",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "pluck",
+     "level": "weak",
+     "note": 0
+    },
+    {
+     "offset": 20,
+     "type": "pluck",
+     "level": "weak",
+     "note": 1
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "section": "s5",
+   "startFrame": 2949,
+   "endFrame": 3039,
+   "text": "因为他们知道，坐在黑里的滋味",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "pad",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "section": "s5",
+   "startFrame": 3039,
+   "endFrame": 3117,
+   "text": "一点光，就够一个人站起来",
+   "highlights": [
+    {
+     "word": "站起来",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "arpUp",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "section": "s6",
+   "startFrame": 3135,
+   "endFrame": 3213,
+   "text": "有人说，世界不是非黑即白",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "pluck",
+     "level": "weak",
+     "note": -1,
+     "pan": -0.5
+    },
+    {
+     "offset": 30,
+     "type": "pluck",
+     "level": "weak",
+     "note": 1,
+     "pan": 0.5
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "section": "s6",
+   "startFrame": 3213,
+   "endFrame": 3273,
+   "text": "而是一抹，精致的灰",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "pad",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "section": "s6",
+   "startFrame": 3273,
+   "endFrame": 3333,
+   "text": "也许，正是这些人",
+   "highlights": [],
+   "sfx": [
+    {
+     "offset": 0,
+     "type": "pad",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 44,
+   "section": "s6",
+   "startFrame": 3333,
+   "endFrame": 3411,
+   "text": "悄悄带走了世界的一些黑",
+   "highlights": [
+    {
+     "word": "带走",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "swellUp",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "section": "s6",
+   "startFrame": 3411,
+   "endFrame": 3471,
+   "text": "所以，当绝望降临时",
+   "highlights": [
+    {
+     "word": "绝望",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 10,
+     "type": "thud",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "section": "s6",
+   "startFrame": 3471,
+   "endFrame": 3531,
+   "text": "别急着压下去",
+   "highlights": [
+    {
+     "word": "压下去",
+     "color": "blue"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "heartbeat",
+     "level": "weak"
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "section": "s6",
+   "startFrame": 3531,
+   "endFrame": 3591,
+   "text": "转过身，看清它",
+   "highlights": [
+    {
+     "word": "转过身",
+     "color": "gold"
+    }
+   ],
+   "sfx": [
+    {
+     "offset": 6,
+     "type": "bell",
+     "level": "mid"
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "section": "s6",
+   "startFrame": 3591,
+   "endFrame": 3681,
+   "text": "它也许会，长成你的黑色生命力",
+   "highlights": [
+    {
+     "word": "黑色生命力",
+     "color": "gold"
+    }
+   ],
+   "impact": {
+    "text": "黑色生命力",
+    "color": "gold",
+    "offset": 0
+   },
+   "sfx": [
+    {
+     "offset": 4,
+     "type": "impact",
+     "level": "strong"
+    }
+   ]
+  }
+ ]
+}

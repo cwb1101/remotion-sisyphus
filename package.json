@@ -1,0 +1,26 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "黑色生命力 — 1920x1080 横屏知识短视频（Remotion 代码动画）",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "audio": "node scripts/build-audio.mjs",
+    "check:script": "node scripts/check-script.mjs",
+    "render:preview": "npm run check:script && npm run audio && remotion render src/index.ts Preview out/preview.mp4",
+    "check:audio": "bash scripts/check-audio.sh out/preview.mp4",
+    "check:sfx": "python3 -I scripts/check_sfx.py out/sfx out/sfx-check",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.9",
+    "@remotion/cli": "4.0.535",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}
