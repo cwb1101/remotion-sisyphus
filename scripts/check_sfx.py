@@ -53,7 +53,7 @@ def main(src, dst):
     os.makedirs(dst, exist_ok=True)
     rows = []
     for name in sorted(os.listdir(src)):
-        if not name.endswith(".wav"):
+        if not name.endswith(".wav") or name.startswith("00_bed"):
             continue
         x, sr = read(os.path.join(src, name))
         noisy = any(t in name for t in NOISY)

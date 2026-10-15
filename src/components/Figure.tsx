@@ -29,6 +29,16 @@ export const POSES = {
 	recoil: P({torso: -10, head: -8, shF: 50, elF: 30, shB: 40, elB: 34, hipF: 16, knF: 14, hipB: -16, knB: 10}),
 	kneel: P({torso: 18, head: 22, shF: 62, elF: 10, shB: 54, elB: 14, hipF: 88, knF: 86, hipB: -6, knB: 86}),
 	sitFallen: P({torso: -22, head: 10, shF: -34, elF: 0, shB: -38, elB: 0, hipF: 100, knF: 25, hipB: 92, knB: 10}),
+	sitDroop: P({torso: -8, head: 34, shF: -30, elF: 4, shB: -34, elB: 4, hipF: 100, knF: 25, hipB: 92, knB: 10}),
+	// 抱膝坐（乙坐在黑里）
+	sitHug: P({torso: 22, head: 36, shF: 74, elF: 40, shB: 66, elB: 44, hipF: 120, knF: 165, hipB: 115, knB: 155}),
+	// 用后背顶（身体后仰，手臂向后）
+	backPush: P({torso: -20, head: -8, shF: -64, elF: -8, shB: -56, elB: -10, hipF: 28, knF: 34, hipB: -12, knB: 8}),
+	dustHands: P({torso: 6, head: 18, shF: 38, elF: 66, shB: 32, elB: 70, hipF: 4, knF: 3, hipB: -4, knB: 3}),
+	lookDown: P({torso: 8, head: 34, shF: -2, elF: 10, shB: 6, elB: 10, hipF: 4, knF: 3, hipB: -4, knB: 3}),
+	armsOpen: P({torso: -6, head: -16, shF: 118, elF: 0, shB: -112, elB: 0, hipF: 6, knF: 3, hipB: -6, knB: 3}),
+	holdLight: P({torso: 4, head: 16, shF: 46, elF: 72, shB: 40, elB: 76, hipF: 4, knF: 3, hipB: -4, knB: 3}),
+	crouchOffer: P({torso: 26, head: 6, shF: 76, elF: 8, shB: 64, elB: 20, hipF: 96, knF: 126, hipB: 60, knB: 128}),
 };
 
 export const lerpPose = (a: Pose, b: Pose, t: number): Pose => {
@@ -52,6 +62,28 @@ export const withWalk = (base: Pose, phase: number, stride = 1, swingArms = fals
 		shF: swingArms ? base.shF - 18 * stride * s : base.shF,
 		shB: swingArms ? base.shB + 18 * stride * s : base.shB,
 	};
+};
+
+// 姿态时间轴：在关键帧之间做缓动插值
+export const poseTrack = (frame: number, keys: [number, Pose][]): Pose => {
+	if (frame <= keys[0][0]) return keys[0][1];
+	for (let i = 0; i < keys.length - 1; i++) {
+		const [fa, a] = keys[i];
+		const [fb, b] = keys[i + 1];
+		if (frame <= fb) {
+			const t = (frame - fa) / Math.max(1, fb - fa);
+			return lerpPose(a, b, t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+		}
+	}
+	return keys[keys.length - 1][1];
+};
+
+export const lerpColor = (a: string, b: string, t: number) => {
+	const pa = parseInt(a.slice(1), 16);
+	const pb = parseInt(b.slice(1), 16);
+	const ch = (n: number, sh: number) => (n >> sh) & 255;
+	const m = (sh: number) => Math.round(ch(pa, sh) + (ch(pb, sh) - ch(pa, sh)) * t);
+	return `#${((m(16) << 16) | (m(8) << 8) | m(0)).toString(16).padStart(6, '0')}`;
 };
 
 // 呼吸：躯干轻微起伏，保证人物静止时画面也在动
@@ -122,7 +154,8 @@ type FigureProps = {
 	// 脚下地面的 y
 	y: number;
 	pose: Pose;
-	facing?: 1 | -1;
+	// 1 = 面向右，-1 = 面向左；中间值用于转身动画
+	facing?: number;
 	scale?: number;
 	color?: string;
 	opacity?: number;
@@ -131,6 +164,8 @@ type FigureProps = {
 	// 轮廓光，0–1
 	rim?: number;
 	rimColor?: string;
+	// 胸口的金点（黑色生命力），0–1
+	heart?: number;
 };
 
 export const Figure: React.FC<FigureProps> = ({
@@ -144,9 +179,10 @@ export const Figure: React.FC<FigureProps> = ({
 	sink = 0,
 	rim = 0,
 	rimColor = '#FFC24A',
+	heart = 0,
 }) => {
 	const s = solveFigure(pose);
-	const far = shade(color, 0.78);
+	const far = shade(color.startsWith('#') ? color : '#E8E1D2', 0.78);
 	const line = (a: {x: number; y: number}, b: {x: number; y: number}, w: number, col: string) => (
 		<line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={col} strokeWidth={w} strokeLinecap="round" />
 	);
@@ -191,6 +227,7 @@ export const Figure: React.FC<FigureProps> = ({
 	);
 
 	const lift = -s.lowest + sink;
+	const heartPt = add(s.hip, s.up, L.torso * 0.68);
 	return (
 		<g
 			transform={`translate(${x} ${y}) scale(${scale * facing} ${scale}) translate(0 ${lift})`}
@@ -199,6 +236,12 @@ export const Figure: React.FC<FigureProps> = ({
 			<g style={rim > 0 ? {filter: `drop-shadow(0 0 ${4 + 6 * rim}px ${rgba(rimColor, rim)})`} : undefined}>
 				{body}
 			</g>
+			{heart > 0 ? (
+				<g opacity={Math.min(1, heart)}>
+					<circle cx={heartPt.x} cy={heartPt.y} r={10 + 10 * heart} fill="#FFC24A" opacity={0.25} />
+					<circle cx={heartPt.x} cy={heartPt.y} r={5 + 2 * heart} fill="#FFE3A0" />
+				</g>
+			) : null}
 		</g>
 	);
 };

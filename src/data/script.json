@@ -410,6 +410,11 @@
      "offset": 10,
      "type": "slideDown",
      "level": "weak"
+    },
+    {
+     "offset": 66,
+     "type": "roll",
+     "level": "weak"
     }
    ]
   },
@@ -422,10 +427,15 @@
    "highlights": [],
    "sfx": [
     {
-     "offset": 20,
+     "offset": 40,
      "type": "thud",
      "level": "weak",
      "pitch": 1.2
+    },
+    {
+     "offset": 74,
+     "type": "whoosh",
+     "level": "weak"
     }
    ]
   },
@@ -443,7 +453,10 @@
      "level": "weak",
      "note": 0
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "白熊实验｜Wegner 等，1987"
+   }
   },
   {
    "id": 19,
@@ -458,7 +471,10 @@
      "type": "drone",
      "level": "weak"
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "白熊实验｜Wegner 等，1987"
+   }
   },
   {
    "id": 20,
@@ -486,7 +502,10 @@
      "level": "weak",
      "pitch": 1.5
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "白熊实验｜Wegner 等，1987"
+   }
   },
   {
    "id": 21,
@@ -519,7 +538,14 @@
      "level": "weak",
      "pitch": 1.5
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "白熊实验｜Wegner 等，1987",
+    "bubbles": [
+     "另一组",
+     "压抑组"
+    ]
+   }
   },
   {
    "id": 22,
@@ -530,7 +556,12 @@
    "highlights": [],
    "sfx": [
     {
-     "offset": 6,
+     "offset": 0,
+     "type": "whoosh",
+     "level": "weak"
+    },
+    {
+     "offset": 16,
      "type": "heartbeat",
      "level": "weak"
     }
@@ -595,7 +626,7 @@
    },
    "sfx": [
     {
-     "offset": 4,
+     "offset": 6,
      "type": "impact",
      "level": "strong"
     }
@@ -624,8 +655,19 @@
      "type": "bell",
      "level": "mid",
      "pitch": 1.26
+    },
+    {
+     "offset": 60,
+     "type": "whoosh",
+     "level": "weak"
     }
-   ]
+   ],
+   "onscreen": {
+    "words": [
+     "失望",
+     "悲痛"
+    ]
+   }
   },
   {
    "id": 27,
@@ -640,7 +682,10 @@
      "type": "heartbeat",
      "level": "weak"
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "情绪标签化｜Lieberman 等，2007"
+   }
   },
   {
    "id": 28,
@@ -661,7 +706,11 @@
      "level": "weak",
      "note": 1
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "情绪标签化｜Lieberman 等，2007",
+    "card": "悲痛"
+   }
   },
   {
    "id": 29,
@@ -681,7 +730,12 @@
      "type": "droneDown",
      "level": "weak"
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "情绪标签化｜Lieberman 等，2007",
+    "sublabel": "杏仁核活动降低",
+    "card": "悲痛"
+   }
   },
   {
    "id": 30,
@@ -698,6 +752,11 @@
    "sfx": [
     {
      "offset": 0,
+     "type": "whoosh",
+     "level": "weak"
+    },
+    {
+     "offset": 10,
      "type": "pad",
      "level": "weak"
     }
@@ -763,7 +822,10 @@
      "type": "roll",
      "level": "weak"
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "《西西弗神话》｜加缪，1942"
+   }
   },
   {
    "id": 34,
@@ -783,7 +845,10 @@
      "type": "pad",
      "level": "mid"
     }
-   ]
+   ],
+   "onscreen": {
+    "label": "《西西弗神话》｜加缪，1942"
+   }
   },
   {
    "id": 35,
@@ -804,7 +869,7 @@
    },
    "sfx": [
     {
-     "offset": 4,
+     "offset": 6,
      "type": "impact",
      "level": "strong"
     }
@@ -978,6 +1043,11 @@
      "offset": 6,
      "type": "swellUp",
      "level": "mid"
+    },
+    {
+     "offset": 66,
+     "type": "whoosh",
+     "level": "weak"
     }
    ]
   },
@@ -995,7 +1065,7 @@
    ],
    "sfx": [
     {
-     "offset": 10,
+     "offset": 34,
      "type": "thud",
      "level": "weak"
     }
@@ -1060,11 +1130,14 @@
    },
    "sfx": [
     {
-     "offset": 4,
+     "offset": 6,
      "type": "impact",
      "level": "strong"
     }
    ]
   }
- ]
+ ],
+ "full": {
+  "endHoldFrames": 60
+ }
 }

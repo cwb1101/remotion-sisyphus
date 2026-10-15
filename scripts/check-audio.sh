@@ -15,5 +15,9 @@ ffmpeg -hide_banner -nostats -i "$IN" -vn -af astats=metadata=0:measure_perchann
 	| grep -E "Overall|Peak level|RMS level|Max level|Min level|Noise floor|Number of samples" | head -12 || true
 
 echo
+echo "== silencedetect (noise=-50dB, d=0.3s) =="
+ffmpeg -hide_banner -nostats -i "$IN" -vn -af silencedetect=noise=-50dB:d=0.3 -f null - 2>&1 | grep -E "silence_(start|end)" || echo "no silence segments"
+
+echo
 echo "== per-sample scan =="
 python3 -I "$DIR/scan_audio.py" "$IN"

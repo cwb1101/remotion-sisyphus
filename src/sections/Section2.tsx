@@ -2,21 +2,37 @@ import React from 'react';
 import {AbsoluteFill, Easing, interpolate, random, useCurrentFrame} from 'remotion';
 import {BlackStone} from '../components/BlackStone';
 import {camAt, camTransform, prog, shakeAt, worldToScreen} from '../components/Camera';
-import {Figure, lerpPose, POSES, withBreath} from '../components/Figure';
+import {Figure, lerpPose, POSES, poseTrack, withBreath} from '../components/Figure';
 import {ImpactWord} from '../components/ImpactWord';
 import {Landscape, SLOPE, slopeY} from '../components/Landscape';
+import {Swarm} from '../components/Overlays';
 import {Motes} from '../components/Particles';
 import {cue, PREVIEW_DURATION, sc} from '../data/script';
+import {FilmMode, useFilmMode} from '../film';
 import {C} from '../theme';
 import {STONE_SEED} from './Opening';
 import {S1, s1StoneX, stoneCY} from './Section1';
 
-// 第二节（预览只做到第 13 屏）：被击垮的时刻。
+// 第二节（第 10–15 屏）：被击垮的时刻。
 // 天色压暗、乌云盖住坡顶的光；"失恋""被诬陷""击垮"三个大字砸下，碎片被黑石吸收，
 // 黑石越长越大，最后滚下坡，甲被带倒坐在地上。
-export const section2Range = () => ({from: sc(10).startFrame - 4, to: PREVIEW_DURATION});
+// 预览模式到第 13 屏收尾；完整片模式继续第 14–15 屏：黑色粒子扑上来，甲在"沉下去 / 站起来"之间抬头。
+export const section2Range = (mode: FilmMode = 'preview') => ({
+	from: sc(10).startFrame - 4,
+	to: mode === 'full' ? sc(16).startFrame : PREVIEW_DURATION,
+});
 
-const Clouds: React.FC<{frame: number; amount: number}> = ({frame, amount}) => (
+// 第二节结束时的世界状态，第三节从这里接着演
+export const S2_END = {
+	stoneX: SLOPE.bottomX + 40,
+	r: S1.r + 18 + 20 + 22,
+	jiaFore: 100,
+	jiaScale: 1.08,
+	cam: {x: 720, y: 640, z: 1.0},
+};
+export const s2JiaX = () => s1StoneX(sc(9).endFrame) - S1.r - 70 - 22 - 18 - 50;
+
+export const Clouds: React.FC<{frame: number; amount: number}> = ({frame, amount}) => (
 	<g opacity={amount}>
 		{Array.from({length: 7}).map((_, i) => {
 			const w = 260 + random(`cw${i}`) * 260;
@@ -32,7 +48,9 @@ const Clouds: React.FC<{frame: number; amount: number}> = ({frame, amount}) => (
 
 export const Section2: React.FC = () => {
 	const frame = useCurrentFrame();
-	const {from, to} = section2Range();
+	const mode = useFilmMode();
+	const full = mode === 'full';
+	const {from, to} = section2Range(mode);
 	if (frame < from || frame > to) {
 		return null;
 	}
@@ -74,6 +92,19 @@ export const Section2: React.FC = () => {
 	pose = lerpPose(pose, POSES.recoil, Math.max(...recoils));
 	pose = lerpPose(pose, POSES.pushBent, prog(frame, land12 + 14, land12 + 26) * (1 - knocked));
 	pose = lerpPose(pose, POSES.sitFallen, knocked);
+	const s14 = sc(14);
+	const s15 = sc(15);
+	if (full && frame > crash + 10) {
+		// 第 14 屏低头；第 15 屏先往下看（左下那摊黑亮起），再抬头看右上的光
+		pose = poseTrack(frame, [
+			[crash + 10, POSES.sitFallen],
+			[s14.startFrame + 24, POSES.sitDroop],
+			[s15.startFrame + 4, POSES.sitDroop],
+			[s15.startFrame + 18, {...POSES.sitDroop, head: 44, torso: -2}],
+			[s15.startFrame + 30, {...POSES.sitFallen, head: 4}],
+			[s15.startFrame + 46, {...POSES.sitFallen, head: -30, torso: -26}],
+		]);
+	}
 	pose = withBreath(pose, frame, 1 - knocked * 0.5);
 	// 被带倒时往镜头这侧（前景）跌坐，石头从他身后滚过
 	const jiaFore = knocked * 100;
@@ -87,7 +118,14 @@ export const Section2: React.FC = () => {
 			{f: s11.startFrame + 2, x: xStart - 200, y: 560, z: 1.0},
 			{f: rollStart, x: xStart - 220, y: 600, z: 1.0},
 			{f: crash, x: 700, y: 660, z: 0.92},
-			{f: to, x: 680, y: 670, z: 0.96},
+			...(full
+				? [
+						{f: crash + 46, x: 680, y: 670, z: 0.96},
+						{f: s14.endFrame, x: 790, y: 700, z: 1.2},
+						{f: s15.startFrame + 30, x: 820, y: 610, z: 0.9},
+						{f: to, ...S2_END.cam},
+				  ]
+				: [{f: to, x: 680, y: 670, z: 0.96}]),
 		],
 		frame,
 	);
@@ -118,11 +156,14 @@ export const Section2: React.FC = () => {
 			: null;
 
 	const fadeIn = interpolate(frame, [from + 4, from + 12], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	// 第 15 屏：左下那摊黑亮一下（沉下去），右上的光透出来（站起来）
+	const poolPulse = full ? 0.5 * Math.exp(-Math.max(0, frame - cue(15, 'pluck', 0)) / 14) * (frame >= cue(15, 'pluck', 0) ? 1 : 0) : 0;
+	const sunPeek = full ? 0.45 * prog(frame, cue(15, 'pluck', 1), cue(15, 'pluck', 1) + 20) : 0;
 
 	return (
 		<AbsoluteFill style={{opacity: fadeIn}}>
 			<svg width={1920} height={1080}>
-				<Landscape cam={cam} variant="slope" sun={1 - dark * 0.85} dark={dark} />
+				<Landscape cam={cam} variant="slope" sun={1 - dark * 0.85 + sunPeek} dark={dark} />
 				<Clouds frame={frame} amount={dark} />
 				<Motes frame={frame} count={46} opacity={0.22 + dark * 0.15} seed="s2" color="#6E7697" rise={-0.3} />
 				<g transform={camTransform(cam)}>
@@ -132,7 +173,7 @@ export const Section2: React.FC = () => {
 						</filter>
 					</defs>
 					{/* 坡底那摊黑（开头里乙陷进去的那种黑） */}
-					<ellipse cx={120} cy={SLOPE.bottomY} rx={330} ry={42} fill={C.blue} opacity={0.3 + 0.15 * Math.sin(frame / 12)} filter="url(#pool2-glow)" />
+					<ellipse cx={120} cy={SLOPE.bottomY} rx={330} ry={42} fill={C.blue} opacity={0.3 + 0.15 * Math.sin(frame / 12) + poolPulse} filter="url(#pool2-glow)" />
 					<ellipse cx={120} cy={SLOPE.bottomY} rx={320} ry={36} fill="#030306" />
 					<BlackStone
 						id="s2"
@@ -156,6 +197,17 @@ export const Section2: React.FC = () => {
 						scale={1 + knocked * 0.08}
 					/>
 					{dust}
+					{full ? (
+						<Swarm
+							frame={frame}
+							start={s14.startFrame}
+							from={{x: 160, y: SLOPE.bottomY - 30}}
+							center={{x: jiaX + 30, y: slopeY(jiaX) + jiaFore - 110}}
+							freezeAt={s15.startFrame}
+							fallAt={s15.endFrame}
+							groundY={slopeY(jiaX) + jiaFore}
+						/>
+					) : null}
 				</g>
 			</svg>
 			{impacts.map((s, i) =>

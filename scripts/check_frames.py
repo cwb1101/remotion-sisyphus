@@ -35,8 +35,9 @@ def near(img, col, tol=40):
 def main(video, script, outdir):
     doc = json.load(open(script))
     fps = doc["fps"]
-    screens = [s for s in doc["screens"] if s["id"] <= doc["preview"]["lastScreen"]]
-    end = (screens[-1]["endFrame"] + doc["preview"]["tailFrames"]) / fps
+    full = os.environ.get("FULL") == "1"
+    screens = doc["screens"] if full else [s for s in doc["screens"] if s["id"] <= doc["preview"]["lastScreen"]]
+    end = (screens[-1]["endFrame"] + (doc["full"]["endHoldFrames"] if full else doc["preview"]["tailFrames"])) / fps
     os.makedirs(outdir, exist_ok=True)
     samples = [(t, None) for t in np.arange(0, end, 2.0)]
     samples += [((s["startFrame"] + s["endFrame"]) / 2 / fps, s) for s in screens]

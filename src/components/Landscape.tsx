@@ -38,15 +38,21 @@ type Props = {
 	dark?: number;
 	// 冷色调 0–1
 	cool?: number;
+	// 天色褪成"精致的灰" 0–1（第六节）
+	gray?: number;
 };
 
-export const Sky: React.FC<{sun?: number; dark?: number; cool?: number}> = ({sun = 0, dark = 0, cool = 0}) => (
+export const Sky: React.FC<{sun?: number; dark?: number; cool?: number; gray?: number}> = ({sun = 0, dark = 0, cool = 0, gray = 0}) => (
 	<>
 		<defs>
 			<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
 				<stop offset="0" stopColor={C.skyTop} />
 				<stop offset="0.75" stopColor={C.skyBottom} />
 				<stop offset="1" stopColor="#30344A" />
+			</linearGradient>
+			<linearGradient id="sky-gray" x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0" stopColor="#4C4D55" />
+				<stop offset="1" stopColor="#8C8983" />
 			</linearGradient>
 			<radialGradient id="sun" cx="1720" cy="250" r="900" gradientUnits="userSpaceOnUse">
 				<stop offset="0" stopColor={C.gold} stopOpacity={0.55} />
@@ -56,13 +62,14 @@ export const Sky: React.FC<{sun?: number; dark?: number; cool?: number}> = ({sun
 			</radialGradient>
 		</defs>
 		<rect x={0} y={0} width={1920} height={1080} fill="url(#sky)" />
+		{gray > 0 ? <rect x={0} y={0} width={1920} height={1080} fill="url(#sky-gray)" opacity={gray} /> : null}
 		<rect x={0} y={0} width={1920} height={1080} fill="url(#sun)" opacity={sun} />
 		<rect x={0} y={0} width={1920} height={1080} fill={C.blue} opacity={cool * 0.08} />
 		<rect x={0} y={0} width={1920} height={1080} fill="#05060A" opacity={dark * 0.6} />
 	</>
 );
 
-export const Landscape: React.FC<Props> = ({cam, variant, sun = 0, dark = 0, cool = 0}) => {
+export const Landscape: React.FC<Props> = ({cam, variant, sun = 0, dark = 0, cool = 0, gray = 0}) => {
 	const slopePath =
 		variant === 'flat'
 			? `M -3000 ${FLAT_Y} L 6000 ${FLAT_Y} L 6000 4000 L -3000 4000 Z`
@@ -73,7 +80,7 @@ export const Landscape: React.FC<Props> = ({cam, variant, sun = 0, dark = 0, coo
 			: `M -3000 ${SLOPE.bottomY} L ${SLOPE.bottomX} ${SLOPE.bottomY} L ${SLOPE.topX} ${SLOPE.topY} L 6000 ${SLOPE.topY}`;
 	return (
 		<>
-			<Sky sun={sun} dark={dark} cool={cool} />
+			<Sky sun={sun} dark={dark} cool={cool} gray={gray} />
 			<g transform={camTransform(cam, 0.25)}>
 				<path d={hills(3, variant === 'flat' ? 700 : 620, 140, -2000, 4600)} fill={C.hillFar} opacity={1 - dark * 0.4} />
 			</g>

@@ -66,3 +66,14 @@ export const prog = (
 		extrapolateRight: 'clamp',
 		easing,
 	});
+
+// 数值关键帧：[[帧, 值], ...]，段间缓动插值
+export const kf = (frame: number, keys: [number, number][], easing: (t: number) => number = ease) => {
+	if (frame <= keys[0][0]) return keys[0][1];
+	for (let i = 0; i < keys.length - 1; i++) {
+		const [fa, a] = keys[i];
+		const [fb, b] = keys[i + 1];
+		if (frame <= fb) return a + (b - a) * easing((frame - fa) / Math.max(1, fb - fa));
+	}
+	return keys[keys.length - 1][1];
+};

@@ -24,6 +24,14 @@ export interface Impact {
 	offset: number;
 }
 
+export interface Onscreen {
+	label?: string;
+	sublabel?: string;
+	bubbles?: string[];
+	words?: string[];
+	card?: string;
+}
+
 export interface Screen {
 	id: number;
 	section: string;
@@ -32,6 +40,7 @@ export interface Screen {
 	text: string;
 	highlights: Highlight[];
 	impact?: Impact;
+	onscreen?: Onscreen;
 	sfx: Sfx[];
 }
 
@@ -42,6 +51,7 @@ interface ScriptDoc {
 	colors: Record<'text' | 'gold' | 'blue' | 'white', string>;
 	sfxLevelsDbfs: Record<SfxLevel, number>;
 	preview: {lastScreen: number; tailFrames: number};
+	full: {endHoldFrames: number};
 	screens: Screen[];
 }
 
@@ -75,3 +85,8 @@ export const cue = (id: number, type: string, nth = 0): number => {
 	}
 	return s.startFrame + list[nth].offset;
 };
+
+export const FULL_DURATION = SCRIPT.screens[SCRIPT.screens.length - 1].endFrame + SCRIPT.full.endHoldFrames;
+
+// 某屏的屏上文字（标签、气泡标注、浮字、词卡）
+export const onscreen = (id: number): Onscreen => sc(id).onscreen ?? {};

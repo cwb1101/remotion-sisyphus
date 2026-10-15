@@ -17,13 +17,13 @@ const FULL = process.argv.includes('--full');
 
 const screens = FULL ? doc.screens : doc.screens.filter((s) => s.id <= doc.preview.lastScreen);
 const last = screens[screens.length - 1];
-const totalFrames = last.endFrame + (FULL ? 60 : doc.preview.tailFrames);
+const totalFrames = last.endFrame + (FULL ? doc.full.endHoldFrames : doc.preview.tailFrames);
 const totalSamples = Math.round((totalFrames / doc.fps) * SR);
 
 const dbToLin = (db) => Math.pow(10, db / 20);
 const LEVEL = Object.fromEntries(Object.entries(doc.sfxLevelsDbfs).map(([k, v]) => [k, dbToLin(v)]));
 const NOISE_TRIM = dbToLin(-4);
-const CEILING = dbToLin(-6.5);
+const CEILING = dbToLin(FULL ? -7 : -6.5);
 const TAU = Math.PI * 2;
 
 // ---------- 工具 ----------
@@ -321,6 +321,152 @@ const writeWav = (file, chans) => {
 	fs.writeFileSync(file, b);
 };
 
+
+// ---------- 铺底（仅完整片）----------
+// 连续的纯音和弦层：保证全片没有意外的静音，并把整体响度托到约 -20 LUFS。
+// 只用正弦（带少量 2、3 次谐波），不含任何噪声；峰值上限 -16 dBFS（不超过"中"档），
+// 遇到强档音效时自动避让 8dB、中档避让 3dB，保证关键句的音效最响。
+const BED_CHORDS = {
+	opening: [73.42, 146.83, 174.61, 220.0],
+	s1: [146.83, 185.0, 220.0, 329.63],
+	s2: [116.54, 146.83, 174.61, 233.08],
+	s3: [73.42, 110.0, 130.81, 174.61],
+	s4: [87.31, 130.81, 220.0, 261.63],
+	s4b: [98.0, 146.83, 246.94, 293.66],
+	s5: [146.83, 220.0, 293.66, 369.99],
+	s6: [98.0, 146.83, 246.94, 293.66],
+	s6b: [73.42, 110.0, 185.0, 293.66],
+};
+const bedSegments = () => {
+	const segs = [];
+	let cur = null;
+	for (const sc of screens) {
+		let key = sc.section;
+		if (sc.section === 's4' && sc.id >= 32) key = 's4b';
+		if (sc.section === 's6' && sc.id >= 45) key = 's6b';
+		if (!cur || cur.key !== key) {
+			cur = {key, start: sc.startFrame / doc.fps};
+			segs.push(cur);
+		}
+	}
+	segs.forEach((g, i) => (g.end = i < segs.length - 1 ? segs[i + 1].start : totalSamples / SR));
+	return segs;
+};
+
+const buildBed = () => {
+	const bl = new Float64Array(totalSamples);
+	const br = new Float64Array(totalSamples);
+	const X = 1.2; // 相邻和弦交叉淡化时长（秒）
+	for (const seg of bedSegments()) {
+		const notes = BED_CHORDS[seg.key];
+		const s0 = Math.max(0, Math.round((seg.start - X / 2) * SR));
+		const s1 = Math.min(totalSamples, Math.round((seg.end + X / 2) * SR));
+		notes.forEach((f, k) => {
+			const amp = (f < 100 ? 0.8 : 1) / notes.length;
+			const pan = k % 2 ? 0.35 : -0.35;
+			const lfoF = 0.07 + 0.03 * k;
+			const lfoP = k * 1.7;
+			for (let n = s0; n < s1; n++) {
+				const t = n / SR;
+				const edgeIn = seg.start <= 0 ? 1 : Math.min(1, Math.max(0, (t - (seg.start - X / 2)) / X));
+				const edgeOut = Math.min(1, Math.max(0, (seg.end + X / 2 - t) / X));
+				const xf = Math.sin((Math.PI / 2) * edgeIn) * Math.sin((Math.PI / 2) * edgeOut);
+				const trem = 1 - 0.18 * (0.5 + 0.5 * Math.sin(TAU * lfoF * t + lfoP));
+				const ph = TAU * f * t;
+				const v = amp * xf * trem * (Math.sin(ph) + 0.12 * Math.sin(2 * ph) + 0.04 * Math.sin(3 * ph));
+				bl[n] += v * Math.min(1, 1 - pan);
+				br[n] += v * Math.min(1, 1 + pan);
+			}
+		});
+	}
+	// 温和软饱和：只压偶发的相位叠加尖峰，降低峰值因子（同样峰值下更饱满，不会出现噪声）
+	{
+		const p = Math.max(peakOf(bl), peakOf(br));
+		const D = 1.8;
+		const norm = Math.tanh(D);
+		for (let n = 0; n < totalSamples; n++) {
+			bl[n] = (Math.tanh((D * bl[n]) / p) / norm) * p;
+			br[n] = (Math.tanh((D * br[n]) / p) / norm) * p;
+		}
+	}
+	// 片头 1.5s 淡入、片尾 2.5s 淡出（成片最后 20 帧画面淡出到黑）
+	const fin = Math.round(1.5 * SR);
+	const fout = Math.round(2.5 * SR);
+	for (let i = 0; i < fin; i++) {
+		const g = Math.sin((Math.PI / 2) * (i / fin));
+		bl[i] *= g * g;
+		br[i] *= g * g;
+	}
+	for (let i = 0; i < fout; i++) {
+		const g = Math.sin((Math.PI / 2) * (i / fout));
+		bl[totalSamples - 1 - i] *= g * g;
+		br[totalSamples - 1 - i] *= g * g;
+	}
+	// 避让：强档 -8dB、中档 -3dB；第 23 屏后的停顿压低 8dB（不是静音）
+	const duck = new Float64Array(totalSamples).fill(1);
+	const dip = (t0, t1, db, ramp = 0.12) => {
+		const g = dbToLin(db);
+		const a = Math.max(0, Math.round((t0 - ramp) * SR));
+		const b = Math.min(totalSamples, Math.round((t1 + ramp) * SR));
+		for (let n = a; n < b; n++) {
+			const t = n / SR;
+			const k = Math.min(1, (t - (t0 - ramp)) / ramp, (t1 + ramp - t) / ramp);
+			const v = 1 + (g - 1) * Math.max(0, Math.min(1, k));
+			duck[n] = Math.min(duck[n], v);
+		}
+	};
+	for (const sc of screens) {
+		for (const e of sc.sfx) {
+			const t = (sc.startFrame + e.offset) / doc.fps;
+			if (e.level === 'strong') dip(t, t + 1.4, -8, 0.15);
+			else if (e.level === 'mid') dip(t, t + 0.8, -3, 0.12);
+		}
+	}
+	const pause = doc.screens.find((x) => x.id === 23);
+	const after = doc.screens.find((x) => x.id === 24);
+	if (pause && after) dip(pause.endFrame / doc.fps, after.startFrame / doc.fps, -8, 0.2);
+	for (let n = 0; n < totalSamples; n++) {
+		bl[n] *= duck[n];
+		br[n] *= duck[n];
+	}
+	return [bl, br];
+};
+
+// ---------- BS.1770 响度（K 计权 + 门限），用于给铺底定电平 ----------
+const kWeight = (x) => {
+	const sh = {b0: 1.53512485958697, b1: -2.69169618940638, b2: 1.19839281085285, a1: -1.69065929318241, a2: 0.73248077421585};
+	const hp = {b0: 1.0, b1: -2.0, b2: 1.0, a1: -1.99004745483398, a2: 0.99007225036621};
+	return filt(filt(x, sh), hp);
+};
+const blockStats = (a, b) => {
+	// 每 400ms 块（100ms 步进）的 sum(a^2), sum(ab), sum(b^2)
+	const W = Math.round(0.4 * SR);
+	const H = Math.round(0.1 * SR);
+	const out = [];
+	for (let s0 = 0; s0 + W <= a.length; s0 += H) {
+		let aa = 0, ab = 0, bb = 0;
+		for (let n = s0; n < s0 + W; n++) {
+			aa += a[n] * a[n];
+			ab += a[n] * b[n];
+			bb += b[n] * b[n];
+		}
+		out.push([aa / W, ab / W, bb / W]);
+	}
+	return out;
+};
+const integrated = (statsL, statsR, g) => {
+	const pw = statsL.map((sl, i) => {
+		const sr = statsR[i];
+		return sl[0] + 2 * g * sl[1] + g * g * sl[2] + sr[0] + 2 * g * sr[1] + g * g * sr[2];
+	});
+	const lk = (p) => -0.691 + 10 * Math.log10(p + 1e-20);
+	const abs = pw.filter((p) => lk(p) > -70);
+	if (!abs.length) return -Infinity;
+	const rel = lk(abs.reduce((s, p) => s + p, 0) / abs.length) - 10;
+	const gated = abs.filter((p) => lk(p) > rel);
+	return lk(gated.reduce((s, p) => s + p, 0) / gated.length);
+};
+
 // ---------- 混音 ----------
 const L = new Float64Array(totalSamples);
 const R = new Float64Array(totalSamples);
@@ -350,6 +496,34 @@ for (const s of screens) {
 		writeWav(path.join(sfxDir, `${name}.wav`), [x]);
 		events.push({screen: s.id, frame, time: +(frame / doc.fps).toFixed(3), type: e.type, level: e.level, peakDbfs: +(20 * Math.log10(peakOf(x))).toFixed(2), noisy: NOISY.has(e.type), file: `out/sfx/${name}.wav`});
 	});
+}
+
+let bedInfo = null;
+if (FULL) {
+	const [bl, br] = buildBed();
+	const bedPeak = Math.max(peakOf(bl), peakOf(br));
+	const gMax = dbToLin(-16) / bedPeak;
+	const target = -20.3;
+	const sL = blockStats(kWeight(L), kWeight(bl));
+	const sR = blockStats(kWeight(R), kWeight(br));
+	let lo = 0;
+	let hi = gMax;
+	for (let it = 0; it < 40; it++) {
+		const mid = (lo + hi) / 2;
+		if (integrated(sL, sR, mid) < target) lo = mid;
+		else hi = mid;
+	}
+	const g = (lo + hi) / 2;
+	for (let n = 0; n < totalSamples; n++) {
+		L[n] += bl[n] * g;
+		R[n] += br[n] * g;
+	}
+	bedInfo = {
+		bedPeakDbfs: +(20 * Math.log10(bedPeak * g)).toFixed(2),
+		bedCappedAtMid: g >= gMax * 0.999,
+		estimatedIntegratedLufs: +integrated(sL, sR, g).toFixed(2),
+	};
+	writeWav(path.join(ROOT, 'out/sfx/00_bed.wav'), [bl.map((v) => v * g), br.map((v) => v * g)]);
 }
 
 // ---------- 总线限幅（lookahead，不削波） ----------
@@ -409,8 +583,10 @@ const report = {
 	mixPeakDbfs: +(20 * Math.log10(mixPeak)).toFixed(2),
 	limiterMaxGainReductionDb: +maxGr.toFixed(2),
 	safetyClampedSamples: safety,
+	bed: bedInfo,
 	events,
 };
 fs.mkdirSync(path.join(ROOT, 'out'), {recursive: true});
 fs.writeFileSync(path.join(ROOT, 'out/audio-report.json'), JSON.stringify(report, null, 1));
+if (bedInfo) console.log('bed', JSON.stringify(bedInfo));
 console.log(`wrote ${report.file}  ${report.durationSec}s  peak ${report.mixPeakDbfs} dBFS  limiter GR max ${report.limiterMaxGainReductionDb} dB  events ${events.length}`);
