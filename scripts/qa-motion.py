@@ -44,7 +44,19 @@ def main():
             i = j
         else:
             i += 1
-    print(json.dumps({'frames': len(d) + 1, 'median_diff': round(float(np.median(d)), 3), 'still_runs_over_%.1fs' % MIN_SEC: runs}, ensure_ascii=False, indent=2))
+    # 各节接缝：接缝那一帧的变化量和前后 15 帧比，既不能是 0（重复帧），也不能突然跳很大（跳帧/错位）
+    from pathlib import Path
+    script = json.loads(Path(__file__).resolve().parent.parent.joinpath('src/data/script.json').read_text())
+    seams = []
+    for sec in script['sections'][1:]:
+        f = sec['start']
+        if f - 1 >= len(d):
+            continue
+        at = d[f - 1]  # d[k] = 第 k 帧到第 k+1 帧的变化
+        around = np.concatenate([d[max(0, f - 16):f - 1], d[f:f + 15]])
+        seams.append({'section': sec['id'], 'frame': f, 'diff_at_seam': round(float(at), 3), 'median_around': round(float(np.median(around)), 3),
+                      'max_around': round(float(around.max()), 3), 'ok': bool(at > 0.02 and at <= max(3 * around.max(), 2.0))})
+    print(json.dumps({'frames': len(d) + 1, 'median_diff': round(float(np.median(d)), 3), 'still_runs_over_%.1fs' % MIN_SEC: runs, 'seams': seams}, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':

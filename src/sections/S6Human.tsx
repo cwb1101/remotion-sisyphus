@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { beat, cue, section, WARM } from '../data/script';
 import { LIGHTS } from '../theme';
+import { COOL } from '../data/script';
 import { camTrack, mixLight } from '../lib/camera';
 import { clamp, ease, impulse, lerp, mix, prog, rgba, rnd, v, vlerp } from '../lib/anim';
 import { Plain, FLOOR } from '../components/Plain';
@@ -9,7 +10,7 @@ import { Saw } from '../components/Saw';
 import { LoopArrows } from '../components/LoopArrows';
 import { Light } from '../theme';
 import { SectionDef } from './story';
-import { horseDust, HORSE_DUST_COUNT, S5Name } from './S5Name';
+import { Bat, BAT_GONE, batPos, horseDust, HORSE_DUST_COUNT, S5Name } from './S5Name';
 import { BLOCK, BLOCK_C, chestAt, personAt, PERSON_F as F, PERSON_SCALE } from './human';
 
 /**
@@ -87,7 +88,15 @@ const World: SectionDef['World'] = ({ frame, light }) => {
 
   return (
     <g>
-      <Plain frame={frame} light={light} stars={0.6 + 0.4 * clamp((frame - C32.start) / 30)} />
+      <Plain
+        frame={frame}
+        light={light}
+        dust={1 - ease.inOut(prog(frame, S.start, S.start + 40))}
+        lineDraw={1}
+        lineColor={rgba(COOL, 0.9 * (1 - ease.inOut(prog(frame, S.start, S.start + 45))))}
+        stars={Math.max(lerp(1, 0.6, ease.inOut(prog(frame, S.start, S.start + 30))), 0.6 + 0.4 * clamp((frame - C32.start) / 30))}
+      />
+      {frame < BAT_GONE && <Bat p={batPos(frame)} flap={frame * 0.7} />}
       {/* 屏 31：12 个月的圆点一颗颗变暖 */}
       {monthsO > 0 &&
         months.map((m, i) => {

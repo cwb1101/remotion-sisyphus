@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { beat, COOL, cue, section, WARM } from '../data/script';
 import { LIGHTS, PALETTE } from '../theme';
 import { camTrack } from '../lib/camera';
@@ -37,6 +37,7 @@ const rearAmt = (f: number) => track(f, [[F_REAR, 0], [F_REAR + 10, 1], [F_REAR 
 const kneelAmt = (f: number) => ease.inOut(prog(f, F_FALL - 4, F_FALL + 6));
 const lieAmt = (f: number) => ease.inOut(prog(f, F_FALL + 6, F_FALL + 16));
 const F_DISSOLVE = F_FALL + 12;
+export const BAT_GONE = F_FALL + 60;
 
 /** 马碎成的粒子（S6 接着把它们聚成人形）。 */
 export const horseDust = (k: number, f: number): Vec & { o: number } => {
@@ -65,7 +66,7 @@ const camera = (f: number) => {
 };
 
 /** 蝙蝠：一枚锯齿当身体，两片三角翅膀扇动。 */
-const Bat: React.FC<{ p: Vec; flap: number; scale?: number }> = ({ p, flap, scale = 1 }) => {
+export const Bat: React.FC<{ p: Vec; flap: number; scale?: number }> = ({ p, flap, scale = 1 }) => {
   const w = 0.35 + 0.65 * Math.abs(Math.sin(flap));
   return (
     <g transform={`translate(${p.x} ${p.y}) scale(${scale})`}>
@@ -76,7 +77,7 @@ const Bat: React.FC<{ p: Vec; flap: number; scale?: number }> = ({ p, flap, scal
   );
 };
 
-const batPos = (f: number): Vec => {
+export const batPos = (f: number): Vec => {
   const hx = horseX(f);
   if (f < F_BITE) {
     const t = ease.inOut(prog(f, C24.start + 10, F_BITE));
@@ -85,13 +86,13 @@ const batPos = (f: number): Vec => {
     return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) - Math.sin(t * Math.PI) * 120 + Math.sin(f * 0.3) * 10 * (1 - t) };
   }
   if (f < F_FALL + 2) return { x: hx - 6, y: FLOOR - 70 + Math.sin(f * 0.6) * 2 };
-  const t = ease.in(prog(f, F_FALL + 2, F_FALL + 30));
+  // 飞走：先加速，之后保持速度一直飞出画面
+  const t = ease.in(prog(f, F_FALL + 2, F_FALL + 30)) + Math.max(0, f - F_FALL - 30) / 14;
   return { x: hx - 6 - 600 * t, y: FLOOR - 70 - 520 * t };
 };
 
 const World: SectionDef['World'] = ({ frame, light }) => {
-  const dust = useMemo(() => Array.from({ length: 40 }, (_, i) => ({ x: rnd(`sdx${i}`) * 1920, ph: rnd(`sdp${i}`) * 9, sp: 0.6 + rnd(`sds${i}`) * 1.4 })), []);
-  const lineDraw = ease.inOut(prog(frame, C22.start, C22.start + 60));
+  const lineDraw = ease.inOut(prog(frame, C22.start, C23.start + 2));
   const slamT = frame - F_SLAM;
   const hx = horseX(frame);
   const horseIn = ease.out(prog(frame, C25.start - 4, C25.start + 14)) * (1 - clamp((frame - F_DISSOLVE) / 10));
@@ -102,7 +103,7 @@ const World: SectionDef['World'] = ({ frame, light }) => {
 
   return (
     <g>
-      <Plain frame={frame} light={light} lineDraw={lineDraw} lineColor={rgba(COOL, 0.9)} />
+      <Plain frame={frame} light={light} lineDraw={lineDraw} lineColor={rgba(COOL, 0.9)} dust={1} />
       {/* 地平线笔头：一颗冷色光点沿线划过 */}
       {lineDraw > 0 && lineDraw < 1 && (
         <g>
@@ -110,10 +111,6 @@ const World: SectionDef['World'] = ({ frame, light }) => {
           <circle cx={-200 + 1900 * lineDraw} cy={HORIZON} r={7} fill="#E9FFFC" />
         </g>
       )}
-      {/* 漂浮的细尘 */}
-      {dust.map((d, i) => (
-        <circle key={i} cx={(d.x + frame * d.sp) % 2200 - 140} cy={HORIZON - 40 - ((frame * 0.4 * d.sp + d.ph * 60) % 420)} r={1.6} fill={rgba('#E9D8C0', 0.18)} />
-      ))}
       {/* 大字落地：地平线扬起一排尘 */}
       {slamT >= 0 && slamT < 40 && (
         <g>
@@ -164,7 +161,7 @@ const World: SectionDef['World'] = ({ frame, light }) => {
           const d = horseDust(k, frame);
           return <circle key={k} cx={d.x} cy={d.y} r={2.4 + (k % 3)} fill={k % 4 === 0 ? rgba(WARM, 0.8) : rgba('#B8C8D0', 0.85)} opacity={d.o} />;
         })}
-      {frame >= C24.start + 10 && frame < F_FALL + 32 && <Bat p={batPos(frame)} flap={frame * 0.7} scale={frame >= F_BITE && frame < F_FALL ? 0.9 : 1.6} />}
+      {frame >= C24.start + 10 && frame < BAT_GONE && <Bat p={batPos(frame)} flap={frame * 0.7} scale={frame >= F_BITE && frame < F_FALL ? 0.9 : 1.6} />}
     </g>
   );
 };

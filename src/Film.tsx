@@ -5,7 +5,7 @@ import '@fontsource/noto-sans-sc/700.css';
 import '@fontsource/noto-sans-sc/900.css';
 import { CUES } from './data/script';
 import { worldTransform } from './lib/camera';
-import { clamp, ease } from './lib/anim';
+import { clamp, ease, vlerp } from './lib/anim';
 import { Lighting } from './components/Ground';
 import { Subtitle } from './components/Subtitle';
 import { BigWord, Impact } from './components/BigWord';
@@ -41,6 +41,14 @@ const useFonts = () => {
   }, [handle]);
 };
 
+/** 光源位置：每节开头 1 秒从上一节的光源位置平滑移过来，接缝处光池不跳。 */
+const lightAtFor = (sec: SectionDef, f: number) => {
+  const own = sec.lightAt(f);
+  const prev = SECTIONS[SECTIONS.indexOf(sec) - 1];
+  const t = ease.inOut(clamp((f - sec.start) / 30));
+  return !prev || t >= 1 ? own : vlerp(prev.lightAt(f), own, t);
+};
+
 /** 一节在某一帧的完整画面（世界 + 光 + 叠加层），供交叉溶解和卡片翻面复用。 */
 const Layer: React.FC<{ sec: SectionDef; frame: number }> = ({ sec, frame }) => {
   const cam = sec.camera(frame);
@@ -54,7 +62,7 @@ const Layer: React.FC<{ sec: SectionDef; frame: number }> = ({ sec, frame }) => 
           <World frame={frame} cam={cam} light={light} />
         </g>
       </svg>
-      <Lighting cam={cam} light={light} at={sec.lightAt(frame)} extra={sec.lightBoost?.(frame) ?? 0} />
+      <Lighting cam={cam} light={light} at={lightAtFor(sec, frame)} extra={sec.lightBoost?.(frame) ?? 0} />
       {Overlay && <Overlay frame={frame} cam={cam} />}
     </AbsoluteFill>
   );

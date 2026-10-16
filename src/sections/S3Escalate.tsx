@@ -119,7 +119,7 @@ const World: SectionDef['World'] = ({ frame, cam, light }) => {
   const snakeProps = { warmth, crack, headGlow, headScale, wound: { index: WOUND_SEG, amount: 0.8 } };
   return (
     <g>
-      <Ground frame={frame} cam={cam} light={light} wind={0.4} />
+      <Ground frame={frame} cam={cam} light={light} wind={lerp(1, 0.4, prog(frame, S.start, S.start + 24))} />
       <Snake id="s3u" segs={segs} layer="under" {...snakeProps} shadow={false} />
       <Saw id="s3saw" layer="body" glint={local} holeColor={light.ground} />
       {!teethOnTop && <Saw id="s3t0" layer="teeth" glint={local} flash={0.7 * impulse(frame, F_STRIKE, 6)} />}

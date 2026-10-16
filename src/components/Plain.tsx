@@ -6,19 +6,21 @@ import { mix, rgba, rnd } from '../lib/anim';
 export const HORIZON = 560;
 export const FLOOR = 800; // 人和马站立的地面
 
-export const Plain: React.FC<{ frame: number; light: Light; lineDraw?: number; lineColor?: string; stars?: number }> = ({
+export const Plain: React.FC<{ frame: number; light: Light; lineDraw?: number; lineColor?: string; stars?: number; dust?: number }> = ({
   frame,
   light,
   lineDraw = 1,
   lineColor,
   stars = 1,
+  dust = 0,
 }) => {
   const field = useMemo(() => {
     const st = Array.from({ length: 90 }, (_, i) => ({ x: -1200 + rnd(`px${i}`) * 4400, y: -500 + rnd(`py${i}`) * 980, r: 0.8 + rnd(`pr${i}`) * 1.8, ph: rnd(`pp${i}`) * 6.28 }));
     const grass = Array.from({ length: 160 }, (_, i) => ({ x: -1200 + i * 28 + rnd(`gx${i}`) * 20, h: 6 + rnd(`gh${i}`) * 16 }));
     const streaks = Array.from({ length: 34 }, (_, i) => ({ y: HORIZON + 30 + Math.pow(rnd(`sy${i}`), 1.6) * 700, x: -1200 + rnd(`sx${i}`) * 4400, w: 60 + rnd(`sw${i}`) * 260 }));
     const pebbles = Array.from({ length: 40 }, (_, i) => ({ x: -1200 + rnd(`bx${i}`) * 4400, y: HORIZON + 120 + rnd(`by${i}`) * 560, r: 3 + rnd(`br${i}`) * 7 }));
-    return { st, grass, streaks, pebbles };
+    const motes = Array.from({ length: 90 }, (_, i) => ({ x: rnd(`sdx${i}`) * 1920, ph: rnd(`sdp${i}`) * 9, sp: 0.8 + rnd(`sds${i}`) * 1.8, r: 1.6 + rnd(`sdr${i}`) * 2.4 }));
+    return { st, grass, streaks, pebbles, motes };
   }, []);
   const skyLow = mix(light.base, light.pool, 0.22);
   const farGround = mix(light.ground, light.base, 0.35);
@@ -49,6 +51,11 @@ export const Plain: React.FC<{ frame: number; light: Light; lineDraw?: number; l
       {field.pebbles.map((b, i) => (
         <ellipse key={i} cx={b.x} cy={b.y} rx={b.r * 1.6} ry={b.r} fill={mix(light.ground, light.grass, 0.6)} />
       ))}
+      {/* 漂浮的细尘 */}
+      {dust > 0.01 &&
+        field.motes.map((d, i) => (
+          <circle key={`m${i}`} cx={(d.x + frame * d.sp * 1.6) % 2200 - 140} cy={HORIZON + 160 - ((frame * 0.9 * d.sp + d.ph * 60) % 620)} r={d.r} fill={rgba('#E9D8C0', 0.32 * dust)} />
+        ))}
       {lineDraw > 0 && lineColor && (
         <line x1={-200} y1={HORIZON} x2={-200 + (1700 + 200) * lineDraw} y2={HORIZON} stroke={lineColor} strokeWidth={2.5} opacity={0.85} />
       )}

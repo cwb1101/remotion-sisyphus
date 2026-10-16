@@ -65,7 +65,7 @@ const World: SectionDef['World'] = ({ frame, light }) => {
 
   return (
     <g>
-      <Plain frame={frame} light={light} stars={0.5} />
+      <Plain frame={frame} light={light} stars={lerp(1, 0.5, ease.inOut(prog(frame, S.start, S.start + 40)))} />
       {/* 屏 40：天平——一枚小锯齿 vs 一整晚（月亮） */}
       {balO > 0.01 && (
         <Balance

@@ -64,7 +64,7 @@ const World: SectionDef['World'] = ({ frame, cam, light }) => {
   const sparkT = frame - F_SCRATCH;
   return (
     <g>
-      <Ground frame={frame} cam={cam} light={light} />
+      <Ground frame={frame} cam={cam} light={light} wind={lerp(0.6, 1, prog(frame, S.start, S.start + 24))} />
       <Saw id="s2saw" glint={tooth} flash={0.5 * impulse(frame, F_SCRATCH, 8)} holeColor={light.ground} />
       {ghostO > 0.01 && <Snake id="s2ghost" segs={crawl(ghostS(frame))} opacity={ghostO} shadow={false} />}
       <Snake id="s2" segs={segs} wound={wound} headGlow={0} />

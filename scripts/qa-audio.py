@@ -75,7 +75,7 @@ def silences(path, noise_db=-50, dur=0.3):
 
 def momentary(path):
     """ebur128 每 100ms 一个瞬时响度 M（400ms 窗）。"""
-    out = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', str(path), '-af', 'ebur128=framelog=verbose', '-f', 'null', '-'],
+    out = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-v', 'verbose', '-i', str(path), '-af', 'ebur128=framelog=verbose', '-f', 'null', '-'],
                          capture_output=True, text=True).stderr
     rows = re.findall(r't:\s*([\d.]+)\s+TARGET:.*?M:\s*(-?[\d.inf]+)', out)
     return [(float(t), float(m)) for t, m in rows if m not in ('-inf', 'inf')]
