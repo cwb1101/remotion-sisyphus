@@ -118,21 +118,25 @@ const RECIPES = {
   // 低频重击＋和弦（强）：重击之后接一个温暖的小调和弦慢慢散开
   impact: () => {
     const b = buf(3.2);
-    sweep(b, expGlide(95, 42, 0.18), (t) => decay(t, 0.012, 0.45));
-    sweep(b, expGlide(190, 84, 0.18), (t) => 0.3 * decay(t, 0.012, 0.25));
+    sweep(b, expGlide(95, 42, 0.18), (t) => 0.5 * decay(t, 0.012, 0.45));
+    sweep(b, expGlide(190, 84, 0.18), (t) => 0.2 * decay(t, 0.012, 0.25));
     [[110, 0.5], [130.81, 0.36], [164.81, 0.32], [220, 0.24], [329.63, 0.08]].forEach(([f, a]) => {
       sweep(b, () => f, (t) => a * decay(t, 0.03, 1.1));
       sweep(b, () => f * 1.003, (t) => a * 0.5 * decay(t, 0.03, 1.1));
     });
+    // 中频和弦层：让关键句在手机外放上也是全片最响的那一下（仍是柔和正弦，不刺耳）
+    [[261.63, 0.55], [329.63, 0.48], [440, 0.4], [523.25, 0.26], [659.25, 0.12]].forEach(([f, a]) => sweep(b, () => f, (t) => a * decay(t, 0.02, 1.4)));
     return b;
   },
   // 重低音击＋余震（强）：更长的重击，后面跟着 6Hz 颤动的低频余震
   boom: () => {
     const b = buf(3.6);
-    sweep(b, expGlide(85, 36, 0.25), (t) => decay(t, 0.012, 0.6));
-    sweep(b, expGlide(170, 72, 0.25), (t) => 0.34 * decay(t, 0.012, 0.32));
-    sweep(b, () => 55, (t) => 0.45 * decay(t, 0.15, 1.0) * (0.6 + 0.4 * Math.sin(TAU * 6 * t)) * (t > 0.15 ? 1 : t / 0.15));
+    sweep(b, expGlide(85, 36, 0.25), (t) => 0.5 * decay(t, 0.012, 0.6));
+    sweep(b, expGlide(170, 72, 0.25), (t) => 0.2 * decay(t, 0.012, 0.32));
+    sweep(b, () => 55, (t) => 0.3 * decay(t, 0.15, 1.0) * (0.6 + 0.4 * Math.sin(TAU * 6 * t)) * (t > 0.15 ? 1 : t / 0.15));
     [[73.42, 0.3], [110, 0.28], [146.83, 0.22], [174.61, 0.16], [220, 0.1]].forEach(([f, a]) => sweep(b, () => f, (t) => a * decay(t, 0.05, 1.3)));
+    // 中频和弦层（同上）
+    [[293.66, 0.42], [349.23, 0.36], [440, 0.3], [587.33, 0.18]].forEach(([f, a]) => sweep(b, () => f, (t) => a * decay(t, 0.02, 1.3)));
     return b;
   },
   // 倒放上扬滑音：音量渐强、音高上扬，像倒带
@@ -201,9 +205,9 @@ const RECIPES = {
   },
   // 上扬铺垫：音高上扬、音量渐强后自然收尾
   riser: () => {
-    const dur = 1.6;
+    const dur = 1.2;
     const b = buf(dur);
-    const env = (t) => Math.pow(Math.min(1, t / (dur * 0.8)), 1.8) * Math.min(1, (dur - t) / 0.25);
+    const env = (t) => Math.pow(Math.min(1, t / (dur * 0.85)), 2.6) * Math.min(1, (dur - t) / 0.2);
     sweep(b, expGlide(220, 660, dur), env);
     sweep(b, expGlide(330, 990, dur), (t) => 0.3 * env(t));
     return b;
@@ -417,8 +421,8 @@ for (const c of script.cues) {
     } else if (RECIPES[sfx.type]) sig = RECIPES[sfx.type]();
     else throw new Error(`第 ${c.id} 屏的音效类型「${sfx.type}」还没有配方`);
     place(EV, tag, sig, startSec, LEVEL_DB[sfx.level]);
-    if (sfx.level === 'strong') ducks.push({ at: startSec, depth: -7, hold: 1.4 });
-    if (sfx.level === 'mid') ducks.push({ at: startSec, depth: -2.5, hold: 0.4 });
+    if (sfx.level === 'strong') ducks.push({ at: startSec, depth: -4, hold: 1.4 });
+    if (sfx.level === 'mid') ducks.push({ at: startSec, depth: -5, hold: 0.8 });
     placed++;
   }
 }
