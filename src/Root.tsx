@@ -1,8 +1,9 @@
 import React from 'react';
-import { Composition } from 'remotion';
+import { Composition, Still } from 'remotion';
 import { SCRIPT } from './data/script';
 import { Film } from './Film';
 import { PersonRig } from './PersonRig';
+import { Cover, COVER } from './Cover';
 
 export const Root: React.FC = () => (
   <>
@@ -26,6 +27,8 @@ export const Root: React.FC = () => (
       height={SCRIPT.height}
       defaultProps={{ end: SCRIPT.cues[SCRIPT.cues.length - 1].end, audio: 'audio/full.wav' }}
     />
+    {/* 3:4 封面 */}
+    <Still id="Cover" component={Cover} width={COVER.width} height={COVER.height} />
     {/* 人物骨骼演示（不进正片） */}
     <Composition id="PersonRig" component={PersonRig} durationInFrames={240} fps={SCRIPT.fps} width={SCRIPT.width} height={SCRIPT.height} />
   </>
