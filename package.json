@@ -1,0 +1,30 @@
+{
+  "name": "remotion-sisyphus",
+  "private": true,
+  "version": "0.1.0",
+  "description": "野马效应 · 横屏知识短视频（Remotion，纯代码动画）",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "check:script": "node scripts/check-script.mjs",
+    "audio": "node scripts/synth-audio.mjs --end preview",
+    "render:preview": "remotion render src/index.ts Preview out/preview.mp4",
+    "render:textonly": "remotion render src/index.ts Preview out/qa/textonly.mp4 --muted --props={\"end\":1080,\"textOnly\":true}",
+    "render:rig": "remotion render src/index.ts PersonRig out/person-rig.mp4",
+    "build:preview": "npm run check:script && npm run audio && npm run render:preview",
+    "qa:audio": "node scripts/synth-audio.mjs --end preview --stems && python3 scripts/qa-audio.py out/preview.mp4 out/audio-qa",
+    "qa:frames": "npm run render:textonly && python3 scripts/qa-frames.py out/qa/textonly.mp4 out/preview.mp4 out/qa",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "^5.2.6",
+    "@remotion/cli": "^4.0.536",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.536"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "title": "野马效应",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "colors": {
+    "text": "#FFFFFF",
+    "warm": "#FF5A3C",
+    "cool": "#4FD1C5",
+    "_meaning": "warm = 失控 / 伤害 / 代价；cool = 事实 / 数字 / 冷静。全片只用这两种强调色。"
+  },
+  "sfxLevels": {
+    "weak": -24,
+    "mid": -16,
+    "strong": -8,
+    "_note": "每个音效自身的峰值目标（dBFS）。总线限幅上限 -6.5 dBFS。"
+  },
+  "previewEnd": 1080,
+  "sections": [
+    { "id": "S1", "name": "钩子", "start": 0, "end": 240 },
+    { "id": "S2", "name": "划伤", "start": 240, "end": 600 },
+    { "id": "S3", "name": "升级三连", "start": 600, "end": 1080 },
+    { "id": "S4", "name": "揭晓", "start": 1080, "end": 1530 },
+    { "id": "S5", "name": "命名·野马客串", "start": 1530, "end": 1890 },
+    { "id": "S6", "name": "人的版本", "start": 1890, "end": 2655 },
+    { "id": "S7", "name": "松手三步", "start": 2655, "end": 3405 },
+    { "id": "S8", "name": "收尾", "start": 3405, "end": 3780 }
+  ],
+  "beds": [
+    { "type": "padNight", "label": "夜色垫音", "level": "weak", "start": 0, "end": 250 },
+    { "type": "padDusk", "label": "黄昏垫音", "level": "weak", "start": 228, "end": 612 },
+    { "type": "crawlSand", "label": "爬行沙粒（滤波噪声）", "level": "weak", "start": 246, "end": 575 },
+    { "type": "padTense", "label": "紧张垫音", "level": "weak", "start": 588, "end": 1080 }
+  ],
+  "cues": [
+    {
+      "id": 1, "section": "S1", "shot": 1, "start": 0, "end": 90,
+      "text": "这把锯子，从头到尾一动没动",
+      "highlights": [{ "word": "一动没动", "color": "#4FD1C5" }],
+      "big": null,
+      "beats": { "glint": 34 },
+      "sfx": [{ "type": "ding", "label": "冷光轻叮", "level": "weak", "beat": "glint" }],
+      "counter": "show", "step": null, "person": null,
+      "note": "特写锯齿填满画面→拉远露出整把锯子和缠在上面的暗色蛇身"
+    },
+    {
+      "id": 2, "section": "S1", "shot": 1, "start": 90, "end": 165,
+      "text": "可那条蛇，没能离开",
+      "highlights": [{ "word": "没能离开", "color": "#FF5A3C" }],
+      "big": { "word": "没能离开", "color": "#FF5A3C" },
+      "beats": { "slam": 6 },
+      "sfx": [{ "type": "impact", "label": "低频重击＋和弦", "level": "strong", "beat": "slam" }],
+      "counter": "show", "step": null, "person": null,
+      "note": "蛇身节段碎成粒子向左上飘散，大字砸下，全屏冲击波"
+    },
+    {
+      "id": 3, "section": "S1", "shot": 2, "start": 165, "end": 240,
+      "text": "锯子没动，蛇是怎么死的？",
+      "highlights": [],
+      "big": null,
+      "beats": { "rewind": 4 },
+      "sfx": [{ "type": "reverseRise", "label": "倒放上扬滑音", "level": "weak", "beat": "rewind" }],
+      "counter": "show", "step": null, "person": null,
+      "note": "倒带：粒子倒飞到左侧聚成完整的蛇，镜头左移"
+    },
+    {
+      "id": 4, "section": "S2", "shot": 3, "start": 240, "end": 330,
+      "text": "那天，它像往常一样爬过草地",
+      "highlights": [],
+      "big": null, "beats": {},
+      "sfx": [],
+      "counter": null, "step": null, "person": null,
+      "note": "黄昏光，远景，蛇正弦爬行，草叶摆动（沙粒声为铺底 bed）"
+    },
+    {
+      "id": 5, "section": "S2", "shot": 3, "start": 330, "end": 405,
+      "text": "身子擦过锯齿，被划了一下",
+      "highlights": [],
+      "big": null,
+      "beats": { "scratch": 45 },
+      "sfx": [{ "type": "softTap", "label": "软嗒", "level": "weak", "beat": "scratch" }],
+      "counter": null, "step": null, "person": null,
+      "note": "蛇腹滑过齿尖，齿尖闪光，身上亮起一道短暖光痕"
+    },
+    {
+      "id": 6, "section": "S2", "shot": 4, "start": 405, "end": 465,
+      "text": "只是一道小口子",
+      "highlights": [{ "word": "一道小口子", "color": "#4FD1C5" }],
+      "big": null,
+      "beats": { "zoom": 0 },
+      "sfx": [{ "type": "hum", "label": "柔和短嗡", "level": "weak", "beat": "zoom" }],
+      "counter": null, "step": null, "person": null,
+      "note": "镜头猛推到伤口特写，伤口在满屏蛇鳞里只是一道细线"
+    },
+    {
+      "id": 7, "section": "S2", "shot": 5, "start": 465, "end": 540,
+      "text": "扭头走开，什么事都不会有",
+      "highlights": [],
+      "big": null, "beats": {},
+      "sfx": [],
+      "counter": null, "step": null, "person": null,
+      "note": "拉远；半透明“另一种可能”的蛇继续往右爬出画面"
+    },
+    {
+      "id": 8, "section": "S2", "shot": 5, "start": 540, "end": 600,
+      "text": "可它停了下来",
+      "highlights": [],
+      "big": null,
+      "beats": { "turn": 6 },
+      "sfx": [{ "type": "heartbeat", "label": "心跳低频", "level": "weak", "beat": "turn", "bpm": 56 }],
+      "counter": null, "step": null, "person": null,
+      "note": "真蛇停住，头慢慢转回对着锯子，伤口光一明一暗"
+    },
+    {
+      "id": 9, "section": "S3", "shot": 6, "start": 600, "end": 660,
+      "text": "它觉得，自己被挑衅了",
+      "highlights": [{ "word": "挑衅", "color": "#FF5A3C" }],
+      "big": null, "beats": { "rise": 0 },
+      "sfx": [{ "type": "heartbeat", "label": "心跳略快", "level": "weak", "beat": "rise", "bpm": 72 }],
+      "counter": "show", "step": null, "person": null,
+      "note": "光线转暖红，蛇头抬起，身体偏暖"
+    },
+    {
+      "id": 10, "section": "S3", "shot": 6, "start": 660, "end": 720,
+      "text": "第一步：回头，狠狠一口",
+      "highlights": [{ "word": "狠狠一口", "color": "#FF5A3C" }],
+      "big": null,
+      "beats": { "strike": 16 },
+      "sfx": [
+        { "type": "thump", "label": "低咚", "level": "mid", "beat": "strike" },
+        { "type": "downSlide", "label": "短下滑音", "level": "mid", "beat": "strike" }
+      ],
+      "counter": "show", "step": 1, "person": null,
+      "note": "蛇头扑向锯齿，冷色火花迸出，蛇头被弹回"
+    },
+    {
+      "id": 11, "section": "S3", "shot": 7, "start": 720, "end": 780,
+      "text": "锯齿扎进嘴里，更疼了",
+      "highlights": [{ "word": "更疼", "color": "#FF5A3C" }],
+      "big": null,
+      "beats": { "pain": 8 },
+      "sfx": [{ "type": "thump", "label": "低咚", "level": "mid", "beat": "pain" }],
+      "counter": "flash", "step": 1, "person": null,
+      "note": "头部暖光扩大脉动；锯子不动，计数器闪冷色"
+    },
+    {
+      "id": 12, "section": "S3", "shot": 8, "start": 780, "end": 865,
+      "text": "第二步：缠上去，想把它勒到认输",
+      "highlights": [],
+      "big": null, "beats": { "wrap": 4 },
+      "sfx": [{ "type": "longSlide", "label": "低频拉长滑音", "level": "mid", "beat": "wrap" }],
+      "counter": "show", "step": 2, "person": null,
+      "note": "蛇身螺旋缠上锯条"
+    },
+    {
+      "id": 13, "section": "S3", "shot": 8, "start": 865, "end": 930,
+      "text": "它越用力，锯齿嵌得越深",
+      "highlights": [{ "word": "嵌得越深", "color": "#FF5A3C" }],
+      "big": null, "beats": { "squeeze": 0 },
+      "sfx": [{ "type": "heartbeat", "label": "心跳加快", "level": "mid", "beat": "squeeze", "bpm": 104 }],
+      "counter": "show", "step": 2, "person": null,
+      "note": "螺旋收紧，锯齿变长刺出，暖色裂纹蔓延"
+    },
+    {
+      "id": 14, "section": "S3", "shot": 9, "start": 930, "end": 1005,
+      "text": "越深就越疼，越疼就越用力",
+      "highlights": [],
+      "big": null, "beats": { "loop": 0 },
+      "sfx": [{ "type": "loopScale", "label": "循环上行音阶", "level": "mid", "beat": "loop" }],
+      "counter": "show", "step": 2, "person": null,
+      "note": "暖色循环箭头绕着蛇和锯子越转越快"
+    },
+    {
+      "id": 15, "section": "S3", "shot": 9, "start": 1005, "end": 1080,
+      "text": "第三步：它再也松不开了",
+      "highlights": [{ "word": "松不开", "color": "#FF5A3C" }],
+      "big": { "word": "松不开", "color": "#FF5A3C" },
+      "beats": { "slam": 10 },
+      "sfx": [{ "type": "boom", "label": "重低音击＋余震", "level": "strong", "beat": "slam" }],
+      "counter": "show", "step": 3, "person": null,
+      "note": "最后一次收紧，整条蛇最暖，循环箭头骤停，大字砸下"
+    },
+
+    { "id": 16, "section": "S4", "shot": 10, "start": 1080, "end": 1155, "text": "锯子还在原地，0 cm", "highlights": [{ "word": "0 cm", "color": "#4FD1C5" }], "big": { "word": "0 cm", "color": "#4FD1C5" }, "beats": {}, "sfx": [{ "type": "cutToSilence", "label": "抽空＋软叮", "level": "weak" }], "counter": "flash", "step": null, "person": null, "note": "蛇身碎成粒子散去；计数器放大成大字" },
+    { "id": 17, "section": "S4", "shot": 11, "start": 1155, "end": 1245, "text": "伤它的力气，全是它自己的", "highlights": [{ "word": "全是它自己的", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "longBell", "label": "低频长钟", "level": "strong" }], "counter": null, "step": null, "person": null, "note": "天平：小锯齿 vs 暖色力量光球" },
+    { "id": 18, "section": "S4", "shot": 12, "start": 1245, "end": 1305, "text": "那道口子，本来不致命", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "softTap", "label": "软嗒", "level": "weak" }], "counter": null, "step": null, "person": null, "note": "回到伤口特写" },
+    { "id": 19, "section": "S4", "shot": 12, "start": 1305, "end": 1395, "text": "要命的，是后来那一口，和那一缠", "highlights": [{ "word": "一口", "color": "#FF5A3C" }, { "word": "一缠", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "thump", "label": "两下低咚", "level": "mid" }], "counter": null, "step": null, "person": null, "note": "扑咬与缠绕的轮廓残影" },
+    { "id": 20, "section": "S4", "shot": 13, "start": 1395, "end": 1455, "text": "当然，这只是一则寓言", "highlights": [{ "word": "寓言", "color": "#4FD1C5" }], "big": null, "beats": {}, "sfx": [{ "type": "downSlide", "label": "柔和下滑音", "level": "weak" }], "counter": null, "step": null, "person": null, "note": "场景收成卡片滑走" },
+    { "id": 21, "section": "S4", "shot": 13, "start": 1455, "end": 1527, "text": "可它讲的事，每天都在发生", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": null, "step": null, "person": null, "note": "卡片翻面，新地平线" },
+
+    { "id": 22, "section": "S5", "shot": 14, "start": 1527, "end": 1605, "text": "人们给这种结局起了个名字——", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "riser", "label": "上扬铺垫", "level": "mid" }], "counter": null, "step": null, "person": null, "note": "冷色细线画出地平线" },
+    { "id": 23, "section": "S5", "shot": 14, "start": 1605, "end": 1665, "text": "野马效应", "highlights": [{ "word": "野马效应", "color": "#FF5A3C" }], "big": { "word": "野马效应", "color": "#FF5A3C" }, "beats": {}, "sfx": [{ "type": "impact", "label": "低频重击＋和弦", "level": "strong" }], "counter": null, "step": null, "person": null, "note": "主题词砸下，地平线一震" },
+    { "id": 24, "section": "S5", "shot": 15, "start": 1665, "end": 1740, "text": "这个名字，来自另一则寓言：", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": null, "step": null, "person": null, "note": "锯齿形小三角（蝙蝠）飘入" },
+    { "id": 25, "section": "S5", "shot": 15, "start": 1740, "end": 1805, "text": "一只蝙蝠咬住野马的腿，", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "hoof", "label": "软嗒＋马蹄节奏", "level": "weak" }], "counter": null, "step": null, "person": null, "note": "野马客串开始（5 秒）" },
+    { "id": 26, "section": "S5", "shot": 16, "start": 1805, "end": 1890, "text": "野马暴怒狂奔，最后自己跑垮了", "highlights": [{ "word": "自己跑垮了", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "hoof", "label": "马蹄加快后骤停", "level": "mid" }], "counter": null, "step": null, "person": null, "note": "狂奔、跪倒、碎成粒子" },
+
+    { "id": 27, "section": "S6", "shot": 17, "start": 1890, "end": 1950, "text": "那你呢？", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "riser", "label": "粒子聚合上扬", "level": "weak" }], "counter": null, "step": null, "person": "粒子聚成人形，站定，抬头", "note": "" },
+    { "id": 28, "section": "S6", "shot": 17, "start": 1950, "end": 2040, "text": "有没有一把锯子，你也缠了很久？", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "footsteps", "label": "软脚步", "level": "weak" }], "counter": null, "step": null, "person": "走向刺块", "note": "刺块＝缩小的锯子" },
+    { "id": 29, "section": "S6", "shot": 18, "start": 2040, "end": 2115, "text": "一句难听的话，扎了你一下", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "softTap", "label": "软嗒", "level": "weak" }], "counter": null, "step": null, "person": "被刺块碰到，停步", "note": "" },
+    { "id": 30, "section": "S6", "shot": 18, "start": 2115, "end": 2188, "text": "你回了十句，气了一整晚", "highlights": [{ "word": "一整晚", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "thump", "label": "低咚", "level": "mid" }], "counter": "show", "step": null, "person": "转身，双手推刺块", "note": "" },
+    { "id": 31, "section": "S6", "shot": 19, "start": 2188, "end": 2265, "text": "功劳被人抢了，你记了一整年", "highlights": [{ "word": "一整年", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "thump", "label": "低咚", "level": "mid" }], "counter": "show", "step": null, "person": "肩膀顶刺块", "note": "12 颗月份圆点变暖" },
+    { "id": 32, "section": "S6", "shot": 20, "start": 2265, "end": 2355, "text": "消息没回，你翻来覆去想了一夜", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "heartbeat", "label": "心跳", "level": "weak" }], "counter": "show", "step": null, "person": "刺块前来回踱步", "note": "月牙升起" },
+    { "id": 33, "section": "S6", "shot": 21, "start": 2355, "end": 2415, "text": "那把锯子，一动没动", "highlights": [{ "word": "一动没动", "color": "#4FD1C5" }], "big": null, "beats": {}, "sfx": [{ "type": "ding", "label": "抽空＋冷光叮", "level": "mid" }], "counter": "flash", "step": null, "person": "定格在回头", "note": "" },
+    { "id": 34, "section": "S6", "shot": 22, "start": 2415, "end": 2505, "text": "后来的裂痕，是你自己推出来的", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "heartbeat", "label": "心跳", "level": "mid" }], "counter": null, "step": null, "person": "双手抵刺块，微颤", "note": "" },
+    { "id": 35, "section": "S6", "shot": 22, "start": 2505, "end": 2580, "text": "你越用力，它就扎得越深", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "loopScale", "label": "循环音阶回声", "level": "mid" }], "counter": null, "step": null, "person": "继续推，推不动", "note": "蛇缠剪影叠影" },
+    { "id": 36, "section": "S6", "shot": 23, "start": 2580, "end": 2655, "text": "其实，你可以不缠上去", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "cutToSilence", "label": "全部淡出", "level": "weak" }], "counter": null, "step": null, "person": "动作放慢", "note": "" },
+
+    { "id": 37, "section": "S7", "shot": 24, "start": 2655, "end": 2730, "text": "第一步：停，先别回咬", "highlights": [{ "word": "停", "color": "#4FD1C5" }], "big": { "word": "停", "color": "#4FD1C5" }, "beats": {}, "sfx": [{ "type": "bell", "label": "柔和短钟", "level": "mid" }], "counter": null, "step": 1, "person": "停止用力", "note": "" },
+    { "id": 38, "section": "S7", "shot": 24, "start": 2730, "end": 2820, "text": "深吸一口气，让第一口火过去", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "breathPad", "label": "呼吸垫音", "level": "weak" }], "counter": null, "step": 1, "person": "深呼吸", "note": "" },
+    { "id": 39, "section": "S7", "shot": 25, "start": 2820, "end": 2895, "text": "第二步：看，它真的在动吗？", "highlights": [{ "word": "看", "color": "#4FD1C5" }], "big": { "word": "看", "color": "#4FD1C5" }, "beats": {}, "sfx": [{ "type": "bell", "label": "柔和短钟", "level": "mid" }], "counter": "show", "step": 2, "person": "抬头看刺块", "note": "" },
+    { "id": 40, "section": "S7", "shot": 25, "start": 2895, "end": 2985, "text": "这件事，值不值得你搭上一整晚？", "highlights": [{ "word": "一整晚", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "thump", "label": "低沉软击", "level": "weak" }], "counter": null, "step": 2, "person": "歪头打量天平", "note": "" },
+    { "id": 41, "section": "S7", "shot": 26, "start": 2985, "end": 3045, "text": "第三步：松开，绕过去", "highlights": [{ "word": "松开", "color": "#4FD1C5" }], "big": null, "beats": {}, "sfx": [{ "type": "bell", "label": "柔和短钟", "level": "mid" }], "counter": null, "step": 3, "person": "松手后退", "note": "" },
+    { "id": 42, "section": "S7", "shot": 26, "start": 3045, "end": 3120, "text": "松开，不是认输", "highlights": [{ "word": "松开", "color": "#4FD1C5" }], "big": { "word": "松开", "color": "#4FD1C5" }, "beats": {}, "sfx": [{ "type": "longBell", "label": "长钟＋温暖和弦", "level": "strong" }], "counter": null, "step": 3, "person": "站直，描边转冷色", "note": "" },
+    { "id": 43, "section": "S7", "shot": 27, "start": 3120, "end": 3195, "text": "是你决定，不再陪它耗下去", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "footsteps", "label": "软脚步", "level": "weak" }], "counter": null, "step": null, "person": "转身绕过刺块", "note": "" },
+    { "id": 44, "section": "S7", "shot": 27, "start": 3195, "end": 3270, "text": "该讲的理，等火过去再讲", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": null, "step": null, "person": "边走边回头看一眼", "note": "补充屏：松手≠吞下不公" },
+    { "id": 45, "section": "S7", "shot": 28, "start": 3270, "end": 3328, "text": "锯子不会追你", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": "show", "step": null, "person": "往右走远", "note": "" },
+    { "id": 46, "section": "S7", "shot": 28, "start": 3328, "end": 3405, "text": "跟着你的，是那口还没消的气", "highlights": [], "big": null, "beats": {}, "sfx": [{ "type": "riser", "label": "上扬泛音", "level": "weak" }], "counter": null, "step": null, "person": "呼气，脚步变轻", "note": "" },
+
+    { "id": 47, "section": "S8", "shot": 29, "start": 3405, "end": 3480, "text": "那条蛇，到最后都没想明白：", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": null, "step": null, "person": null, "note": "回到夜色锯条" },
+    { "id": 48, "section": "S8", "shot": 29, "start": 3480, "end": 3570, "text": "害它的不是锯子，是它不肯松开", "highlights": [{ "word": "不肯松开", "color": "#FF5A3C" }], "big": null, "beats": {}, "sfx": [{ "type": "longBell", "label": "低频长钟", "level": "strong" }], "counter": null, "step": null, "person": null, "note": "" },
+    { "id": 49, "section": "S8", "shot": 30, "start": 3570, "end": 3645, "text": "你不必赢过它，松手就好", "highlights": [{ "word": "松手", "color": "#4FD1C5" }], "big": null, "beats": {}, "sfx": [{ "type": "chord", "label": "温和和弦", "level": "mid" }], "counter": null, "step": null, "person": "走进来，停下，抬头", "note": "" },
+    { "id": 50, "section": "S8", "shot": 31, "start": 3645, "end": 3705, "text": "锯子还在原地，0 cm", "highlights": [{ "word": "0 cm", "color": "#4FD1C5" }], "big": null, "beats": {}, "sfx": [{ "type": "ding", "label": "冷光叮", "level": "weak" }], "counter": "flash", "step": null, "person": "经过锯条继续走", "note": "" },
+    { "id": 51, "section": "S8", "shot": 31, "start": 3705, "end": 3780, "text": "这一次，走开的是你", "highlights": [], "big": null, "beats": {}, "sfx": [], "counter": null, "step": null, "person": "走出画面", "note": "渐黑" }
+  ]
+}
