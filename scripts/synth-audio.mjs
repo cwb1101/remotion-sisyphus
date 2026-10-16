@@ -6,10 +6,12 @@
 //   --stems  另外导出每个音效的单轨（out/audio-qa/），用于放大检查噪声
 //
 // 规则（全片硬性规范）：
-//   · 三档峰值：弱 -24 dBFS、中 -16 dBFS、强 -8 dBFS（每个音效各自归一到所属档位）
-//   · 噪声类音效先过 4 阶 100Hz 高通 + 4 阶低通（≤6kHz）再压低电平，不整段铺白噪声
+//   · 点缀音效三档峰值：弱 -24 dBFS、中 -16 dBFS、强 -8 dBFS（每个音效各自归一到所属档位）
+//   · 铺底垫音连续不断（各段交叉淡化，不留意外静音），电平按全片响度目标（约 -20 LUFS，BS.1770）自动校准，
+//     并在“中”“强”音效和“抽空”处自动压低，保证关键句最响
+//   · 噪声类音效先过 8 阶高通（130Hz）+ 8 阶低通（≤3.5kHz）再压低电平，不整段铺白噪声
 //   · 每个音效首尾强制 ≥15ms 淡入淡出；总线前瞻限幅，上限 -6.5 dBFS，不削波
-//   · 没有音效的地方是数字静音（全 0），不加抖动噪声
+//   · 不加抖动噪声
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const script = JSON.parse(readFileSync(new URL('../src/data/script.json', import.meta.url)));
@@ -22,6 +24,8 @@ const STEMS = args.includes('--stems');
 const LEN = Math.round((END_FRAME / FPS) * SR);
 const CEIL = Math.pow(10, -6.5 / 20);
 const LEVEL_DB = { weak: script.sfxLevels.weak, mid: script.sfxLevels.mid, strong: script.sfxLevels.strong };
+const TARGET_LUFS = -20.5; // 约 -20 LUFS，略偏小
+const BED_MAX_PEAK_DB = -9.5; // 铺底再响也不超过这个峰值，给关键句留出余量
 
 // ———————————————————— 基础工具 ————————————————————
 const TAU = Math.PI * 2;
@@ -174,6 +178,54 @@ const RECIPES = {
     sweep(b, expGlide(300, 144, 1.8), (t) => 0.18 * env(t));
     return b;
   },
+
+  // 低频长钟（强）：FM 钟声，基频低、衰减长，叠一个温暖和弦，不尖
+  longBell: () => {
+    const dur = 4.2;
+    const b = buf(dur);
+    const fm = (fc, ratio, index, amp, tau) => {
+      let ph = 0;
+      let pm = 0;
+      for (let i = 0; i < b.length; i++) {
+        const t = i / SR;
+        const env = decay(t, 0.018, tau);
+        b[i] += amp * env * Math.sin(ph + index * env * Math.sin(pm));
+        ph += (TAU * fc) / SR;
+        pm += (TAU * fc * ratio) / SR;
+      }
+    };
+    fm(196, 1.4, 1.2, 1, 1.4);
+    fm(98, 2, 0.6, 0.7, 1.8);
+    [[146.83, 0.35], [220, 0.3], [293.66, 0.18]].forEach(([f, a]) => sweep(b, () => f, (t) => a * decay(t, 0.12, 1.6)));
+    return b;
+  },
+  // 上扬铺垫：音高上扬、音量渐强后自然收尾
+  riser: () => {
+    const dur = 1.6;
+    const b = buf(dur);
+    const env = (t) => Math.pow(Math.min(1, t / (dur * 0.8)), 1.8) * Math.min(1, (dur - t) / 0.25);
+    sweep(b, expGlide(220, 660, dur), env);
+    sweep(b, expGlide(330, 990, dur), (t) => 0.3 * env(t));
+    return b;
+  },
+  // 柔和短钟（中）
+  bell: () => {
+    const b = buf(2.0);
+    [[523.25, 1], [784, 0.35], [1046.5, 0.12]].forEach(([f, a], k) => sweep(b, () => f, (t) => a * decay(t, 0.012, 0.55 / (k + 1))));
+    sweep(b, () => 261.63, (t) => 0.4 * decay(t, 0.02, 0.6));
+    return b;
+  },
+  // 温和和弦（中）
+  chord: () => {
+    const dur = 2.6;
+    const b = buf(dur);
+    const env = (t) => Math.min(1, t / 0.12) * Math.exp(-t / 1.1);
+    [[196, 1], [246.94, 0.8], [293.66, 0.7], [392, 0.35]].forEach(([f, a]) => {
+      sweep(b, () => f, (t) => a * env(t));
+      sweep(b, () => f * 1.002, (t) => a * 0.5 * env(t));
+    });
+    return b;
+  },
 };
 
 /** 心跳：按 bpm 一直跳到这一屏结束；每拍“咚-咚”两下 */
@@ -214,11 +266,58 @@ const loopScale = (durSec) => {
   return b;
 };
 
+
+/** 马蹄：三连一组的软低音点，越跑越快；durSec 后骤停 */
+const hoof = (durSec, accel = true) => {
+  const b = buf(durSec + 0.6);
+  let t0 = 0;
+  let k = 0;
+  while (t0 < durSec - 0.05) {
+    const s0 = Math.round(t0 * SR);
+    const one = buf(0.4);
+    sweep(one, expGlide(180, 90, 0.05), (t) => (k % 3 === 0 ? 1 : 0.7) * decay(t, 0.008, 0.06));
+    sweep(one, expGlide(420, 260, 0.05), (t) => 0.25 * decay(t, 0.008, 0.03));
+    edgeFade(one, 0.008, 0.12);
+    for (let i = 0; i < one.length && s0 + i < b.length; i++) b[s0 + i] += one[i];
+    const gap = k % 3 === 2 ? 0.2 : 0.09;
+    t0 += accel ? gap * Math.max(0.55, 1 - t0 / (durSec * 1.6)) : gap;
+    k++;
+  }
+  return b;
+};
+
+/** 软脚步：跟走路节奏（约每 0.29 秒一步）的轻木质点音 */
+const footsteps = (durSec, step = 0.29) => {
+  const b = buf(durSec + 0.5);
+  for (let t0 = 0, k = 0; t0 < durSec - 0.05; t0 += step, k++) {
+    const s0 = Math.round(t0 * SR);
+    const one = buf(0.3);
+    const a = k % 2 ? 0.8 : 1;
+    sweep(one, expGlide(300, 190, 0.04), (t) => a * decay(t, 0.008, 0.045));
+    sweep(one, () => 760, (t) => a * 0.18 * decay(t, 0.008, 0.02));
+    edgeFade(one, 0.008, 0.1);
+    for (let i = 0; i < one.length && s0 + i < b.length; i++) b[s0 + i] += one[i];
+  }
+  return b;
+};
+
+/** 呼吸垫音：两次缓慢的吸—呼起伏 */
+const breathPad = (durSec) => {
+  const b = buf(durSec);
+  [[174.61, 1], [261.63, 0.6], [349.23, 0.25]].forEach(([f, a]) =>
+    sweep(b, () => f, (t) => a * (0.5 - 0.5 * Math.cos((t / 1.5) * TAU)) * Math.min(1, (durSec - t) / 0.4)),
+  );
+  return b;
+};
+
 /** 垫音：几个正弦组成的和弦，左右声道略微失谐，振幅缓慢起伏 */
 const PADS = {
   padNight: [[110, 1], [164.81, 0.7], [220, 0.5], [261.63, 0.32]],
   padDusk: [[87.31, 0.9], [130.81, 0.8], [220, 0.5], [329.63, 0.22]],
   padTense: [[73.42, 1], [110, 0.8], [146.83, 0.55], [174.61, 0.4], [311.13, 0.07]],
+  padPlain: [[98, 0.9], [146.83, 0.8], [196, 0.5], [293.66, 0.3], [440, 0.1]],
+  padCool: [[82.41, 0.9], [123.47, 0.8], [164.81, 0.5], [246.94, 0.3]],
+  padCalm: [[110, 0.8], [164.81, 0.8], [220, 0.5], [277.18, 0.35], [329.63, 0.15]],
 };
 const pad = (type, durSec, fadeIn, fadeOut) => {
   const L = buf(durSec);
@@ -262,27 +361,27 @@ const crawlSand = (durSec, startFrame) => {
 };
 
 // ———————————————————— 按时间轴混音 ————————————————————
-const L = new Float32Array(LEN);
-const R = new Float32Array(LEN);
+// 两条总线：点缀音效（EV，按三档峰值）+ 铺底垫音（BED，先统一到 0dBFS 参考峰值，最后整体校准响度）
+const EV = [new Float32Array(LEN), new Float32Array(LEN)];
+const BED = [new Float32Array(LEN), new Float32Array(LEN)];
 const stems = [];
+const ducks = []; // 铺底压低：{ at, depth(dB), hold(秒) }
 
-const place = (name, monoOrStereo, startSec, levelDb, pan = 0) => {
+const place = (bus, name, monoOrStereo, startSec, levelDb) => {
   const [a, b] = Array.isArray(monoOrStereo) ? monoOrStereo : [monoOrStereo, monoOrStereo];
   edgeFade(a, 0.015, 0.02);
   if (b !== a) edgeFade(b, 0.015, 0.02);
   const pk = Math.max(peakOf(a), peakOf(b));
   if (pk === 0) return;
   const g = dbToLin(levelDb) / pk;
-  const gl = g * Math.cos(((pan + 1) * Math.PI) / 4) * Math.SQRT2;
-  const gr = g * Math.sin(((pan + 1) * Math.PI) / 4) * Math.SQRT2;
   const s0 = Math.round(startSec * SR);
   for (let i = 0; i < a.length; i++) {
     const n = s0 + i;
     if (n < 0 || n >= LEN) continue;
-    L[n] += a[i] * gl;
-    R[n] += b[i] * gr;
+    bus[0][n] += a[i] * g;
+    bus[1][n] += b[i] * g;
   }
-  if (STEMS) stems.push({ name, a, b, g, s0 });
+  if (STEMS) stems.push({ name, a, b, g, s0, bus: bus === BED ? 'bed' : 'ev' });
 };
 
 let placed = 0;
@@ -290,9 +389,8 @@ for (const bed of script.beds) {
   if (bed.start >= END_FRAME) continue;
   const dur = (bed.end - bed.start) / FPS;
   const s = bed.start / FPS;
-  const level = LEVEL_DB[bed.level];
-  if (bed.type === 'crawlSand') place(bed.type, crawlSand(dur, bed.start), s, level);
-  else if (PADS[bed.type]) place(bed.type, pad(bed.type, dur, bed.start === 0 ? 1.2 : 0.45, 0.45), s, level);
+  if (bed.type === 'crawlSand') place(EV, bed.type, crawlSand(dur, bed.start), s, LEVEL_DB[bed.level]);
+  else if (PADS[bed.type]) place(BED, `${bed.type}_${bed.start}`, pad(bed.type, dur, bed.start === 0 ? 1.2 : 0.45, 0.45), s, 0);
   else throw new Error(`未知铺底类型 ${bed.type}`);
   placed++;
 }
@@ -302,18 +400,107 @@ for (const c of script.cues) {
     const at = c.start + (sfx.beat ? c.beats[sfx.beat] : 0);
     if (at >= END_FRAME) continue;
     const startSec = at / FPS;
-    const restSec = (c.end - at) / FPS;
+    const restSec = (sfx.dur ?? c.end - at) / FPS;
+    const tag = `${String(c.id).padStart(2, '0')}_${sfx.type}`;
     let sig;
     if (sfx.type === 'heartbeat') sig = heartbeat(restSec, sfx.bpm ?? 70);
     else if (sfx.type === 'loopScale') sig = loopScale(restSec);
-    else if (RECIPES[sfx.type]) sig = RECIPES[sfx.type]();
+    else if (sfx.type === 'hoof') sig = hoof(restSec);
+    else if (sfx.type === 'footsteps') sig = footsteps(restSec);
+    else if (sfx.type === 'breathPad') sig = breathPad(restSec);
+    else if (sfx.type === 'cutToSilence') {
+      // “抽空”：铺底压低 14dB 约一秒（不是静音），中间一声软叮
+      ducks.push({ at: startSec, depth: -14, hold: 0.75 });
+      place(EV, `${tag}_ding`, RECIPES.ding(), startSec + 0.3, LEVEL_DB[sfx.level]);
+      placed++;
+      continue;
+    } else if (RECIPES[sfx.type]) sig = RECIPES[sfx.type]();
     else throw new Error(`第 ${c.id} 屏的音效类型「${sfx.type}」还没有配方`);
-    place(`${String(c.id).padStart(2, '0')}_${sfx.type}`, sig, startSec, LEVEL_DB[sfx.level]);
+    place(EV, tag, sig, startSec, LEVEL_DB[sfx.level]);
+    if (sfx.level === 'strong') ducks.push({ at: startSec, depth: -7, hold: 1.4 });
+    if (sfx.level === 'mid') ducks.push({ at: startSec, depth: -2.5, hold: 0.4 });
     placed++;
   }
 }
 
-// 预览结尾随画面一起淡出到数字静音
+// 铺底压低包络（dB）：提前 50ms 压下，保持，再用 0.6s 回来
+const duckDb = new Float32Array(LEN);
+for (const d of ducks) {
+  const a0 = Math.round((d.at - 0.05) * SR);
+  const a1 = Math.round(d.at * SR);
+  const h1 = Math.round((d.at + d.hold) * SR);
+  const r1 = Math.round((d.at + d.hold + 0.6) * SR);
+  for (let n = Math.max(0, a0); n < Math.min(LEN, r1); n++) {
+    let k = 1;
+    if (n < a1) k = (n - a0) / (a1 - a0);
+    else if (n > h1) k = 1 - (n - h1) / (r1 - h1);
+    duckDb[n] = Math.min(duckDb[n], d.depth * (0.5 - 0.5 * Math.cos(Math.PI * k)));
+  }
+}
+for (let n = 0; n < LEN; n++) {
+  const g = dbToLin(duckDb[n]);
+  BED[0][n] *= g;
+  BED[1][n] *= g;
+}
+
+// ———————————————————— 响度（ITU-R BS.1770 / EBU R128 积分响度） ————————————————————
+const kFilter = (x) => {
+  const y = new Float32Array(x.length);
+  const st = (b0, b1, b2, a1, a2, src, dst) => {
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < src.length; i++) {
+      const v = b0 * src[i] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+      x2 = x1; x1 = src[i]; y2 = y1; y1 = v;
+      dst[i] = v;
+    }
+  };
+  st(1.53512485958697, -2.69169618940638, 1.19839281085285, -1.69065929318241, 0.73248077421585, x, y);
+  st(1.0, -2.0, 1.0, -1.99004745483398, 0.99007225036621, y, y);
+  return y;
+};
+const integratedLufs = (L, R) => {
+  const kl = kFilter(L);
+  const kr = kFilter(R);
+  const blk = Math.round(0.4 * SR);
+  const hop = Math.round(0.1 * SR);
+  const zs = [];
+  for (let s = 0; s + blk <= L.length; s += hop) {
+    let a = 0, b = 0;
+    for (let i = s; i < s + blk; i++) { a += kl[i] * kl[i]; b += kr[i] * kr[i]; }
+    zs.push((a + b) / blk);
+  }
+  const lk = (z) => -0.691 + 10 * Math.log10(z);
+  const abs = zs.filter((z) => lk(z) > -70);
+  if (!abs.length) return -Infinity;
+  const rel = lk(abs.reduce((p, z) => p + z, 0) / abs.length) - 10;
+  const gated = abs.filter((z) => lk(z) > rel);
+  return lk(gated.reduce((p, z) => p + z, 0) / gated.length);
+};
+
+// 铺底整体增益：二分查找，让全片积分响度落到目标附近（铺底峰值不超过 BED_MAX_PEAK_DB）
+const bedPeak = Math.max(peakOf(BED[0]), peakOf(BED[1]));
+const mixWith = (gDb) => {
+  const g = dbToLin(gDb);
+  return [0, 1].map((ch) => {
+    const out = new Float32Array(LEN);
+    for (let n = 0; n < LEN; n++) out[n] = EV[ch][n] + BED[ch][n] * g;
+    return out;
+  });
+};
+const gMax = BED_MAX_PEAK_DB - 20 * Math.log10(bedPeak || 1);
+let lo = gMax - 30;
+let hi = gMax;
+for (let it = 0; it < 18; it++) {
+  const mid = (lo + hi) / 2;
+  const [l, r] = mixWith(mid);
+  if (integratedLufs(l, r) < TARGET_LUFS) lo = mid;
+  else hi = mid;
+}
+const bedGainDb = (lo + hi) / 2;
+const [L, R] = mixWith(bedGainDb);
+const preLufs = integratedLufs(L, R);
+
+// 片尾随画面一起淡出
 const tailN = Math.round(0.45 * SR);
 for (let i = 0; i < tailN; i++) {
   const g = 0.5 - 0.5 * Math.cos((Math.PI * i) / tailN);
@@ -329,15 +516,15 @@ for (let i = 0; i < LEN; i++) {
   const p = Math.max(Math.abs(L[i]), Math.abs(R[i]));
   need[i] = p > CEIL ? CEIL / p : 1;
 }
-// 前瞻窗口内取最小增益（单调队列）
 const gmin = new Float32Array(LEN);
 {
   const dq = [];
+  let head = 0;
   for (let i = LEN - 1; i >= 0; i--) {
-    while (dq.length && need[dq[dq.length - 1]] >= need[i]) dq.pop();
+    while (dq.length > head && need[dq[dq.length - 1]] >= need[i]) dq.pop();
     dq.push(i);
-    while (dq[0] > i + LOOK) dq.shift();
-    gmin[i] = need[dq[0]];
+    while (dq[head] > i + LOOK) head++;
+    gmin[i] = need[dq[head]];
   }
 }
 let g = 1;
@@ -381,19 +568,19 @@ const writeWav = (path, chans) => {
 
 mkdirSync(new URL('../public/audio/', import.meta.url), { recursive: true });
 const name = endArg === 'preview' ? 'preview' : endArg === 'full' ? 'full' : `upto_${END_FRAME}`;
-const outPath = new URL(`../public/audio/${name}.wav`, import.meta.url);
-const clipped = writeWav(outPath, [L, R]);
+const clipped = writeWav(new URL(`../public/audio/${name}.wav`, import.meta.url), [L, R]);
 const peak = Math.max(peakOf(L), peakOf(R));
 console.log(`写入 public/audio/${name}.wav：${(LEN / SR).toFixed(2)}s，${placed} 个音效/铺底`);
+console.log(`铺底增益 ${bedGainDb.toFixed(1)} dB（铺底峰值 ${(20 * Math.log10(bedPeak) + bedGainDb).toFixed(1)} dBFS），积分响度 ${preLufs.toFixed(1)} LUFS`);
 console.log(`总线峰值 ${(20 * Math.log10(peak)).toFixed(2)} dBFS，限幅器动作 ${(limited / SR).toFixed(3)}s，削波样本 ${clipped}`);
 
 if (STEMS) {
   const dir = new URL('../out/audio-qa/', import.meta.url);
   mkdirSync(dir, { recursive: true });
+  const gb = dbToLin(bedGainDb);
   for (const s of stems) {
-    const a = Float32Array.from(s.a, (x) => x * s.g);
-    const b = Float32Array.from(s.b, (x) => x * s.g);
-    writeWav(new URL(`stem_${s.name}.wav`, dir), [a, b]);
+    const k = s.g * (s.bus === 'bed' ? gb : 1);
+    writeWav(new URL(`stem_${s.name}.wav`, dir), [Float32Array.from(s.a, (x) => x * k), Float32Array.from(s.b, (x) => x * k)]);
   }
   console.log(`单轨 ${stems.length} 条已导出到 out/audio-qa/`);
 }

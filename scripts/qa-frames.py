@@ -7,7 +7,8 @@
    · 每屏完全显示时，高亮颜色是否和字幕稿一致（暖色/冷色出现与否），有没有第三种颜色
 2) 从成片每 2 秒抽一帧，拼成联系表，供人工检查遮挡、穿模和裁切。
 
-用法：python3 scripts/qa-frames.py out/qa/textonly.mp4 out/preview.mp4 out/qa
+   并检查右上角水印每一帧都在、位置固定。
+用法：python3 scripts/qa-frames.py out/qa/textonly_film.mp4 out/film.mp4 out/qa/film
 """
 import json
 import subprocess
@@ -107,17 +108,38 @@ def main():
         if int(other.sum()) > 400:
             issues.append({'frame': f, 'issue': '出现第三种强调色', 'n': int(other.sum())})
 
-    # 联系表：每 2 秒一帧
-    sheet = out / 'contact_every2s.png'
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(film), '-vf', 'fps=1/2,scale=480:-1,tile=3x6', '-frames:v', '1', str(sheet)], check=True)
-    for i, t in enumerate(range(0, int(script['previewEnd'] / FPS), 2)):
-        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', str(t + 0.5), '-i', str(film), '-frames:v', '1', str(out / f'full_{t:02d}s.png')], check=True)
+    # 联系表：每 2 秒一帧（每张 4×4），同时检查水印：每一帧右上角都要有，位置不动
+    total = script['cues'][-1]['end'] if 'film' in film.name else script['previewEnd']
+    secs = list(range(0, int(total / FPS), 2))
+    wm_boxes = []
+    for t in secs:
+        png = out / f'full_{t:03d}s.png'
+        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', str(t + 0.5), '-i', str(film), '-frames:v', '1', str(png)], check=True)
+        raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(png), '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True, check=True).stdout
+        img = np.frombuffer(raw, np.uint8).reshape(H, W, 3).astype(np.int32)
+        region = img[0:110, 1560:, :]
+        lum = (region[..., 0] * 299 + region[..., 1] * 587 + region[..., 2] * 114) // 1000
+        bg = np.median(lum)
+        ys, xs = np.where(lum > bg + 35)
+        if len(xs) < 150:
+            issues.append({'second': t + 0.5, 'issue': '右上角水印缺失或太淡', 'px': int(len(xs))})
+        else:
+            wm_boxes.append((int(xs.min()) + 1560, int(ys.min()), int(xs.max()) + 1560, int(ys.max())))
+    if wm_boxes:
+        arr = np.array(wm_boxes)
+        spread = (arr.max(axis=0) - arr.min(axis=0)).tolist()
+        if max(spread) > 6:
+            issues.append({'issue': '水印位置不固定', 'spread_px': spread})
+    sheet = out / 'contact_%02d.png'
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-framerate', '1', '-pattern_type', 'glob', '-i', str(out / 'full_*s.png'),
+                    '-vf', 'scale=480:-1,tile=4x4', str(sheet)], check=True)
 
     by_type = {}
     for i in issues:
         by_type[i['issue']] = by_type.get(i['issue'], 0) + 1
     (out / 'frame_issues.json').write_text(json.dumps(issues, ensure_ascii=False, indent=1))
-    print(json.dumps({'frames_checked': checked, 'issue_count': len(issues), 'by_type': by_type, 'first_issues': issues[:20], 'contact_sheet': str(sheet)}, ensure_ascii=False, indent=2))
+    print(json.dumps({'frames_checked': checked, 'issue_count': len(issues), 'by_type': by_type, 'first_issues': issues[:20],
+                      'watermark_box': list(wm_boxes[0]) if wm_boxes else None, 'contact_sheets': str(sheet), 'stills_every_2s': len(secs)}, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':

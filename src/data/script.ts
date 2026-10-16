@@ -2,7 +2,7 @@ import raw from './script.json';
 
 export type Level = 'weak' | 'mid' | 'strong';
 export type Highlight = { word: string; color: string };
-export type Sfx = { type: string; label: string; level: Level; beat?: string; bpm?: number };
+export type Sfx = { type: string; label: string; level: Level; beat?: string; bpm?: number; dur?: number };
 export type Cue = {
   id: number;
   section: string;

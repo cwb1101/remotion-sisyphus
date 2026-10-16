@@ -16,6 +16,16 @@ export const Root: React.FC = () => (
       height={SCRIPT.height}
       defaultProps={{ end: SCRIPT.previewEnd, audio: 'audio/preview.wav' }}
     />
+    {/* 完整片：屏 1–51，0–126 秒 */}
+    <Composition
+      id="Film"
+      component={Film}
+      durationInFrames={SCRIPT.cues[SCRIPT.cues.length - 1].end}
+      fps={SCRIPT.fps}
+      width={SCRIPT.width}
+      height={SCRIPT.height}
+      defaultProps={{ end: SCRIPT.cues[SCRIPT.cues.length - 1].end, audio: 'audio/full.wav' }}
+    />
     {/* 人物骨骼演示（不进正片） */}
     <Composition id="PersonRig" component={PersonRig} durationInFrames={240} fps={SCRIPT.fps} width={SCRIPT.width} height={SCRIPT.height} />
   </>

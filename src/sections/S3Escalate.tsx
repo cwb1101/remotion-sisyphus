@@ -63,7 +63,8 @@ const camera = (f: number) => {
   return { ...c, x: c.x + s.x, y: c.y + s.y };
 };
 
-const World: SectionDef['World'] = ({ frame, cam, light }) => {
+/** S3 每一帧的蛇与锯子状态（S4 从 S3 最后一帧的状态接着演）。 */
+export const s3State = (frame: number) => {
   const base = restPose();
   const coilP = prog(frame, F_WRAP, C12.end - 8);
   const period = (30 * 60) / BPM13;
@@ -99,6 +100,11 @@ const World: SectionDef['World'] = ({ frame, cam, light }) => {
   const headScale = 1 + 0.28 * ease.inOut(prog(frame, S.start, S.start + 30)) * (1 - coilP);
   const pain = frame >= F_PAIN ? 0.55 + 0.35 * Math.sin((frame - F_PAIN) * 0.35) : 0;
   const headGlow = Math.max(0.6 * impulse(frame, F_STRIKE, 10), pain * (1 - coilP * 0.4));
+  return { segs, coilP, warmth, crack, toothGrow, teethWarm, headScale, headGlow };
+};
+
+const World: SectionDef['World'] = ({ frame, cam, light }) => {
+  const { segs, coilP, warmth, crack, toothGrow, teethWarm, headScale, headGlow } = s3State(frame);
   const teethOnTop = coilP > 0.3;
   const sparkT = frame - F_STRIKE;
   const local = frame >= F_STRIKE - 2 && frame < F_STRIKE + 14 ? TARGET.x : null;
@@ -171,6 +177,7 @@ export const S3Escalate: SectionDef = {
     const t = ease.inOut(prog(f, F_WRAP, C12.end));
     return v(lerp(1500, SAW_C.x, t), lerp(500, SAW_C.y, t));
   },
+  lightBoost: (f) => s3LightBoost(f),
   World,
 };
 

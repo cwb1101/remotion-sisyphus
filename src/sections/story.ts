@@ -15,7 +15,16 @@ export type SectionDef = {
   lightAt: (f: number) => Vec;
   World: React.FC<{ frame: number; cam: Cam; light: Light }>;
   Overlay?: React.FC<{ frame: number; cam: Cam }>;
+  /** 光池额外增亮（冲击时） */
+  lightBoost?: (f: number) => number;
+  /** 本节开头与上一节画面交叉溶解的帧数（不经过黑场） */
+  blendIn?: number;
+  /** 本节结尾把整个画面收成卡片、翻面露出下一节（null = 不变形） */
+  card?: (f: number) => Card | null;
 };
+
+/** 卡片变形：以画面中心缩放，sx 为水平压缩（翻面），showNext 时卡片里显示下一节。 */
+export type Card = { scale: number; sx: number; tx: number; ty: number; radius: number; showNext: boolean };
 
 // —— 蛇的故事时间线：全部从字幕数据文件的节拍点推出来 ——
 export const F_CRAWL = cue(4).start;

@@ -1,4 +1,5 @@
-"""音频自检：响度、峰值、削波、超 -6 dBFS 的时间点、噪声单轨的嘶声/轰鸣、咔哒检测、静音是否干净。
+"""音频自检：响度、峰值、削波、超 -6 dBFS 的时间点、静音段（silencedetect）、各节接缝、
+关键句是否最响、噪声单轨的嘶声/轰鸣、咔哒检测、静音是否干净。
 
 用法：python3 scripts/qa-audio.py out/preview.mp4 [out/audio-qa]
   第一个参数：要检查的成片（mp4 或 wav）
@@ -61,6 +62,42 @@ def clicks(x, label):
     return {'label': label, 'click_candidates': int(len(hits)), 'first_times_s': [round(h / SR, 4) for h in hits[:5]], 'edge_sample_dBFS': round(db(edge), 1)}
 
 
+SCRIPT = json.loads(Path(__file__).resolve().parent.parent.joinpath('src/data/script.json').read_text())
+
+
+def silences(path, noise_db=-50, dur=0.3):
+    out = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', str(path), '-af', f'silencedetect=noise={noise_db}dB:d={dur}', '-f', 'null', '-'],
+                         capture_output=True, text=True).stderr
+    starts = [float(x) for x in re.findall(r'silence_start: (-?[\d.]+)', out)]
+    ends = [float(x) for x in re.findall(r'silence_end: (-?[\d.]+)', out)]
+    return [{'from_s': round(a, 2), 'to_s': round(b, 2) if i < len(ends) else None} for i, (a, b) in enumerate(zip(starts, ends + [None] * len(starts)))]
+
+
+def momentary(path):
+    """ebur128 每 100ms 一个瞬时响度 M（400ms 窗）。"""
+    out = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', str(path), '-af', 'ebur128=framelog=verbose', '-f', 'null', '-'],
+                         capture_output=True, text=True).stderr
+    rows = re.findall(r't:\s*([\d.]+)\s+TARGET:.*?M:\s*(-?[\d.inf]+)', out)
+    return [(float(t), float(m)) for t, m in rows if m not in ('-inf', 'inf')]
+
+
+def seam_report(x, fps):
+    """各节接缝前后：50ms 窗口的峰值/响度不能突跳，也不能掉成静音；接缝附近不能有咔哒。"""
+    rep = []
+    for sec in SCRIPT['sections'][1:]:
+        t = sec['start'] / fps
+        n = int(t * SR)
+        win = int(0.05 * SR)
+        seg = x[max(0, n - 10 * win):n + 10 * win].mean(axis=1)
+        rms = [float(np.sqrt(np.mean(seg[i:i + win] ** 2)) + 1e-12) for i in range(0, len(seg) - win, win)]
+        rms_db = [20 * np.log10(r) for r in rms]
+        jump = max(abs(a - b) for a, b in zip(rms_db, rms_db[1:]))
+        c = clicks(seg, sec['id'])
+        rep.append({'section': sec['id'], 't_s': round(t, 3), 'min_rms_dBFS': round(min(rms_db), 1), 'max_peak_dBFS': round(db(np.abs(seg).max()), 1),
+                    'max_50ms_step_dB': round(jump, 1), 'click_candidates': c['click_candidates']})
+    return rep
+
+
 def main():
     target = Path(sys.argv[1])
     stem_dir = Path(sys.argv[2]) if len(sys.argv) > 2 else None
@@ -100,6 +137,16 @@ def main():
     report['nonzero_samples_inside_silence'] = nonzero
 
     report['mix_clicks'] = clicks(x.mean(axis=1), 'mix')
+    report['silences_below_-50dB_over_0.3s'] = silences(target)
+    report['seams'] = seam_report(x, SCRIPT['fps'])
+
+    # 关键句（强档）是否最响：每个强档音效 2 秒内的最大瞬时响度，与全片其余时间的最大值比较
+    mom = momentary(target)
+    strong_ts = [(c['id'], (c['start'] + (c['beats'].get(s['beat'], 0) if s.get('beat') else 0)) / SCRIPT['fps'])
+                 for c in SCRIPT['cues'] for s in c['sfx'] if s['level'] == 'strong']
+    in_strong = lambda t: any(0 <= t - ts <= 2.0 for _, ts in strong_ts)
+    report['strong_cues_max_momentary_LUFS'] = {str(cid): round(max((m for t, m in mom if 0 <= t - ts <= 2.0), default=float('nan')), 1) for cid, ts in strong_ts}
+    report['elsewhere_max_momentary_LUFS'] = round(max((m for t, m in mom if not in_strong(t)), default=float('nan')), 1)
 
     if stem_dir and stem_dir.exists():
         stems = []
