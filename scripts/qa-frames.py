@@ -126,9 +126,10 @@ def main():
         else:
             wm_boxes.append((int(xs.min()) + 1560, int(ys.min()), int(xs.max()) + 1560, int(ys.max())))
     if wm_boxes:
+        # 只比较水印框的上边和右边：左下方偶尔飘过的星点、尘粒会把检测框拉大，但不是水印在动
         arr = np.array(wm_boxes)
         spread = (arr.max(axis=0) - arr.min(axis=0)).tolist()
-        if max(spread) > 6:
+        if max(spread[1], spread[2]) > 3:
             issues.append({'issue': '水印位置不固定', 'spread_px': spread})
     sheet = out / 'contact_%02d.png'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-framerate', '1', '-pattern_type', 'glob', '-i', str(out / 'full_*s.png'),
