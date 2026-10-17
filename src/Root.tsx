@@ -1,6 +1,7 @@
 import React from 'react';
-import { Composition } from 'remotion';
+import { Composition, Still } from 'remotion';
 import { script } from './data/script';
+import { Cover } from './Cover';
 import { Film } from './Film';
 import { Preview } from './Preview';
 
@@ -43,5 +44,7 @@ export const RemotionRoot: React.FC = () => (
       height={script.height}
       defaultProps={{ textOnly: true }}
     />
+    {/* 3:4 封面 */}
+    <Still id="Cover" component={Cover} width={1080} height={1440} />
   </>
 );
