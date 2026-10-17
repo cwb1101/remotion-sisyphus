@@ -1,0 +1,1524 @@
+{
+	"meta": {
+		"fps": 30,
+		"width": 1920,
+		"height": 1080,
+		"framesPerChar": 4,
+		"padFrames": 10,
+		"maxScreenFrames": 90,
+		"episode": "第01期",
+		"title": "为什么早熟的人都晚熟",
+		"watermark": "肆号静匣Logos",
+		"previewChapters": [
+			0,
+			1
+		]
+	},
+	"palette": {
+		"background": "#1C1A17",
+		"text": "#FFFFFF",
+		"warm": "#E0A458",
+		"cool": "#8EC9BB",
+		"meaning": {
+			"warm": "做 经验 答案 结论 以及时间和经验类数字",
+			"cool": "想 认知 内耗 过载 以及认知和损耗类数字"
+		}
+	},
+	"highlightStyles": {
+		"songUnderline": "思源宋体Heavy 放大一点三五倍 赭金填充 下划线八帧生长",
+		"outlineScale": "思源黑体Heavy 空心描边 放大一点二五倍 青瓷描边",
+		"numberSweep": "得意黑 放大一点三倍 高光扫过"
+	},
+	"sfxLevels": {
+		"weak": -24,
+		"mid": -16,
+		"strong": -8,
+		"ceiling": -6
+	},
+	"chapterNames": [
+		"早熟陷阱",
+		"高配空转",
+		"知行鸿沟",
+		"电量耗尽",
+		"虚无吞噬",
+		"先走后想",
+		"低头去做"
+	],
+	"chapters": [
+		{
+			"index": 0,
+			"name": "早熟陷阱",
+			"start": 0,
+			"end": 316
+		},
+		{
+			"index": 1,
+			"name": "高配空转",
+			"start": 316,
+			"end": 792
+		},
+		{
+			"index": 2,
+			"name": "知行鸿沟",
+			"start": 792,
+			"end": 1288
+		},
+		{
+			"index": 3,
+			"name": "电量耗尽",
+			"start": 1288,
+			"end": 1900
+		},
+		{
+			"index": 4,
+			"name": "虚无吞噬",
+			"start": 1900,
+			"end": 2360
+		},
+		{
+			"index": 5,
+			"name": "先走后想",
+			"start": 2360,
+			"end": 2878
+		},
+		{
+			"index": 6,
+			"name": "低头去做",
+			"start": 2878,
+			"end": 3562
+		}
+	],
+	"labels": {
+		"s1": {
+			"bigWord": [
+				"看",
+				"透"
+			],
+			"formula": [
+				"成熟",
+				"认知",
+				"经验"
+			],
+			"stepsPrefix": "已走",
+			"stepsSuffix": "步",
+			"age": "年龄",
+			"exp": "经验",
+			"orderEarly": "早熟",
+			"orderLate": "晚熟",
+			"think": "想",
+			"act": "做"
+		},
+		"s2": {
+			"cognition": "认知",
+			"exp": "经验",
+			"load": "运算负载",
+			"input": "数据输入",
+			"sum": "相加",
+			"mul": "相乘",
+			"about": "约",
+			"kolb": [
+				"经验",
+				"反思",
+				"概念",
+				"尝试"
+			],
+			"tries": "尝试次数",
+			"layers": "层数"
+		}
+	},
+	"screens": [
+		{
+			"id": 1,
+			"chapter": 0,
+			"start": 0,
+			"end": 50,
+			"text": "越早看透的人 越晚长大",
+			"highlights": [
+				{
+					"word": "早",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "晚",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "strong",
+			"sfx": [
+				{
+					"type": "impact",
+					"offset": 7,
+					"level": "strong"
+				},
+				{
+					"type": "sand",
+					"offset": 8,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 2,
+			"chapter": 0,
+			"start": 50,
+			"end": 100,
+			"text": "成熟不是想明白 是走过",
+			"highlights": [
+				{
+					"word": "想明白",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "走过",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 3,
+			"chapter": 0,
+			"start": 100,
+			"end": 154,
+			"text": "答案来得太早 路一步没走",
+			"highlights": [
+				{
+					"word": "答案",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "一步没走",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "tick",
+					"offset": 10,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 4,
+			"chapter": 0,
+			"start": 154,
+			"end": 216,
+			"text": "你十几岁就把人情世故看透了",
+			"highlights": [
+				{
+					"word": "看透",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "glass",
+					"offset": 6,
+					"level": "weak"
+				},
+				{
+					"type": "glass",
+					"offset": 24,
+					"level": "weak"
+				},
+				{
+					"type": "glass",
+					"offset": 42,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 5,
+			"chapter": 0,
+			"start": 216,
+			"end": 266,
+			"text": "却在三十岁 还站在原地",
+			"highlights": [
+				{
+					"word": "三十岁",
+					"color": "#E0A458",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "downSweep",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 6,
+			"chapter": 0,
+			"start": 266,
+			"end": 316,
+			"text": "这不是诅咒 是顺序反了",
+			"highlights": [
+				{
+					"word": "顺序",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "flip",
+					"offset": 13,
+					"level": "mid"
+				},
+				{
+					"type": "whoosh",
+					"offset": 38,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 7,
+			"chapter": 1,
+			"start": 316,
+			"end": 366,
+			"text": "早熟 是认知提前发育了",
+			"highlights": [
+				{
+					"word": "认知",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "upSweep",
+					"offset": 2,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 8,
+			"chapter": 1,
+			"start": 366,
+			"end": 412,
+			"text": "经历却还停在十几岁",
+			"highlights": [
+				{
+					"word": "十几岁",
+					"color": "#E0A458",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "tick",
+					"offset": 6,
+					"level": "weak"
+				},
+				{
+					"type": "tick",
+					"offset": 26,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 9,
+			"chapter": 1,
+			"start": 412,
+			"end": 482,
+			"text": "像装了顶级处理器 却没有数据可算",
+			"highlights": [
+				{
+					"word": "数据",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "hum",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 10,
+			"chapter": 1,
+			"start": 482,
+			"end": 544,
+			"text": "成熟是认知乘以经验 不是相加",
+			"highlights": [
+				{
+					"word": "乘以",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 4,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 11,
+			"chapter": 1,
+			"start": 544,
+			"end": 602,
+			"text": "经验接近零 认知再高也白搭",
+			"highlights": [
+				{
+					"word": "零",
+					"color": "#E0A458",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "strong",
+			"sfx": [
+				{
+					"type": "impact",
+					"offset": 8,
+					"level": "strong"
+				},
+				{
+					"type": "soft",
+					"offset": 36,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 12,
+			"chapter": 1,
+			"start": 602,
+			"end": 664,
+			"text": "想得越深 越找不到落脚的地方",
+			"highlights": [
+				{
+					"word": "落脚",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "wind",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 13,
+			"chapter": 1,
+			"start": 664,
+			"end": 726,
+			"text": "你看清了规则 却没验证过一次",
+			"highlights": [
+				{
+					"word": "规则",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "没验证过",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 12,
+					"level": "weak"
+				},
+				{
+					"type": "soft",
+					"offset": 34,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 14,
+			"chapter": 1,
+			"start": 726,
+			"end": 792,
+			"text": "道理一层层堆上去 变成一块石头",
+			"highlights": [
+				{
+					"word": "石头",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "stoneDrop",
+					"offset": 47,
+					"level": "mid"
+				},
+				{
+					"type": "sand",
+					"offset": 48,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 15,
+			"chapter": 2,
+			"start": 792,
+			"end": 862,
+			"text": "你知道该做什么 就是迈不出那一步",
+			"highlights": [
+				{
+					"word": "迈不出",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 16,
+			"chapter": 2,
+			"start": 862,
+			"end": 912,
+			"text": "这不是你一个人的毛病",
+			"highlights": [],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 17,
+			"chapter": 2,
+			"start": 912,
+			"end": 966,
+			"text": "有人汇总了四百多项研究",
+			"highlights": [
+				{
+					"word": "四百多项",
+					"color": "#8EC9BB",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 18,
+			"chapter": 2,
+			"start": 966,
+			"end": 1036,
+			"text": "意图只能解释 不到三成的行为差异",
+			"highlights": [
+				{
+					"word": "三成",
+					"color": "#8EC9BB",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 19,
+			"chapter": 2,
+			"start": 1036,
+			"end": 1098,
+			"text": "剩下七成 卡在知道和做到之间",
+			"highlights": [
+				{
+					"word": "知道",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "做到",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "strong",
+			"sfx": [
+				{
+					"type": "impact",
+					"offset": 0,
+					"level": "strong"
+				}
+			]
+		},
+		{
+			"id": 20,
+			"chapter": 2,
+			"start": 1098,
+			"end": 1164,
+			"text": "你缺的不是道理 是一次真的去做",
+			"highlights": [
+				{
+					"word": "真的去做",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 21,
+			"chapter": 2,
+			"start": 1164,
+			"end": 1218,
+			"text": "道理越多 这道缝反而越宽",
+			"highlights": [
+				{
+					"word": "宽",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 22,
+			"chapter": 2,
+			"start": 1218,
+			"end": 1288,
+			"text": "你在脑子里做加法 在行动上做减法",
+			"highlights": [
+				{
+					"word": "加法",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				},
+				{
+					"word": "减法",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 23,
+			"chapter": 3,
+			"start": 1288,
+			"end": 1346,
+			"text": "别人说你懒 可你是真的没电",
+			"highlights": [
+				{
+					"word": "没电",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 24,
+			"chapter": 3,
+			"start": 1346,
+			"end": 1396,
+			"text": "但耗电的 不是思考本身",
+			"highlights": [
+				{
+					"word": "思考本身",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 25,
+			"chapter": 3,
+			"start": 1396,
+			"end": 1462,
+			"text": "认真想一件事 大脑额外耗的能量",
+			"highlights": [],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 26,
+			"chapter": 3,
+			"start": 1462,
+			"end": 1516,
+			"text": "比放空的时候 多不了多少",
+			"highlights": [
+				{
+					"word": "多少",
+					"color": "#8EC9BB",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 27,
+			"chapter": 3,
+			"start": 1516,
+			"end": 1586,
+			"text": "所以没电 不是想太多把能量用光了",
+			"highlights": [
+				{
+					"word": "想太多",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 28,
+			"chapter": 3,
+			"start": 1586,
+			"end": 1628,
+			"text": "焦虑 害怕 患得患失",
+			"highlights": [
+				{
+					"word": "焦虑",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 29,
+			"chapter": 3,
+			"start": 1628,
+			"end": 1690,
+			"text": "二十四小时在脑子里来回拉扯",
+			"highlights": [
+				{
+					"word": "二十四小时",
+					"color": "#8EC9BB",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 30,
+			"chapter": 3,
+			"start": 1690,
+			"end": 1752,
+			"text": "人有近一半的清醒时间在走神",
+			"highlights": [
+				{
+					"word": "一半",
+					"color": "#8EC9BB",
+					"style": "numberSweep"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 31,
+			"chapter": 3,
+			"start": 1752,
+			"end": 1818,
+			"text": "剩下那点心力 只够维持基本生活",
+			"highlights": [
+				{
+					"word": "基本生活",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 32,
+			"chapter": 3,
+			"start": 1818,
+			"end": 1900,
+			"text": "这时逼你奋斗 就像让高烧的人去跑马拉松",
+			"highlights": [
+				{
+					"word": "高烧",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 33,
+			"chapter": 4,
+			"start": 1900,
+			"end": 1958,
+			"text": "想得太多 又拿不出结果撑腰",
+			"highlights": [
+				{
+					"word": "结果",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 34,
+			"chapter": 4,
+			"start": 1958,
+			"end": 2004,
+			"text": "思考就开始吃掉自己",
+			"highlights": [
+				{
+					"word": "吃掉自己",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 35,
+			"chapter": 4,
+			"start": 2004,
+			"end": 2066,
+			"text": "活着有什么意义 努力有什么用",
+			"highlights": [
+				{
+					"word": "意义",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 36,
+			"chapter": 4,
+			"start": 2066,
+			"end": 2140,
+			"text": "每个问题都没有答案 只会生出新问题",
+			"highlights": [
+				{
+					"word": "新问题",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 37,
+			"chapter": 4,
+			"start": 2140,
+			"end": 2186,
+			"text": "而你看不上的那些人",
+			"highlights": [],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 38,
+			"chapter": 4,
+			"start": 2186,
+			"end": 2244,
+			"text": "一路升职买房 走到了你前面",
+			"highlights": [
+				{
+					"word": "走到了你前面",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 39,
+			"chapter": 4,
+			"start": 2244,
+			"end": 2302,
+			"text": "你开始怀疑 是不是自己不行",
+			"highlights": [
+				{
+					"word": "不行",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 40,
+			"chapter": 4,
+			"start": 2302,
+			"end": 2360,
+			"text": "其实不是不行 是一直没上场",
+			"highlights": [
+				{
+					"word": "没上场",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 41,
+			"chapter": 5,
+			"start": 2360,
+			"end": 2426,
+			"text": "那些晚熟的人 年轻时没想那么多",
+			"highlights": [
+				{
+					"word": "晚熟",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 42,
+			"chapter": 5,
+			"start": 2426,
+			"end": 2476,
+			"text": "先读书 先工作 先摔跟头",
+			"highlights": [
+				{
+					"word": "摔跟头",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 43,
+			"chapter": 5,
+			"start": 2476,
+			"end": 2522,
+			"text": "受过伤 也真的高兴过",
+			"highlights": [
+				{
+					"word": "高兴",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 44,
+			"chapter": 5,
+			"start": 2522,
+			"end": 2588,
+			"text": "教育学家库伯 把学习画成一个圈",
+			"highlights": [
+				{
+					"word": "一个圈",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 45,
+			"chapter": 5,
+			"start": 2588,
+			"end": 2650,
+			"text": "从经验出发 反思之后才有概念",
+			"highlights": [
+				{
+					"word": "经验",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				},
+				{
+					"word": "概念",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 46,
+			"chapter": 5,
+			"start": 2650,
+			"end": 2716,
+			"text": "早熟的人 直接跳到了概念这一格",
+			"highlights": [
+				{
+					"word": "跳到",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 47,
+			"chapter": 5,
+			"start": 2716,
+			"end": 2766,
+			"text": "等晚熟的人开始想人生",
+			"highlights": [],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 48,
+			"chapter": 5,
+			"start": 2766,
+			"end": 2812,
+			"text": "手里早就握满了答案",
+			"highlights": [
+				{
+					"word": "握满",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 49,
+			"chapter": 5,
+			"start": 2812,
+			"end": 2878,
+			"text": "他们的答案 是一步一步走出来的",
+			"highlights": [
+				{
+					"word": "走出来",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "strong",
+			"sfx": [
+				{
+					"type": "impact",
+					"offset": 0,
+					"level": "strong"
+				}
+			]
+		},
+		{
+			"id": 50,
+			"chapter": 6,
+			"start": 2878,
+			"end": 2920,
+			"text": "所以解药不是少想",
+			"highlights": [
+				{
+					"word": "少想",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 51,
+			"chapter": 6,
+			"start": 2920,
+			"end": 2970,
+			"text": "是让行动追上你的思考",
+			"highlights": [
+				{
+					"word": "追上",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 52,
+			"chapter": 6,
+			"start": 2970,
+			"end": 3028,
+			"text": "心理学有个方法叫行为激活",
+			"highlights": [
+				{
+					"word": "行为激活",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 53,
+			"chapter": 6,
+			"start": 3028,
+			"end": 3086,
+			"text": "先动起来 动力往往随后才到",
+			"highlights": [
+				{
+					"word": "先动起来",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 54,
+			"chapter": 6,
+			"start": 3086,
+			"end": 3148,
+			"text": "意义不是关在房间里想出来的",
+			"highlights": [
+				{
+					"word": "想出来",
+					"color": "#8EC9BB",
+					"style": "outlineScale"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 55,
+			"chapter": 6,
+			"start": 3148,
+			"end": 3210,
+			"text": "是一次次粗糙的动作刻出来的",
+			"highlights": [
+				{
+					"word": "刻",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "mid",
+			"sfx": [
+				{
+					"type": "whoosh",
+					"offset": 0,
+					"level": "mid"
+				}
+			]
+		},
+		{
+			"id": 56,
+			"chapter": 6,
+			"start": 3210,
+			"end": 3272,
+			"text": "每推一次 就多一格真实的经验",
+			"highlights": [
+				{
+					"word": "真实的经验",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 57,
+			"chapter": 6,
+			"start": 3272,
+			"end": 3334,
+			"text": "经验一涨 那道乘法才开始算数",
+			"highlights": [
+				{
+					"word": "算数",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 58,
+			"chapter": 6,
+			"start": 3334,
+			"end": 3392,
+			"text": "因为意义就在推的这一步里",
+			"highlights": [
+				{
+					"word": "这一步",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 59,
+			"chapter": 6,
+			"start": 3392,
+			"end": 3458,
+			"text": "别再等想明白 先去做最小的一步",
+			"highlights": [
+				{
+					"word": "最小的一步",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		},
+		{
+			"id": 60,
+			"chapter": 6,
+			"start": 3458,
+			"end": 3496,
+			"text": "意义 是做出来的",
+			"highlights": [
+				{
+					"word": "做",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "strong",
+			"sfx": [
+				{
+					"type": "impact",
+					"offset": 0,
+					"level": "strong"
+				}
+			]
+		},
+		{
+			"id": 61,
+			"chapter": 6,
+			"start": 3496,
+			"end": 3562,
+			"text": "你迈出去的那一刻 才算真正降生",
+			"highlights": [
+				{
+					"word": "降生",
+					"color": "#E0A458",
+					"style": "songUnderline"
+				}
+			],
+			"sfxLevel": "weak",
+			"sfx": [
+				{
+					"type": "soft",
+					"offset": 0,
+					"level": "weak"
+				}
+			]
+		}
+	]
+}

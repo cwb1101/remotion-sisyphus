@@ -1,0 +1,28 @@
+{
+	"name": "remotion-sisyphus",
+	"version": "0.1.0",
+	"private": true,
+	"description": "早熟的人为什么晚熟 抖音横屏知识短视频 Remotion 工程",
+	"scripts": {
+		"studio": "remotion studio src/index.ts",
+		"retime": "node scripts/retime.mjs",
+		"check:text": "node scripts/check-text.mjs",
+		"report:timing": "node scripts/timing-report.mjs preview",
+		"fonts": "bash scripts/fetch-fonts.sh .fonts-src && python3 scripts/subset-fonts.py .fonts-src",
+		"audio": "node scripts/synth-audio.mjs preview",
+		"render:preview": "npm run check:text && npm run audio && remotion render src/index.ts Preview out/preview.mp4",
+		"audit:preview": "remotion render src/index.ts PreviewTextAudit out/text-audit.mp4 --crf=8 --muted && python3 scripts/audit-video.py out/preview.mp4 out/text-audit.mp4 && python3 scripts/measure-audio.py out/preview.mp4 && node scripts/synth-audio.mjs solo && python3 scripts/check-sfx.py out/sfx-solo",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@remotion/cli": "4.0.536",
+		"@remotion/fonts": "4.0.536",
+		"react": "19.1.1",
+		"react-dom": "19.1.1",
+		"remotion": "4.0.536"
+	},
+	"devDependencies": {
+		"@types/react": "19.1.12",
+		"typescript": "5.9.2"
+	}
+}
