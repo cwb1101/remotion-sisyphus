@@ -427,8 +427,14 @@
           "color": "#FFB15C"
         }
       ],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "breaks",
+          "tier": "weak",
+          "atFrame": 4
+        }
+      ],
       "bigWord": null
     },
     {
@@ -882,8 +888,14 @@
       "endFrame": 2562,
       "text": "不是放弃思考",
       "highlights": [],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "woodTick",
+          "tier": "weak",
+          "atFrame": 14
+        }
+      ],
       "bigWord": null
     },
     {
@@ -1078,8 +1090,14 @@
       "endFrame": 3138,
       "text": "想法不用扔掉",
       "highlights": [],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "padIn",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
       "bigWord": null
     },
     {

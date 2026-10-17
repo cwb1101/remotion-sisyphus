@@ -321,6 +321,12 @@ const SYNTHS = {
     osc(x, { t0: 0.12, dur: 4.0, freq: 587.33, env: ad(0.014, 1.4), gain: 0.3, partials: bell });
     return lp(x, 3500);
   },
+  // 屏 16：光路一条条断开，每断一条一声轻点音（间隔 11 帧，和画面断口一致）
+  breaks: () => {
+    const x = buf(1.9);
+    [784, 698.46, 622.25, 554.37].forEach((f0, i) => osc(x, { t0: (i * 11) / 30, dur: 0.6, freq: glide(f0, f0 * 0.94, 0.08), env: ad(0.012, 0.12), gain: 0.7 }));
+    return lp(x, 3000);
+  },
   // 结尾的铺底：慢慢淡出
   padTail: () => pad(1.0, 0.6, 1.4, 1.6),
 };
@@ -394,6 +400,7 @@ for (const s of script.screens.filter((x) => x.id <= LAST)) {
     // 音色类音效做一次柔和饱和（tanh），压低峰值因数，让同样的峰值听起来更饱满；噪声类不做
     if (!isNoise && drive > 0) {
       for (let n = 0; n < x.length; n++) x[n] = Math.tanh((drive * x[n]) / peak);
+      lp(x, 4500, 2); // 饱和会生出新的高次谐波，再滤一次，保证 6 kHz 以上干净
       peak = 0;
       for (const v of x) peak = Math.max(peak, Math.abs(v));
     }
