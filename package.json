@@ -1,0 +1,24 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "抖音横屏知识短视频《为什么说早熟的人通常都晚熟》— Remotion 纯代码动画",
+  "scripts": {
+    "studio": "remotion studio",
+    "sfx": "node scripts/gen-sfx.mjs",
+    "render:preview": "npm run sfx && remotion render Preview out/preview.mp4",
+    "check:script": "node scripts/check-script.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.8",
+    "@remotion/cli": "4.0.536",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.536"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}

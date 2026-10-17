@@ -1,0 +1,1140 @@
+{
+  "title": "为什么说早熟的人通常都晚熟",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "durationInFrames": 3600,
+  "preview": {
+    "startFrame": 0,
+    "endFrame": 900,
+    "lastScreen": 13,
+    "note": "预览：开头 + 拆开命题 + 早熟长什么样（第01–13屏，0–846帧），846–900 为无字幕收尾淡出"
+  },
+  "rules": {
+    "readingCharsPerSecond": 5,
+    "accentColors": {
+      "think": "#FFB15C",
+      "act": "#6FD6A8"
+    },
+    "textColor": "#FFFFFF",
+    "maxHighlightsPerScreen": 2,
+    "subtitle": {
+      "fontSize": 66,
+      "maxWidth": 1200,
+      "left": 360,
+      "right": 1560,
+      "bottomMargin": 96,
+      "maxLines": 2
+    },
+    "forbiddenTextZoneX": 1560,
+    "bigWordZone": {
+      "minX": 240,
+      "maxX": 1080,
+      "minY": 160,
+      "maxY": 740
+    },
+    "sfxPeakDbfs": {
+      "weak": -24,
+      "mid": -16,
+      "strong": -8
+    },
+    "noiseSfxExtraAttenuationDb": 4,
+    "busCeilingDbfs": -7
+  },
+  "sections": [
+    {
+      "id": "opening",
+      "title": "开头",
+      "startFrame": 0,
+      "endFrame": 150
+    },
+    {
+      "id": "thesis",
+      "title": "拆开命题",
+      "startFrame": 150,
+      "endFrame": 426
+    },
+    {
+      "id": "early",
+      "title": "早熟长什么样",
+      "startFrame": 426,
+      "endFrame": 846
+    },
+    {
+      "id": "halfSeen",
+      "title": "看透只看了一半",
+      "startFrame": 846,
+      "endFrame": 1152
+    },
+    {
+      "id": "notLazy",
+      "title": "不是懒",
+      "startFrame": 1152,
+      "endFrame": 1956
+    },
+    {
+      "id": "walkers",
+      "title": "先走路的人",
+      "startFrame": 1956,
+      "endFrame": 2448
+    },
+    {
+      "id": "exit",
+      "title": "出口",
+      "startFrame": 2448,
+      "endFrame": 3252
+    },
+    {
+      "id": "ending",
+      "title": "收尾",
+      "startFrame": 3252,
+      "endFrame": 3600
+    }
+  ],
+  "screens": [
+    {
+      "id": 1,
+      "section": "opening",
+      "startFrame": 0,
+      "endFrame": 72,
+      "text": "为什么最早想明白的人",
+      "highlights": [
+        {
+          "word": "想明白",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "balloonRise",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 2,
+      "section": "opening",
+      "startFrame": 72,
+      "endFrame": 150,
+      "text": "反而最晚活明白",
+      "highlights": [
+        {
+          "word": "活明白",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "strong",
+      "sfx": [
+        {
+          "type": "hookChord",
+          "tier": "strong",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 3,
+      "section": "thesis",
+      "startFrame": 150,
+      "endFrame": 216,
+      "text": "这里的早熟，不是说身体",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "whooshIn",
+          "tier": "mid",
+          "atFrame": -12
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 4,
+      "section": "thesis",
+      "startFrame": 216,
+      "endFrame": 288,
+      "text": "而是想法，跑在了经历前面",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "twoTones",
+          "tier": "weak",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 5,
+      "section": "thesis",
+      "startFrame": 288,
+      "endFrame": 348,
+      "text": "早熟的是脑子",
+      "highlights": [
+        {
+          "word": "脑子",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "slam",
+          "tier": "mid",
+          "atFrame": 2
+        }
+      ],
+      "bigWord": {
+        "text": "脑子",
+        "color": "#FFB15C",
+        "x": 300,
+        "y": 220,
+        "w": 460,
+        "h": 200
+      }
+    },
+    {
+      "id": 6,
+      "section": "thesis",
+      "startFrame": 348,
+      "endFrame": 426,
+      "text": "晚熟的是人生",
+      "highlights": [
+        {
+          "word": "人生",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "strong",
+      "sfx": [
+        {
+          "type": "landChord",
+          "tier": "strong",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": {
+        "text": "人生",
+        "color": "#6FD6A8",
+        "x": 300,
+        "y": 560,
+        "w": 460,
+        "h": 180
+      }
+    },
+    {
+      "id": 7,
+      "section": "early",
+      "startFrame": 426,
+      "endFrame": 486,
+      "text": "有人十几岁就开始想",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "whooshOut",
+          "tier": "mid",
+          "atFrame": -14
+        },
+        {
+          "type": "sand",
+          "tier": "weak",
+          "atFrame": 10
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 8,
+      "section": "early",
+      "startFrame": 486,
+      "endFrame": 546,
+      "text": "人活着，到底为了什么",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "bubble",
+          "tier": "weak",
+          "atFrame": 40,
+          "variant": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 9,
+      "section": "early",
+      "startFrame": 546,
+      "endFrame": 600,
+      "text": "努力，到底有没有用",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "bubble",
+          "tier": "weak",
+          "atFrame": 30,
+          "variant": 1
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 10,
+      "section": "early",
+      "startFrame": 600,
+      "endFrame": 660,
+      "text": "这世界，到底公不公平",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "bubble",
+          "tier": "weak",
+          "atFrame": 40,
+          "variant": 2
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 11,
+      "section": "early",
+      "startFrame": 660,
+      "endFrame": 720,
+      "text": "大人夸他懂事，看得透",
+      "highlights": [
+        {
+          "word": "懂事",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "tap",
+          "tier": "weak",
+          "atFrame": 28
+        },
+        {
+          "type": "tap",
+          "tier": "weak",
+          "atFrame": 46
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 12,
+      "section": "early",
+      "startFrame": 720,
+      "endFrame": 774,
+      "text": "他也以为，这是天赋",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "padIn",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 13,
+      "section": "early",
+      "startFrame": 774,
+      "endFrame": 846,
+      "text": "后来才发现，它是有代价的",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "padSlide",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 14,
+      "section": "halfSeen",
+      "startFrame": 846,
+      "endFrame": 906,
+      "text": "思考，得拿经历垫底",
+      "highlights": [
+        {
+          "word": "经历",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "woodTick",
+          "tier": "weak",
+          "atFrame": 20
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 15,
+      "section": "halfSeen",
+      "startFrame": 906,
+      "endFrame": 978,
+      "text": "他想得很远，走过的路却很少",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "arpUp",
+          "tier": "weak",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 16,
+      "section": "halfSeen",
+      "startFrame": 978,
+      "endFrame": 1032,
+      "text": "没走过的路，在想象里",
+      "highlights": [
+        {
+          "word": "想象",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 17,
+      "section": "halfSeen",
+      "startFrame": 1032,
+      "endFrame": 1086,
+      "text": "每一条都像死路",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "dropTicks",
+          "tier": "weak",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 18,
+      "section": "halfSeen",
+      "startFrame": 1086,
+      "endFrame": 1152,
+      "text": "他看透的，往往只是一半",
+      "highlights": [
+        {
+          "word": "一半",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "softBell",
+          "tier": "mid",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 19,
+      "section": "notLazy",
+      "startFrame": 1152,
+      "endFrame": 1218,
+      "text": "懂得越多，做得越少",
+      "highlights": [
+        {
+          "word": "多",
+          "color": "#FFB15C"
+        },
+        {
+          "word": "少",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "upDownGlide",
+          "tier": "weak",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 20,
+      "section": "notLazy",
+      "startFrame": 1218,
+      "endFrame": 1278,
+      "text": "别人说他懒，眼高手低",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 21,
+      "section": "notLazy",
+      "startFrame": 1278,
+      "endFrame": 1350,
+      "text": "可他不是不想动，是没力气动",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "heartPulse",
+          "tier": "weak",
+          "atFrame": 10
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 22,
+      "section": "notLazy",
+      "startFrame": 1350,
+      "endFrame": 1404,
+      "text": "担心、害怕、患得患失",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "pluck3",
+          "tier": "weak",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 23,
+      "section": "notLazy",
+      "startFrame": 1404,
+      "endFrame": 1458,
+      "text": "在脑子里吵个不停",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "pluck3Fast",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 24,
+      "section": "notLazy",
+      "startFrame": 1458,
+      "endFrame": 1536,
+      "text": "光是压住它们，就耗掉大半力气",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "stepDown",
+          "tier": "mid",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 25,
+      "section": "notLazy",
+      "startFrame": 1536,
+      "endFrame": 1614,
+      "text": "不是懒，是电量被吵没了",
+      "highlights": [
+        {
+          "word": "电量",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "strong",
+      "sfx": [
+        {
+          "type": "lowChord",
+          "tier": "strong",
+          "atFrame": 12
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 26,
+      "section": "notLazy",
+      "startFrame": 1614,
+      "endFrame": 1692,
+      "text": "这时候逼他硬冲，只会更快倒下",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "swing",
+          "tier": "weak",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 27,
+      "section": "notLazy",
+      "startFrame": 1692,
+      "endFrame": 1752,
+      "text": "想得越多，人就飘得越高",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "balloonRise",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 28,
+      "section": "notLazy",
+      "startFrame": 1752,
+      "endFrame": 1824,
+      "text": "往前迈不出去，往后又不甘心",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 29,
+      "section": "notLazy",
+      "startFrame": 1824,
+      "endFrame": 1884,
+      "text": "看着别人一步步往前走",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 30,
+      "section": "notLazy",
+      "startFrame": 1884,
+      "endFrame": 1956,
+      "text": "为什么我都懂，却还在原地？",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 31,
+      "section": "walkers",
+      "startFrame": 1956,
+      "endFrame": 2016,
+      "text": "而那些被叫作晚熟的人",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 32,
+      "section": "walkers",
+      "startFrame": 2016,
+      "endFrame": 2076,
+      "text": "不是想得浅，是先上了路",
+      "highlights": [
+        {
+          "word": "上了路",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 33,
+      "section": "walkers",
+      "startFrame": 2076,
+      "endFrame": 2136,
+      "text": "去读书，去工作，去试错",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "woodTick",
+          "tier": "weak",
+          "atFrame": 30
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 34,
+      "section": "walkers",
+      "startFrame": 2136,
+      "endFrame": 2196,
+      "text": "跌过，伤过，也狂喜过",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "fallJoy",
+          "tier": "mid",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 35,
+      "section": "walkers",
+      "startFrame": 2196,
+      "endFrame": 2256,
+      "text": "每一步，都攒成了经历",
+      "highlights": [
+        {
+          "word": "经历",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 36,
+      "section": "walkers",
+      "startFrame": 2256,
+      "endFrame": 2322,
+      "text": "等他们开始想人生的意义",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "bubble",
+          "tier": "weak",
+          "atFrame": 10,
+          "variant": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 37,
+      "section": "walkers",
+      "startFrame": 2322,
+      "endFrame": 2376,
+      "text": "手里早就握着答案",
+      "highlights": [
+        {
+          "word": "答案",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "softBell",
+          "tier": "weak",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 38,
+      "section": "walkers",
+      "startFrame": 2376,
+      "endFrame": 2448,
+      "text": "他们的想法，有脚印撑着",
+      "highlights": [
+        {
+          "word": "脚印",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "dyad",
+          "tier": "mid",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 39,
+      "section": "exit",
+      "startFrame": 2448,
+      "endFrame": 2514,
+      "text": "那早熟的人，怎么落地？",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "toneUp",
+          "tier": "mid",
+          "atFrame": 6
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 40,
+      "section": "exit",
+      "startFrame": 2514,
+      "endFrame": 2562,
+      "text": "不是放弃思考",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 41,
+      "section": "exit",
+      "startFrame": 2562,
+      "endFrame": 2622,
+      "text": "而是先做一件很小的事",
+      "highlights": [
+        {
+          "word": "小",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "glideDown",
+          "tier": "weak",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 42,
+      "section": "exit",
+      "startFrame": 2622,
+      "endFrame": 2682,
+      "text": "小到，不用先想通意义",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "exhale",
+          "tier": "weak",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 43,
+      "section": "exit",
+      "startFrame": 2682,
+      "endFrame": 2730,
+      "text": "出门走十分钟",
+      "highlights": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "mid",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 44,
+      "section": "exit",
+      "startFrame": 2730,
+      "endFrame": 2796,
+      "text": "发出那条一直没发的消息",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "toneUp",
+          "tier": "weak",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 45,
+      "section": "exit",
+      "startFrame": 2796,
+      "endFrame": 2838,
+      "text": "写下第一行字",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "glideShort",
+          "tier": "weak",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 46,
+      "section": "exit",
+      "startFrame": 2838,
+      "endFrame": 2892,
+      "text": "别等想通了，再出发",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "weak",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 47,
+      "section": "exit",
+      "startFrame": 2892,
+      "endFrame": 2952,
+      "text": "意义不是想出来的",
+      "highlights": [
+        {
+          "word": "想",
+          "color": "#FFB15C"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "softBell",
+          "tier": "weak",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": {
+        "text": "想",
+        "color": "#FFB15C",
+        "x": 280,
+        "y": 200,
+        "w": 240,
+        "h": 220
+      }
+    },
+    {
+      "id": 48,
+      "section": "exit",
+      "startFrame": 2952,
+      "endFrame": 3030,
+      "text": "是做出来的",
+      "highlights": [
+        {
+          "word": "做",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "strong",
+      "sfx": [
+        {
+          "type": "landChord",
+          "tier": "strong",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": {
+        "text": "做",
+        "color": "#6FD6A8",
+        "x": 640,
+        "y": 460,
+        "w": 260,
+        "h": 260
+      }
+    },
+    {
+      "id": 49,
+      "section": "exit",
+      "startFrame": 3030,
+      "endFrame": 3090,
+      "text": "做一点，就落地一点",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 50,
+      "section": "exit",
+      "startFrame": 3090,
+      "endFrame": 3138,
+      "text": "想法不用扔掉",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 51,
+      "section": "exit",
+      "startFrame": 3138,
+      "endFrame": 3198,
+      "text": "把它系在手上，带着走",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "dyad",
+          "tier": "weak",
+          "atFrame": 8
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 52,
+      "section": "exit",
+      "startFrame": 3198,
+      "endFrame": 3252,
+      "text": "想得早，不是错",
+      "highlights": [],
+      "sfxTier": null,
+      "sfx": [],
+      "bigWord": null
+    },
+    {
+      "id": 53,
+      "section": "ending",
+      "startFrame": 3252,
+      "endFrame": 3312,
+      "text": "只是还差一段路",
+      "highlights": [
+        {
+          "word": "路",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "padIn",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 54,
+      "section": "ending",
+      "startFrame": 3312,
+      "endFrame": 3366,
+      "text": "当你开始走",
+      "highlights": [
+        {
+          "word": "走",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "steps",
+          "tier": "mid",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 55,
+      "section": "ending",
+      "startFrame": 3366,
+      "endFrame": 3456,
+      "text": "你才真正落地",
+      "highlights": [
+        {
+          "word": "落地",
+          "color": "#6FD6A8"
+        }
+      ],
+      "sfxTier": "strong",
+      "sfx": [
+        {
+          "type": "finalChord",
+          "tier": "strong",
+          "atFrame": 4
+        }
+      ],
+      "bigWord": null
+    },
+    {
+      "id": 56,
+      "section": "ending",
+      "startFrame": 3456,
+      "endFrame": 3546,
+      "text": "你是从哪一步，开始落地的？",
+      "highlights": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "padTail",
+          "tier": "weak",
+          "atFrame": 0
+        }
+      ],
+      "bigWord": null
+    }
+  ]
+}
