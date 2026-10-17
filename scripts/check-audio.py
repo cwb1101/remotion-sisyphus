@@ -149,6 +149,33 @@ if __name__ == "__main__":
             }
         )
     report["stems"] = stems
+
+    # silencedetect：列出所有静音段（-50 dBFS 以下持续 0.3 s 以上），并标出是否落在两个音效之间（= 预期的留白）
+    out = run(["ffmpeg", "-nostats", "-i", str(mp4), "-af", "silencedetect=noise=-50dB:d=0.3", "-f", "null", "-"])
+    starts = [float(v) for v in re.findall(r"silence_start: (-?[\d.]+)", out)]
+    ends = [float(v) for v in re.findall(r"silence_end: ([\d.]+)", out)]
+    sil = []
+    for k, a in enumerate(starts):
+        b = ends[k] if k < len(ends) else len(m) / SR
+        prev = max([c for c in cues if c["startSec"] <= a + 0.05], key=lambda c: c["endSec"], default=None)
+        nxt = min([c for c in cues if c["startSec"] >= b - 0.05], key=lambda c: c["startSec"], default=None)
+        sil.append({"from": round(max(a, 0), 2), "to": round(b, 2), "len": round(b - max(a, 0), 2),
+                    "after": f"#{prev['screen']} {prev['type']}" if prev else "片头",
+                    "before": f"#{nxt['screen']} {nxt['type']}" if nxt else "片尾"})
+    report["silences"] = sil
+
+    # 分段接缝：在每个接缝前后 40 ms 内找样本跳变（咔哒 / 断音），和接缝两侧 0.5 s 的电平对比
+    film = json.loads((ROOT / "src/data/script.json").read_text()).get("film")
+    seams = []
+    if film and len(m) > SR * 60:
+        for a, b in film["segments"][1:]:
+            t = a / 30
+            n = int(t * SR)
+            win = m[n - SR // 25 : n + SR // 25, 0]
+            jump = float(np.abs(np.diff(win)).max()) if len(win) > 1 else 0.0
+            lvl = lambda seg: round(float(20 * np.log10(np.sqrt(np.mean(seg ** 2)) + 1e-12)), 1)
+            seams.append({"t": t, "maxJump": round(jump, 5), "rmsBefore_dB": lvl(m[n - SR // 2 : n, 0]), "rmsAfter_dB": lvl(m[n : n + SR // 2, 0])})
+    report["seams"] = seams
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
     bad = []
@@ -160,6 +187,9 @@ if __name__ == "__main__":
             bad.append(f"{label} 峰值超 -6 dBFS：{r['overMinus6']}")
         if r["integratedLUFS"] > -19:
             bad.append(f"{label} 整体响度 {r['integratedLUFS']} LUFS 偏大")
+    for sm in report["seams"]:
+        if sm["maxJump"] > 0.05:
+            bad.append(f"接缝 {sm['t']}s 处样本跳变 {sm['maxJump']}")
     if report["silence"]["wavNonZeroSamplesInGaps"]:
         bad.append("WAV 静音段不是数字静音")
     for s in stems:

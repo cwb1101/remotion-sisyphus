@@ -66,6 +66,8 @@ d.screens.forEach((s, i) => {
   }
   if (s.sfxTier && !s.sfx.length) errors.push(`#${s.id} 标了档位 ${s.sfxTier} 但没有音效`);
 });
+const wm = rules.watermark;
+if (wm && (wm.x < rules.forbiddenTextZoneX || wm.y + wm.h > 160)) errors.push('水印必须在右上角禁字区内');
 if (strongCount > 6) errors.push(`强音效 ${strongCount} 处，超过 6 处`);
 
 // 逐帧数高亮（与 BigWord.tsx / Preview.tsx 同规则）
@@ -75,7 +77,7 @@ const colored = (b, f) => {
   const appear = Math.max(b.startFrame, hit - 8);
   const next = big.find((o) => o.section === b.section && o.startFrame > b.startFrame);
   const dimAt = next ? next.startFrame - 2 : Infinity;
-  const outEnd = sections[b.section].endFrame - 24 + 12;
+  const outEnd = Math.min(sections[b.section].endFrame - 24, b.endFrame + 70) + 12;
   return f >= appear && f < dimAt && f <= outEnd;
 };
 for (const s of d.screens) {

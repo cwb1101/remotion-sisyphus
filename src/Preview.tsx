@@ -3,6 +3,7 @@ import { AbsoluteFill, Html5Audio, staticFile, useCurrentFrame } from 'remotion'
 import './fonts';
 import { BigWord } from './components/BigWord';
 import { Subtitle } from './components/Subtitle';
+import { Watermark } from './components/Watermark';
 import { at, script, section } from './data/script';
 import { prog } from './lib/anim';
 import { Early } from './sections/Early';
@@ -52,6 +53,7 @@ export const Preview: React.FC<{ textOnly?: boolean }> = ({ textOnly = false }) 
       <BigWords />
       <AbsoluteFill style={{ background: '#000', opacity: fadeOut }} />
       <Subtitle />
+      <Watermark />
       <Html5Audio src={staticFile('audio/sfx-preview.wav')} />
     </AbsoluteFill>
   );

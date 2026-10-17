@@ -69,3 +69,9 @@ export const BigWord: React.FC<{ s: Screen; dimAt: number | null; outAt: number 
     </div>
   );
 };
+
+/**
+ * 大字退场时间：所在小节结束前 24 帧，且最多在砸字那一屏结束后再停留 70 帧。
+ * scripts/check-script.mjs 用同样的规则逐帧数高亮。
+ */
+export const bigWordOutAt = (s: Screen, sectionEnd: number) => Math.min(sectionEnd - 24, s.endFrame + 70);

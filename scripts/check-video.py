@@ -110,6 +110,39 @@ def contact_sheets(path, outdir):
     return shots, sheets
 
 
+def motion_profile(path):
+    """逐帧画面变化量（只看字幕带以上的区域，160×90 灰度），用来找静止段和分段接缝。"""
+    p = subprocess.Popen(
+        ["ffmpeg", "-v", "error", "-i", str(path), "-vf", "crop=1920:820:0:0,scale=160:68", "-f", "rawvideo", "-pix_fmt", "gray", "-"],
+        stdout=subprocess.PIPE,
+    )
+    prev = None
+    diffs = []
+    while True:
+        buf = p.stdout.read(160 * 68)
+        if len(buf) < 160 * 68:
+            break
+        cur = np.frombuffer(buf, np.uint8).astype(np.float32)
+        if prev is not None:
+            diffs.append(float(np.abs(cur - prev).mean()))
+        prev = cur
+    p.wait()
+    return np.array(diffs)
+
+
+def static_runs(diffs, thr=0.12, min_len=60):
+    runs = []
+    start = None
+    for i, d in enumerate(list(diffs) + [999]):
+        if d < thr and start is None:
+            start = i
+        elif d >= thr and start is not None:
+            if i - start >= min_len:
+                runs.append((start + 1, i))
+            start = None
+    return runs
+
+
 if __name__ == "__main__":
     video, text_video = Path(sys.argv[1]), Path(sys.argv[2])
     n, problems, max_right, sub_box, big_bottom = check_text_layer(text_video)
@@ -118,6 +151,20 @@ if __name__ == "__main__":
     print(f"大字最低像素 y={big_bottom}")
     shots, sheets = contact_sheets(video, ROOT / "out/frames")
     print(f"抽帧 {len(shots)} 张 → {', '.join(str(s.relative_to(ROOT)) for s in sheets)}")
+    diffs = motion_profile(video)
+    runs = static_runs(diffs)
+    print(f"逐帧画面变化：中位数 {np.median(diffs):.3f}，最小 {diffs.min():.3f}")
+    print("静止超过 2 秒的段落：" + ("无" if not runs else "、".join(f"帧 {a}–{b}（{(b - a) / 30:.1f}s）" for a, b in runs)))
+    for a, b in runs:
+        problems.append(f"帧 {a}–{b} 画面几乎静止 {(b - a) / 30:.1f}s")
+    film = script.get("film")
+    if film and len(diffs) > 3000:
+        for a, _ in film["segments"][1:]:
+            d = diffs[a - 1]
+            around = np.median(np.r_[diffs[a - 11 : a - 1], diffs[a : a + 10]])
+            print(f"接缝 帧 {a - 1}→{a}：变化 {d:.3f}（前后中位数 {around:.3f}）")
+            if d > max(1.0, 4 * around):
+                problems.append(f"接缝 {a} 处画面跳变")
     if problems:
         print(f"FAIL {len(problems)} 处：")
         for p in problems[:40]:

@@ -197,7 +197,139 @@ const SYNTHS = {
   padIn: () => pad(1.0, 0.65, 1.35, 0.55),
   // 代价：铺底下滑半音
   padSlide: () => pad(2 ** (-1 / 12), 0.25, 1.5, 0.7),
+
+  // ───── 后半片 ─────
+  // 脚尖碰砖 / 推门：低沉的木质“笃”
+  woodTick: () => {
+    const x = buf(0.5);
+    osc(x, { dur: 0.4, freq: glide(300, 220, 0.04), env: ad(0.01, 0.05), partials: [[1, 1], [2.02, 0.18]] });
+    osc(x, { dur: 0.5, freq: 150, env: ad(0.012, 0.1), gain: 0.6 });
+    return lp(x, 1800);
+  },
+  // 光路铺出去：四个音往上走
+  arpUp: () => {
+    const x = buf(1.6);
+    [440, 554.37, 659.25, 880].forEach((f0, i) => osc(x, { t0: i * 0.09, dur: 1.2, freq: f0, env: ad(0.012, 0.35), gain: 0.5, partials: bell }));
+    return lp(x, 3500);
+  },
+  // 断口往下掉：五个下行点音
+  dropTicks: () => {
+    const x = buf(1.2);
+    [659.25, 587.33, 523.25, 493.88, 440].forEach((f0, i) => osc(x, { t0: i * 0.11, dur: 0.5, freq: f0, env: ad(0.012, 0.11), gain: 0.6 }));
+    return lp(x, 3000);
+  },
+  // 柔钟（C5）
+  softBell: () => {
+    const x = buf(2.6);
+    osc(x, { dur: 2.6, freq: 523.25, env: ad(0.014, 1.1), partials: bell });
+    osc(x, { dur: 2.6, freq: 261.63, env: ad(0.03, 1.3), gain: 0.25 });
+    return lp(x, 3500);
+  },
+  // 懂得越多 / 做得越少：一升一降
+  upDownGlide: () => {
+    const x = buf(1.1);
+    osc(x, { dur: 0.7, freq: glide(300, 600, 0.5), env: ahr(0.08, 0.4, 0.25), gain: 0.6 });
+    osc(x, { t0: 0.2, dur: 0.8, freq: glide(600, 300, 0.55), env: ahr(0.08, 0.45, 0.3), gain: 0.6 });
+    return lp(x, 3000);
+  },
+  // 心跳般的软脉冲 ×2
+  heartPulse: () => {
+    const x = buf(1.0);
+    [0, 0.35].forEach((t0, i) => osc(x, { t0, dur: 0.5, freq: glide(150, 110, 0.08), env: ad(0.012, 0.09), gain: i ? 0.7 : 1, partials: [[1, 1], [2, 0.2]] }));
+    return lp(x, 1200);
+  },
+  // 杂念：三声轻拨弦（三角波），快版四声
+  pluck3: () => plucks([659.25, 587.33, 493.88], 0.25),
+  pluck3Fast: () => plucks([698.46, 622.25, 554.37, 493.88], 0.15),
+  // 每推一次灭一格：两个下行音，间隔 32 帧
+  stepDown: () => {
+    const x = buf(2.4);
+    osc(x, { dur: 1.0, freq: glide(440, 392, 0.3), env: ad(0.015, 0.4), partials: bell });
+    osc(x, { t0: 32 / 30, dur: 1.2, freq: glide(392, 329.63, 0.3), env: ad(0.015, 0.5), partials: bell });
+    return lp(x, 3000);
+  },
+  // 电量见底：低沉的小三和弦（关键句，强）
+  lowChord: () => {
+    const x = buf(4.2);
+    osc(x, { dur: 1.6, freq: glide(78, 55, 0.25), env: ad(0.012, 0.45), gain: 0.9 });
+    [110, 164.81, 220, 261.63].forEach((f0, i) =>
+      osc(x, { t0: 0.02 + i * 0.01, dur: 4.1, freq: (t) => f0 * (1 + 0.0012 * Math.sin(TAU * 4 * t)), env: ahr(0.05, 1.3, 2.4), gain: 0.24, partials: [[1, 1], [2, 0.1]] }),
+    );
+    return lp(x, 2600);
+  },
+  // 钟摆：音高一荡一回
+  swing: () => {
+    const x = buf(1.2);
+    osc(x, { dur: 1.2, freq: (t) => 200 + 50 * Math.sin(Math.PI * Math.min(1, t / 0.9)), env: ahr(0.1, 0.7, 0.4), partials: [[1, 1], [2, 0.12]] });
+    return lp(x, 2000);
+  },
+  // 脚步：variant = 步数，间隔 0.32 s（= 画面里的 9.6 帧一步）
+  steps: (n = 4) => {
+    const x = buf(0.32 * n + 0.4);
+    for (let k = 0; k < n; k++) {
+      osc(x, { t0: k * 0.32, dur: 0.35, freq: glide(130, 82, 0.05), env: ad(0.012, 0.06), gain: 1 });
+      osc(x, { t0: k * 0.32, dur: 0.2, freq: 260, env: ad(0.01, 0.025), gain: 0.25, shape: 'tri' });
+    }
+    return lp(x, 1200);
+  },
+  // 跌倒一声闷响，1.2 s 后跳起来一串上行琶音
+  fallJoy: () => {
+    const x = buf(2.6);
+    osc(x, { dur: 0.8, freq: glide(95, 52, 0.12), env: ad(0.012, 0.2), gain: 0.8 });
+    [523.25, 659.25, 783.99, 1046.5].forEach((f0, i) => osc(x, { t0: 1.2 + i * 0.07, dur: 1.2, freq: f0, env: ad(0.012, 0.45), gain: 0.45, partials: bell }));
+    return lp(x, 3800);
+  },
+  // 两音和声
+  dyad: () => {
+    const x = buf(2.6);
+    [329.63, 493.88].forEach((f0) => osc(x, { dur: 2.6, freq: f0, env: ad(0.02, 1.0), gain: 0.5, partials: bell }));
+    osc(x, { dur: 2.6, freq: 164.81, env: ad(0.05, 1.2), gain: 0.2 });
+    return lp(x, 3200);
+  },
+  // 单音上扬
+  toneUp: () => {
+    const x = buf(1.4);
+    osc(x, { dur: 1.4, freq: glide(330, 495, 0.25), env: ad(0.015, 0.45), partials: [[1, 1], [2, 0.15]] });
+    return lp(x, 3000);
+  },
+  // 拉绳：下行滑音
+  glideDown: () => {
+    const x = buf(1.4);
+    osc(x, { dur: 1.4, freq: glide(520, 330, 0.8), env: ahr(0.06, 0.65, 0.6), partials: [[1, 1], [2, 0.1]] });
+    return lp(x, 2600);
+  },
+  // 呼气般的下行正弦（不是气声）
+  exhale: () => {
+    const x = buf(1.9);
+    osc(x, { dur: 1.9, freq: glide(400, 260, 1.0), env: ahr(0.25, 0.9, 0.7), gain: 0.8 });
+    osc(x, { dur: 1.9, freq: glide(200, 130, 1.0), env: ahr(0.25, 0.9, 0.7), gain: 0.4 });
+    return lp(x, 2000);
+  },
+  // 划一道：短促三角波滑音
+  glideShort: () => {
+    const x = buf(0.7);
+    osc(x, { dur: 0.7, freq: glide(600, 800, 0.25), env: ad(0.015, 0.18), shape: 'tri' });
+    return lp(x, 2400);
+  },
+  // 全片最后的落地：低频 + 完整大三和弦 + 一声钟（关键句，强，最长）
+  finalChord: () => {
+    const x = buf(5.0);
+    osc(x, { dur: 1.6, freq: glide(84, 52, 0.22), env: ad(0.012, 0.42), gain: 0.95 });
+    [73.42, 110, 146.83, 185, 220, 293.66, 369.99].forEach((f0, i) =>
+      osc(x, { t0: 0.02 + i * 0.012, dur: 4.9, freq: (t) => f0 * (1 + 0.0012 * Math.sin(TAU * 4.2 * t)), env: ahr(0.05, 1.8, 2.9), gain: 0.17, partials: [[1, 1], [2, 0.1]] }),
+    );
+    osc(x, { t0: 0.12, dur: 4.0, freq: 587.33, env: ad(0.014, 1.4), gain: 0.3, partials: bell });
+    return lp(x, 3500);
+  },
+  // 结尾的铺底：慢慢淡出
+  padTail: () => pad(1.0, 0.6, 1.4, 1.6),
 };
+
+function plucks(notes, gap) {
+  const x = buf(gap * notes.length + 0.6);
+  notes.forEach((f0, i) => osc(x, { t0: i * gap, dur: 0.6, freq: f0, env: ad(0.012, 0.16), shape: 'tri', gain: 0.8 }));
+  return lp(x, 2500);
+}
 
 function whoosh(fA, fB, peakAt) {
   const D = 1.15;
@@ -239,6 +371,7 @@ const NOISE_TYPES = new Set(['sand', 'whooshIn', 'whooshOut']);
 // ───────────── 排时间轴 ─────────────
 const tiers = script.rules.sfxPeakDbfs;
 const noiseCut = script.rules.noiseSfxExtraAttenuationDb;
+const drive = script.rules.sfxSoftClipDrive ?? 0;
 const ceiling = dbToLin(script.rules.busCeilingDbfs);
 const total = Math.round(((END - START) / FPS) * SR);
 const bus = new Float64Array(total);
@@ -258,6 +391,12 @@ for (const s of script.screens.filter((x) => x.id <= LAST)) {
     for (const v of x) peak = Math.max(peak, Math.abs(v));
     const isNoise = NOISE_TYPES.has(c.type);
     const targetDb = tiers[c.tier] - (isNoise ? noiseCut : 0);
+    // 音色类音效做一次柔和饱和（tanh），压低峰值因数，让同样的峰值听起来更饱满；噪声类不做
+    if (!isNoise && drive > 0) {
+      for (let n = 0; n < x.length; n++) x[n] = Math.tanh((drive * x[n]) / peak);
+      peak = 0;
+      for (const v of x) peak = Math.max(peak, Math.abs(v));
+    }
     const g = dbToLin(targetDb) / peak;
     for (let n = 0; n < x.length; n++) x[n] *= g;
     // 首尾 15 ms 升余弦，防咔哒

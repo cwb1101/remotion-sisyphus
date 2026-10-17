@@ -34,12 +34,23 @@
       "maxY": 740
     },
     "sfxPeakDbfs": {
-      "weak": -24,
-      "mid": -16,
-      "strong": -8
+      "weak": -23,
+      "mid": -15,
+      "strong": -7.5
     },
     "noiseSfxExtraAttenuationDb": 4,
-    "busCeilingDbfs": -7
+    "busCeilingDbfs": -7,
+    "watermark": {
+      "text": "肆号静匣Logos",
+      "x": 1660,
+      "y": 34,
+      "w": 226,
+      "h": 40,
+      "fontSize": 22,
+      "opacity": 0.35,
+      "borderWidth": 1
+    },
+    "sfxSoftClipDrive": 1.8
   },
   "sections": [
     {
@@ -492,8 +503,14 @@
       "endFrame": 1278,
       "text": "别人说他懒，眼高手低",
       "highlights": [],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "mid",
+      "sfx": [
+        {
+          "type": "whooshOut",
+          "tier": "mid",
+          "atFrame": -4
+        }
+      ],
       "bigWord": null
     },
     {
@@ -584,7 +601,14 @@
           "atFrame": 12
         }
       ],
-      "bigWord": null
+      "bigWord": {
+        "text": "电量",
+        "color": "#6FD6A8",
+        "x": 300,
+        "y": 280,
+        "w": 400,
+        "h": 180
+      }
     },
     {
       "id": 26,
@@ -627,8 +651,14 @@
       "endFrame": 1824,
       "text": "往前迈不出去，往后又不甘心",
       "highlights": [],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "swing",
+          "tier": "weak",
+          "atFrame": 34
+        }
+      ],
       "bigWord": null
     },
     {
@@ -643,7 +673,8 @@
         {
           "type": "steps",
           "tier": "weak",
-          "atFrame": 0
+          "atFrame": 0,
+          "variant": 6
         }
       ],
       "bigWord": null
@@ -671,7 +702,8 @@
         {
           "type": "steps",
           "tier": "weak",
-          "atFrame": 0
+          "atFrame": 2,
+          "variant": 6
         }
       ],
       "bigWord": null
@@ -688,8 +720,14 @@
           "color": "#6FD6A8"
         }
       ],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "arpUp",
+          "tier": "weak",
+          "atFrame": 10
+        }
+      ],
       "bigWord": null
     },
     {
@@ -738,8 +776,14 @@
           "color": "#6FD6A8"
         }
       ],
-      "sfxTier": null,
-      "sfx": [],
+      "sfxTier": "weak",
+      "sfx": [
+        {
+          "type": "arpUp",
+          "tier": "weak",
+          "atFrame": 10
+        }
+      ],
       "bigWord": null
     },
     {
@@ -800,6 +844,11 @@
           "type": "dyad",
           "tier": "mid",
           "atFrame": 6
+        },
+        {
+          "type": "whooshIn",
+          "tier": "mid",
+          "atFrame": -2
         }
       ],
       "bigWord": null
@@ -817,6 +866,11 @@
           "type": "toneUp",
           "tier": "mid",
           "atFrame": 6
+        },
+        {
+          "type": "whooshOut",
+          "tier": "mid",
+          "atFrame": -4
         }
       ],
       "bigWord": null
@@ -883,7 +937,8 @@
         {
           "type": "steps",
           "tier": "mid",
-          "atFrame": 4
+          "atFrame": 4,
+          "variant": 1
         }
       ],
       "bigWord": null
@@ -934,7 +989,8 @@
         {
           "type": "steps",
           "tier": "weak",
-          "atFrame": 8
+          "atFrame": 8,
+          "variant": 2
         }
       ],
       "bigWord": null
@@ -1009,7 +1065,8 @@
         {
           "type": "steps",
           "tier": "weak",
-          "atFrame": 0
+          "atFrame": 8,
+          "variant": 4
         }
       ],
       "bigWord": null
@@ -1092,7 +1149,8 @@
         {
           "type": "steps",
           "tier": "mid",
-          "atFrame": 4
+          "atFrame": 4,
+          "variant": 3
         }
       ],
       "bigWord": null
@@ -1114,10 +1172,17 @@
         {
           "type": "finalChord",
           "tier": "strong",
-          "atFrame": 4
+          "atFrame": 8
         }
       ],
-      "bigWord": null
+      "bigWord": {
+        "text": "落地",
+        "color": "#6FD6A8",
+        "x": 300,
+        "y": 220,
+        "w": 460,
+        "h": 200
+      }
     },
     {
       "id": 56,
@@ -1136,5 +1201,28 @@
       ],
       "bigWord": null
     }
-  ]
+  ],
+  "film": {
+    "startFrame": 0,
+    "endFrame": 3600,
+    "lastScreen": 56,
+    "segments": [
+      [
+        0,
+        899
+      ],
+      [
+        900,
+        1799
+      ],
+      [
+        1800,
+        2699
+      ],
+      [
+        2700,
+        3599
+      ]
+    ]
+  }
 }

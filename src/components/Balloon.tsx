@@ -27,6 +27,8 @@ export type BalloonProps = {
   halo?: number;
   /** 绳子单独的透明度（拉远交接时人还没显出来，绳子也先不出现） */
   stringOpacity?: number;
+  /** 同心环间距（相对半径）；环多的时候调小，避免最外圈超出球面 */
+  ringGap?: number;
 };
 
 export const Balloon: React.FC<BalloonProps> = ({
@@ -43,6 +45,7 @@ export const Balloon: React.FC<BalloonProps> = ({
   halfDark = 0,
   halo = 0,
   stringOpacity = 1,
+  ringGap = 0.17,
 }) => {
   const knot = { x: cx, y: cy + r };
   const end = anchor ?? { x: cx + sway * 0.6, y: cy + r + stringLen };
@@ -51,7 +54,7 @@ export const Balloon: React.FC<BalloonProps> = ({
   const nRings = Math.ceil(rings);
   for (let i = 0; i < nRings; i++) {
     const grow = clamp(rings - i);
-    const rr = r * (0.3 + 0.17 * i) * (0.85 + 0.15 * grow);
+    const rr = r * (0.3 + ringGap * i) * (0.85 + 0.15 * grow);
     ringEls.push(
       <circle
         key={i}

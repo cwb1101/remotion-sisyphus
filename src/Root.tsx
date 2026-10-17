@@ -1,6 +1,7 @@
 import React from 'react';
 import { Composition } from 'remotion';
 import { script } from './data/script';
+import { Film } from './Film';
 import { Preview } from './Preview';
 
 export const RemotionRoot: React.FC = () => (
@@ -19,6 +20,24 @@ export const RemotionRoot: React.FC = () => (
       id="PreviewTextOnly"
       component={Preview}
       durationInFrames={script.preview.endFrame - script.preview.startFrame}
+      fps={script.fps}
+      width={script.width}
+      height={script.height}
+      defaultProps={{ textOnly: true }}
+    />
+    <Composition
+      id="Film"
+      component={Film}
+      durationInFrames={script.film.endFrame - script.film.startFrame}
+      fps={script.fps}
+      width={script.width}
+      height={script.height}
+      defaultProps={{ textOnly: false }}
+    />
+    <Composition
+      id="FilmTextOnly"
+      component={Film}
+      durationInFrames={script.film.endFrame - script.film.startFrame}
       fps={script.fps}
       width={script.width}
       height={script.height}

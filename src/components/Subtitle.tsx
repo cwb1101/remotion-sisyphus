@@ -30,9 +30,9 @@ export const splitHighlights = (s: Screen) => {
 };
 
 /** 底部主字幕：屏幕坐标固定，不在任何镜头变换里。 */
-export const Subtitle: React.FC<{ textOnly?: boolean }> = ({ textOnly = false }) => {
+export const Subtitle: React.FC<{ textOnly?: boolean; lastScreen?: number }> = ({ textOnly = false, lastScreen }) => {
   const frame = useCurrentFrame();
-  const s = activeScreen(frame);
+  const s = activeScreen(frame, lastScreen);
   const fadeIn = s ? clamp((frame - s.startFrame) / 5) : 0;
   const fadeOut = s ? clamp((s.endFrame - frame) / 4) : 0;
   const o = Math.min(fadeIn, fadeOut);
