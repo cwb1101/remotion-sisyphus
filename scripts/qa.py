@@ -185,7 +185,8 @@ def main(video, qa_dir):
                     if not (blob & (cm["any"] & ~cm["head"])).any():
                         flags["dot"].append(f)
                         break
-        if sc:
+        if sc and not glow:
+            # 换场亮光盖住的帧不计入 看得到人物 的比例
             ps = per_screen[sc["id"]]
             ps["n"] += 1
             ps["head"] += int(cm["head"].any())
@@ -259,7 +260,7 @@ def main(video, qa_dir):
     for a, d in silences:
         if a < tail:
             problems.append(f"意外静音: {a:.2f}s 起 {d:.2f} 秒")
-    eb = ff(["-map", "0:a", "-af", "ebur128=peak=true:framelog=verbose"])
+    eb = ff(["-map", "0:a", "-af", "ebur128=peak=true:framelog=info"])
     integ = float(_re.findall(r"I:\s+(-?[\d.]+) LUFS", eb)[-1])
     tpk = float(_re.findall(r"Peak:\s+(-?[\d.]+) dBFS", eb)[-1])
     if abs(integ + 14) > 1.0:

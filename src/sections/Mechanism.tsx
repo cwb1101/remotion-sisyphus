@@ -57,7 +57,7 @@ export const mPartnerX = (f: number): number => {
 	// 退到 4800: 杯子落地那几个特写里, 对方的头不会进到右上角的水印区
 	if (f < M.hold) return travel(PARTNER_KEYS, f, px0, 4800, M.chase, M.crack);
 	if (f < M.hug) return travel(PARTNER_KEYS, f, 4800, 4290, M.hold, M.leave);
-	return travel(PARTNER_KEYS, f, 4290, 4440, M.hug, M.five);
+	return travel(PARTNER_KEYS, f, 4290, 4520, M.hug, M.five);
 };
 
 /** 主角那只杯的液面: 每次收到回复涨一截, 然后漏下去, 越来越快 */

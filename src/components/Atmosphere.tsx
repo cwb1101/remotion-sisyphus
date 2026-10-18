@@ -64,7 +64,8 @@ export const portalRadius = (frame: number) => {
 	const p = PORTALS.find((q) => frame >= q.frame - PORTAL_PUSH && frame < q.frame + PORTAL_PULL);
 	if (!p) return 0;
 	const k = frame < p.frame ? 1 - (p.frame - frame) / PORTAL_PUSH : 1 - (frame - p.frame) / PORTAL_PULL;
-	return 40 + 1700 * Math.max(0, k);
+	// 最大时 0.55 倍半径 (几乎不透明的那一圈) 超过屏幕中心到角的距离, 换场那一帧整屏都被盖住
+	return 40 + 2200 * Math.max(0, k);
 };
 
 /** 换场时盖住画面的一圈亮光 (象牙白到金), 中心就是镜头推近的那个物件 */

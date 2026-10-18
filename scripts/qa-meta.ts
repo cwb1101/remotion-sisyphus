@@ -26,7 +26,7 @@ const meta = {
 		const sc = SCREENS.find((s) => f >= s.startFrame && f < s.endFrame);
 		// 穿物件换场时镜头有意推到极近 (允许裁切), 亮光盖住的圆里人物看不见 (遮挡检查跳过这一圈)
 		const glow = portalRadius(f);
-		return {closeup: glow > 0 || fromClose || (!moving && !!(sc && SHOTS[sc.shot]?.closeup)), moving, glow: Math.round(glow * 0.55), bgm: Number(bgmVolume(f).toFixed(4))};
+		return {closeup: glow > 0 || fromClose || (!moving && !!(sc && SHOTS[sc.shot]?.closeup)), moving, glow: Math.round(glow * 0.72), bgm: Number(bgmVolume(f).toFixed(4))};
 	}),
 	screens: SCREENS.filter((s) => s.startFrame < end).map((s) => ({
 		id: s.id,
