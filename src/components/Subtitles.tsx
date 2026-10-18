@@ -62,9 +62,10 @@ export const Subtitles: React.FC = () => {
 				if (until - frame <= 14) {
 					const k = 1 - (until - frame) / 14;
 					if (target && target.keyword === x.keyword) {
+						// 先沿着画面上沿横移, 再竖直落进字幕行, 不从人物的手和脸上斜穿过去
 						const e = k * k;
-						left = interpolate(e, [0, 1], [120, kwLeft(target.text, x.keyword!)]);
-						top = interpolate(e, [0, 1], [pinTop, lineTop]);
+						left = interpolate(e, [0, 0.5], [120, kwLeft(target.text, x.keyword!)], {extrapolateRight: 'clamp'});
+						top = interpolate(e, [0.5, 1], [pinTop, lineTop], {extrapolateLeft: 'clamp'});
 						size = interpolate(e, [0, 1], [pinSize, SUBTITLE.size]);
 						fade = interpolate(k, [0, 1], [0.42, 1]);
 					} else {

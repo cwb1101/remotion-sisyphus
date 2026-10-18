@@ -23,7 +23,8 @@ export const GLANCES = BARS.filter((b) => b >= YOU_START && b < S(24).startFrame
 
 const T = {
 	send: cueFrame(S(19), 1),
-	sitEdge: S(22).startFrame,
+	// 镜头先从手机特写拉开, 这个人再坐到床沿 (避免半起身时头顶进到右上角)
+	sitEdge: cueFrame(S(22), 0.75),
 	lieAgain: S(24).startFrame,
 	buzz: S(25).startFrame,
 	slump: cueFrame(S(25), 2),
@@ -125,7 +126,7 @@ export const You: React.FC = () => {
 	const sh0 = S(22).startFrame;
 	const shadowKeys = [{frame: sh0, pose: 'stand' as const, facing: 1 as const}, {frame: plusBeats(sh0, 1), pose: 'walk' as const}];
 	const shadowX = interpolate(f, [plusBeats(sh0, 1), S(23).startFrame], [-1500, -1200], clamp);
-	const shadowOn = interpolate(f, [sh0, sh0 + 10, S(23).startFrame - 6, S(23).startFrame], [0, 1, 1, 0], clamp);
+	const shadowOn = interpolate(f, [sh0 + 20, sh0 + 30, S(23).startFrame - 6, S(23).startFrame], [0, 1, 1, 0], clamp);
 
 	return (
 		<g>

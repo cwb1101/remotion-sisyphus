@@ -174,7 +174,7 @@ def main(video, qa_dir):
             if ft[-2:].any():
                 flags["foot_crop"].append(f)
         lab, n = ndimage.label(cm["head"])
-        if n:
+        if n and not glow:
             sizes = ndimage.sum(cm["head"], lab, range(1, n + 1))
             boxes = ndimage.find_objects(lab)
             for sz, bx in zip(sizes, boxes):

@@ -10,7 +10,7 @@ import {H, W} from '../theme';
 export type CamState = {x: number; y: number; zoom: number; rot: number};
 
 const ease = Easing.bezier(0.45, 0, 0.2, 1);
-const PORTAL_ZOOM = 4;
+const PORTAL_ZOOM = 2.5;
 
 const mix = (a: Shot | CamState, b: Shot | CamState, t: number): CamState => ({
 	x: a.x + (b.x - a.x) * t,

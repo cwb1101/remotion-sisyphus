@@ -103,7 +103,7 @@ export const Turn: React.FC = () => {
 	} as CharacterProps;
 
 	// ---------- 对方 ----------
-	const offering = f >= cueFrame(S(36), 2) && f < M.leave + 6;
+	const offering = f >= cueFrame(S(36), 3) && f < M.leave + 6;
 	const pouring = f >= M.jug && f < M.hug;
 	// 壶在杯子右上方, 不挡主角的脸
 	const jugAt = cup ? {x: cup.x + 74, y: cup.y - 70} : {x: px - 60, y: -300};
