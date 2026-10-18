@@ -12,11 +12,18 @@ import {SoundLayer} from './components/SoundLayer';
 import {Subtitles} from './components/Subtitles';
 import {Watermark} from './components/Watermark';
 import {CREDITS, SCREENS} from './data/subtitles';
+import {Callback} from './sections/Callback';
 import {Evidence} from './sections/Evidence';
+import {Fusion} from './sections/Fusion';
 import {Hook} from './sections/Hook';
+import {Mechanism, OpenGround} from './sections/Mechanism';
+import {EndCard, Outro} from './sections/Outro';
+import {Quote} from './sections/Quote';
+import {Turn} from './sections/Turn';
+import {Bedroom, You} from './sections/You';
 import {COLORS} from './theme';
 
-const ALL_TEXT = [...SCREENS.map((s) => s.text + (s.note ?? '')), ...CREDITS, '肆号静匣Logos', '陪伴倾听安全感成长意义理解回应全部'].join('');
+const ALL_TEXT = [...SCREENS.map((s) => s.text + (s.note ?? '')), ...CREDITS, '肆号静匣Logos', '陪伴倾听安全感成长意义理解回应全部', '爱的浓度科普内容不构成心理诊断', '睡了吗你还爱我吗爱在吗你在忙吗回我在不在嗯'].join('');
 
 const useFonts = () => {
 	const [handle] = useState(() => delayRender('fonts'));
@@ -45,11 +52,22 @@ export const Film: React.FC<FilmProps> = ({mode}) => {
 			<AbsoluteFill style={{background: bg}}>
 				<CameraLayer>
 					{mode === 'normal' ? <rect x={-6000} y={-4000} width={14000} height={9000} fill={COLORS.bg} /> : null}
-					<Hook />
+					<Hook layer="back" />
 					<Evidence />
+					<Fusion />
+					<Bedroom />
+					<You />
+					<OpenGround />
+					<Mechanism />
+					<Turn />
+					<Quote />
+					<Callback />
+					<Outro />
+					<Hook layer="front" />
 				</CameraLayer>
 				<Atmosphere />
 				<Subtitles />
+				<EndCard />
 				<Watermark />
 				{mode === 'normal' ? <SoundLayer durationInFrames={durationInFrames} /> : null}
 			</AbsoluteFill>

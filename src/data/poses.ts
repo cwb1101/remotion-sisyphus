@@ -33,7 +33,7 @@ export type PoseName =
 	| 'stand' | 'walk' | 'run' | 'push' | 'pull' | 'sit' | 'lookUp' | 'lookDown' | 'reach' | 'point'
 	| 'fall' | 'getUp' | 'turn' | 'raiseHand' | 'holdHead'
 	| 'kneel' | 'holdCup' | 'pour' | 'offer' | 'lean' | 'leanBack' | 'carry' | 'stagger' | 'phone'
-	| 'slump' | 'highFive' | 'pass' | 'lieSide' | 'hug' | 'type';
+	| 'slump' | 'highFive' | 'pass' | 'lieSide' | 'hug' | 'type' | 'walkBack' | 'sitUp';
 
 export type Expression = 'neutral' | 'sad' | 'surprised' | 'smile' | 'tense' | 'calm';
 
@@ -50,7 +50,7 @@ const STAND: Pose = {
 const P = (o: Partial<Pose>): Pose => ({...STAND, ...o});
 
 /** 静态动作 */
-export const POSES: Record<Exclude<PoseName, 'walk' | 'run'>, Pose> = {
+export const POSES: Record<Exclude<PoseName, 'walk' | 'run' | 'walkBack'>, Pose> = {
 	stand: STAND,
 	turn: STAND, // 转身 = 站姿 + 朝向翻转, 翻转由时间线处理
 	push: P({torso: 18, armF: arm(84, 12), armB: arm(80, 22), legF: leg(22, 14), legB: leg(-26, 4)}),
@@ -60,7 +60,8 @@ export const POSES: Record<Exclude<PoseName, 'walk' | 'run'>, Pose> = {
 	lookDown: P({torso: 8, neck: 32, armF: arm(10, 28), armB: arm(4, 30)}),
 	reach: P({torso: 12, neck: -4, armF: arm(86, 8, -6), armB: arm(-8, 12), legF: leg(10, 6)}),
 	point: P({torso: 4, neck: -4, armF: arm(94, 0), armB: arm(-6, 10)}),
-	fall: P({torso: -30, neck: 12, rot: 0, armF: arm(-38, 6), armB: arm(-48, 6), legF: leg(80, 24), legB: leg(70, 46), ground: 'hands'}),
+	// 跌坐: 屁股着地 双手往后撑地, 近侧腿伸直 远侧腿屈膝立起
+	fall: P({torso: -30, neck: 12, rot: 0, armF: arm(-38, 6), armB: arm(-48, 6), legF: leg(86, 6), legB: leg(132, 128), ground: 'hands'}),
 	getUp: P({torso: 12, neck: 6, armF: arm(42, 34), armB: arm(12, 20), legF: leg(86, 92), legB: leg(-8, 96), ground: 'auto'}),
 	raiseHand: P({torso: -2, neck: -10, armF: arm(166, 12), armB: arm(-4, 10)}),
 	holdHead: P({torso: 10, neck: 26, armF: arm(146, 128), armB: arm(140, 132), legF: leg(6, 10), legB: leg(-6, 10)}),
@@ -76,7 +77,10 @@ export const POSES: Record<Exclude<PoseName, 'walk' | 'run'>, Pose> = {
 	slump: P({torso: 14, neck: 34, armF: arm(4, 6), armB: arm(0, 6), legF: leg(4, 9), legB: leg(-4, 9)}),
 	highFive: P({torso: -4, neck: -8, armF: arm(158, 22), armB: arm(-6, 12)}),
 	pass: P({torso: 8, neck: 2, armF: arm(66, 20), armB: arm(0, 16)}),
-	lieSide: P({torso: 0, neck: 0, rot: -90, armF: arm(40, 90), armB: arm(30, 80), legF: leg(30, 40), legB: leg(26, 44)}),
+	// 平躺: 整个人往后转 90 度, 头朝左 脸朝上
+	lieSide: P({torso: 0, neck: -6, rot: -90, armF: arm(20, 90), armB: arm(10, 80), legF: leg(4, 2), legB: leg(-2, 6)}),
+	// 在床上坐起: 腿伸直平放
+	sitUp: P({torso: 4, neck: 8, armF: arm(28, 104), armB: arm(22, 108), legF: leg(88, 3), legB: leg(86, 6)}),
 	hug: P({torso: 6, neck: 10, armF: arm(70, 70), armB: arm(64, 78), legF: leg(8, 6)}),
 	type: P({torso: 6, neck: 26, armF: arm(30, 112), armB: arm(26, 116)}),
 };
@@ -126,7 +130,8 @@ export const POSE_LABELS: Record<PoseName, string> = {
 	lookUp: '抬头', lookDown: '低头', reach: '伸手', point: '指向', fall: '跌倒', getUp: '爬起',
 	turn: '转身', raiseHand: '举手', holdHead: '抱头', kneel: '跪坐', holdCup: '捧杯', pour: '倒',
 	offer: '递出', lean: '探身', leanBack: '后靠', carry: '抱重物', stagger: '被压弯', phone: '看手机',
-	slump: '垂头丧气', highFive: '击掌', pass: '传递', lieSide: '侧躺', hug: '拥抱', type: '打字',
+	slump: '垂头丧气', highFive: '击掌', pass: '传递', lieSide: '躺下', hug: '拥抱', type: '打字',
+	walkBack: '后退', sitUp: '坐起',
 };
 
 // ---------- 混合 ----------
@@ -148,7 +153,7 @@ export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
 /** 关节限位: 肘和膝只能往一个方向弯, 防止反折 */
 export const clampPose = (p: Pose): Pose => {
 	const ca = (x: Arm): Arm => ({sh: clamp(x.sh, -80, 185), el: clamp(x.el, 0, 160), wr: clamp(x.wr, -60, 60)});
-	const cl = (x: Leg): Leg => ({hip: clamp(x.hip, -60, 120), kn: clamp(x.kn, 0, 160), an: clamp(x.an, -50, 50)});
+	const cl = (x: Leg): Leg => ({hip: clamp(x.hip, -60, 140), kn: clamp(x.kn, 0, 160), an: clamp(x.an, -50, 50)});
 	return {...p, neck: clamp(p.neck, -45, 50), armF: ca(p.armF), armB: ca(p.armB), legF: cl(p.legF), legB: cl(p.legB)};
 };
 
@@ -176,12 +181,14 @@ const evalKey = (k: PoseKey, frame: number, phaseOffset: number): Pose => {
 	const base = (name: PoseName): Pose => {
 		if (name === 'walk') return walkPose((beatAt(frame) - beatAt(k.frame)) / 2 + phaseOffset);
 		if (name === 'run') return runPose(beatAt(frame) - beatAt(k.frame) + phaseOffset);
+		if (name === 'walkBack') return walkPose(-(beatAt(frame) - beatAt(k.frame)) / 2 + phaseOffset);
 		return POSES[name];
 	};
 	const upper = base(k.pose);
 	if (!k.lower) return upper;
 	const lower = base(k.lower);
-	return {...upper, legF: lower.legF, legB: lower.legB, ground: lower.ground};
+	// 下半身是躺着的动作时, 整体旋转也跟下半身走 (躺着打字 = 躺 + 打字的手)
+	return {...upper, legF: lower.legF, legB: lower.legB, ground: lower.ground, rot: lower.rot !== 0 ? lower.rot : upper.rot};
 };
 
 export type PoseState = {pose: Pose; facing: number; expr: Expression; key: PoseKey};

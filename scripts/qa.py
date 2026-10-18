@@ -232,12 +232,55 @@ def main(video, qa_dir):
         if m["end"] not in kicks:
             problems.append(f"镜头 {m['name']} 没有落在底鼓上")
 
+    # ---------- ffmpeg: 静止画面 静音 响度 ----------
+    import re as _re
+
+    def ff(args):
+        return subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(video)] + args + ["-f", "null", "-"], capture_output=True, text=True).stderr
+
+    fz = ff(["-map", "0:v", "-vf", "freezedetect=n=-60dB:d=3"])
+    freezes = [(float(a), float(b)) for a, b in zip(_re.findall(r"freeze_start: ([\d.]+)", fz), _re.findall(r"freeze_duration: ([\d.]+)", fz))]
+    for a, d in freezes:
+        problems.append(f"画面静止超过 3 秒: {a:.2f}s 起 {d:.2f} 秒")
+    sl = ff(["-map", "0:a", "-af", "silencedetect=noise=-50dB:d=0.5"])
+    silences = [(float(a), float(b)) for a, b in zip(_re.findall(r"silence_start: ([\d.]+)", sl), _re.findall(r"silence_duration: ([\d.]+)", sl))]
+    tail = end / fps - 1.5
+    for a, d in silences:
+        if a < tail:
+            problems.append(f"意外静音: {a:.2f}s 起 {d:.2f} 秒")
+    eb = ff(["-map", "0:a", "-af", "ebur128=peak=true:framelog=verbose"])
+    integ = float(_re.findall(r"I:\s+(-?[\d.]+) LUFS", eb)[-1])
+    tpk = float(_re.findall(r"Peak:\s+(-?[\d.]+) dBFS", eb)[-1])
+    if abs(integ + 14) > 1.0:
+        problems.append(f"整片响度 {integ} LUFS, 不在 -14 附近")
+    if tpk > -1.0:
+        problems.append(f"真峰 {tpk} dBTP 超过 -1")
+    # 瞬时响度 (400ms) 逐 0.1 秒: 重卡点前后 0.5 秒里的最大值 应高于其他时间的最大值
+    mom = [(float(t), float(m)) for t, m in _re.findall(r"t:\s*([\d.]+)\s+TARGET:-?\d+ LUFS\s+M:\s*(-?[\d.]+)", eb)]
+    hv = [h / fps for h in meta["heavy"]]
+    near = lambda t: any(-0.1 <= t - x <= 0.6 for x in hv)
+    other = max((m for t, m in mom if not near(t)), default=-99)
+    loud_rows = []
+    for x in hv:
+        pk = max((m for t, m in mom if -0.1 <= t - x <= 0.6), default=-99)
+        loud_rows.append(f"| {x:.2f}s | {pk:.1f} LUFS | {other:.1f} LUFS | {'是' if pk >= other else '否'} |")
+        if pk < other:
+            problems.append(f"重卡点 {x:.2f}s 的瞬时响度 {pk:.1f} 低于别处最大值 {other:.1f}")
+
+    # 逐屏一帧: 每屏中间那一帧, 用来对照字幕 人物 动作
+    mids = [(sc["start"] + sc["end"]) // 2 for sc in meta["screens"]]
+    fr = frames_from_video(video, mids, 384)
+    imgs = [label(im, f"#{sc['id']} f{m}") for im, m, sc in zip(fr, mids, meta["screens"])]
+    Image.fromarray(tile(imgs, 7)).save(qa / "screens.png")
+
     rep = ["# 质检报告", "", f"视频 `{video}` 共 {end} 帧; 遮罩序列 {len(chars)} / {len(subs)} 帧", "",
+           f"整片响度 **{integ} LUFS** 真峰 **{tpk} dBTP**; 静止超过 3 秒的段落 {len(freezes)} 处; 静音段 {len([1 for a, d in silences if a < tail])} 处", "",
            "## 问题", ""] + ([f"- ❌ {p}" for p in problems] or ["- 没有发现问题"]) + [
            "", "## 逐屏", "", "| 屏 | 帧 | 字幕 | 看得到人物的帧 | 字幕可读的帧 | 特写 |", "|---|---|---|---|---|---|"] + notes + [
            "", "## 重卡点", "", "| 帧 | 画面变化最大的帧 | 重音效起音偏差 (帧) |", "|---|---|---|"] + [
            f"| {h} | {p} | {o:+.1f} |" for (h, p, _), (_, o) in zip(heavy_rows, audio_rows)] + [
            "", "## BGM 让位", "", "| 重卡点帧 | BGM 平时音量 | 最低 | 压低 | 持续 |", "|---|---|---|---|---|"] + duck_rows + [
+           "", "## 重卡点响度", "", "| 时间 | 重卡点 0.5 秒内瞬时响度最大 | 其余时间最大 | 最响 |", "|---|---|---|---|"] + loud_rows + [
            "", "## 镜头落点", "", "| 机位 | 开始帧 (小节) | 落定帧 | 落在底鼓上 |", "|---|---|---|---|"] + cam_rows + [""]
     (qa / "report.md").write_text("\n".join(rep))
     print("\n".join(problems) if problems else "no problems")

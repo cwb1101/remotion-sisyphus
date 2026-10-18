@@ -20,10 +20,30 @@ export const PLACES = {
 	heroCrowdEdge: 1160,
 	partnerStage: 1000,
 	spot: {x: 1000, y: -1100},
+	// 卧室 (第 4 节 屏 41-44)
+	bed: {x0: -1630, x1: -1210, top: -110},
+	viewerLie: -1410,
+	bedEdge: -1260,
+	nightstand: {x: -1070, top: -150},
+	window: {x: -1370, y: -560},
+	tally: {x: -1190, y: -490},
+	bedroomWall: {x0: -2000, x1: -950},
+	moon: {x: -1320, y: -620},
+	// 冷光空地 (第 5-6 节)
+	mHeroChair: 3900,
+	mPartnerChair: 4400,
+	mLight: {x: 4150, y: -1100},
 };
+
+export const VIEWER_LOOK: Partial<CharacterProps> = {color: '#100E0D', feature: 'hood', hair: 'short', seed: 21, build: 1.02};
+export const FRIEND_LOOK: Partial<CharacterProps> = {color: '#120F0C', feature: 'none', hair: 'long', seed: 41, build: 0.92, heightK: 0.96};
+export const BUDDY_LOOK: Partial<CharacterProps> = {color: '#0F0D0B', feature: 'none', hair: 'bun', seed: 57, build: 1.0, heightK: 1.02};
 
 export const HERO_KEYS = keysFor('hero');
 export const PARTNER_KEYS = keysFor('partner');
+export const VIEWER_KEYS = keysFor('viewer');
+export const FRIEND_KEYS = keysFor('oldFriend');
+export const BUDDY_KEYS = keysFor('buddy');
 
 const S12 = screenById(12).startFrame;
 /** 主角: 椅子 -> 舞台 (屏 9-10), 屏 12 再走到人群边上 */

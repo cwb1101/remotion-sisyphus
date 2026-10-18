@@ -2,7 +2,7 @@
 import React from 'react';
 import {useCurrentFrame} from 'remotion';
 import {cameraAt} from './Camera';
-import {HEAVY_FRAMES} from '../lib/timeline';
+import {HEAVY_FRAMES, PORTALS, PORTAL_PULL, PORTAL_PUSH} from '../lib/timeline';
 import {mulberry32, range} from '../lib/random';
 import {COLORS, H, W} from '../theme';
 import {useRenderMode} from './Character';
@@ -54,6 +54,27 @@ export const Atmosphere: React.FC = () => {
 			})}
 			<rect width={W} height={H} fill="url(#vignette)" />
 			{flash > 0 ? <rect width={W} height={H} fill={COLORS.gold} opacity={0.22 * flash} /> : null}
+			<PortalGlow frame={frame} />
 		</svg>
+	);
+};
+
+/** 换场时盖住画面的一圈亮光 (象牙白到金), 中心就是镜头推近的那个物件 */
+const PortalGlow: React.FC<{frame: number}> = ({frame}) => {
+	const p = PORTALS.find((q) => frame >= q.frame - PORTAL_PUSH && frame < q.frame + PORTAL_PULL);
+	if (!p) return null;
+	const k = frame < p.frame ? 1 - (p.frame - frame) / PORTAL_PUSH : 1 - (frame - p.frame) / PORTAL_PULL;
+	const r = 40 + 1500 * Math.pow(Math.max(0, k), 2.2);
+	return (
+		<>
+			<defs>
+				<radialGradient id="portal">
+					<stop offset="0" stopColor="#FFF4DC" stopOpacity={1} />
+					<stop offset="0.55" stopColor={COLORS.ivory} stopOpacity={0.97} />
+					<stop offset="1" stopColor={COLORS.gold} stopOpacity={0} />
+				</radialGradient>
+			</defs>
+			<circle cx={W / 2} cy={H / 2} r={r} fill="url(#portal)" />
+		</>
 	);
 };

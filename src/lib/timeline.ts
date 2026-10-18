@@ -34,7 +34,7 @@ export const keysFor = (who: Who): PoseKey[] =>
 export const moveSegments = (keys: PoseKey[]) =>
 	keys
 		.map((k, i) => ({k, end: keys[i + 1]?.frame ?? k.frame}))
-		.filter(({k}) => k.pose === 'walk' || k.pose === 'run')
+		.filter(({k}) => k.pose === 'walk' || k.pose === 'run' || k.pose === 'walkBack')
 		.map(({k, end}) => ({start: k.frame, end, run: k.pose === 'run'}));
 
 /** 步点: 走路每拍一步, 跑步每半拍一步 */
@@ -88,10 +88,19 @@ export const CAMERA_MOVES: CameraMove[] = (() => {
 		const shot = SHOTS[s.shot];
 		if (!shot || s.shot === prevName) continue;
 		const start = BARS.includes(s.startFrame) ? s.startFrame : s.startFrame;
-		const end = nextKick(start, shot.moveFrames ?? 18);
+		const end = shot.cut ? start : nextKick(start, shot.moveFrames ?? 18);
 		moves.push({from: prev ?? shot.enterFrom ?? shot, to: shot, start, end, name: s.shot});
 		prev = shot;
 		prevName = s.shot;
 	}
 	return moves;
 })();
+
+export const PORTAL_PUSH = 14;
+export const PORTAL_PULL = 18;
+/** 穿过物件的换场: 帧号 + 两个场景里的对应点 */
+export const PORTALS = CAMERA_MOVES.filter((m) => m.to.cut && m.to.portalFrom && m.to.portalTo).map((m) => ({
+	frame: m.start,
+	from: m.to.portalFrom!,
+	to: m.to.portalTo!,
+}));

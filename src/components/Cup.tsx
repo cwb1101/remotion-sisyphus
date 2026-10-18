@@ -32,6 +32,17 @@ export type CupProps = {
 	kintsugi?: number;
 };
 
+// 裂纹 (杯子本地坐标, 杯底中心为原点, 往上为负): 从杯口往下的几条折线, 金缮时同一组线描成金色
+const CRACKS: [number, number][][] = [
+	[[-18, -70], [-12, -54], [-16, -40], [-6, -26], [-9, -10]],
+	[[10, -70], [6, -58], [14, -46], [8, -34]],
+	[[-6, -26], [6, -20], [16, -12]],
+	[[26, -50], [16, -44], [14, -46]],
+	[[-23, -34], [-14, -30], [-16, -40]],
+];
+const crackPath = CRACKS.map((l) => 'M ' + l.map(([x, y]) => `${x} ${y}`).join(' L ')).join(' ');
+const CRACK_LEN = 260;
+
 const rot = (x: number, y: number, deg: number) => {
 	const a = (deg * Math.PI) / 180;
 	return {x: x * Math.cos(a) - y * Math.sin(a), y: x * Math.sin(a) + y * Math.cos(a)};
@@ -124,6 +135,19 @@ export const Cup: React.FC<CupProps> = (c) => {
 					</text>
 				) : null}
 			</g>
+			{c.cracks || c.kintsugi ? (
+				<g transform={`rotate(${tilt})`} fill="none" strokeLinecap="round" strokeLinejoin="round">
+					{c.cracks ? (
+						<path d={crackPath} stroke="#2A231C" strokeWidth={1.8} strokeDasharray={CRACK_LEN} strokeDashoffset={CRACK_LEN * (1 - Math.min(1, c.cracks))} />
+					) : null}
+					{c.kintsugi ? (
+						<>
+							<path d={crackPath} stroke={COLORS.gold} strokeWidth={6} opacity={0.25 * Math.min(1, c.kintsugi)} strokeDasharray={CRACK_LEN} strokeDashoffset={CRACK_LEN * (1 - Math.min(1, c.kintsugi))} />
+							<path d={crackPath} stroke={COLORS.gold} strokeWidth={2.6} strokeDasharray={CRACK_LEN} strokeDashoffset={CRACK_LEN * (1 - Math.min(1, c.kintsugi))} />
+						</>
+					) : null}
+				</g>
+			) : null}
 			{c.glint ? (
 				<g transform={`translate(${top / 2 - 6} ${-h - 4}) scale(${c.glint})`} fill={COLORS.gold}>
 					<path d="M 0 -14 L 3 -3 L 14 0 L 3 3 L 0 14 L -3 3 L -14 0 L -3 -3 Z" />
@@ -156,3 +180,50 @@ export const Drop: React.FC<{x: number; y: number; r?: number; color?: string}> 
 	if (mode !== 'normal') return null;
 	return <path d={`M ${x} ${y - r * 1.8} Q ${x + r} ${y - r * 0.2} ${x} ${y + r} Q ${x - r} ${y - r * 0.2} ${x} ${y - r * 1.8} Z`} fill={color ?? COLORS.liquidHero} />;
 };
+
+// ---------- 碎片 ----------
+
+export type Shard = {pts: [number, number][]; vx: number; vy: number; spin: number; restX: number};
+
+const SHARDS: Shard[] = (() => {
+	const out: Shard[] = [];
+	let seed = 7;
+	const r = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+	for (let i = 0; i < 14; i++) {
+		const n = 3 + Math.floor(r() * 2);
+		const size = 10 + r() * 16;
+		const pts: [number, number][] = Array.from({length: n}, (_, k) => {
+			const a = (k / n) * Math.PI * 2 + r() * 0.8;
+			return [Math.cos(a) * size * (0.6 + r() * 0.5), Math.sin(a) * size * (0.6 + r() * 0.5)];
+		});
+		const dir = i % 2 === 0 ? 1 : -1;
+		out.push({pts, vx: dir * (2 + r() * 9), vy: -(6 + r() * 9), spin: (r() - 0.5) * 30, restX: dir * (30 + r() * 230)});
+	}
+	return out;
+})();
+
+/** 碎片: 落地瞬间炸开, 弹一下后停在地上; picked 前几片被捡起 (由场景另外画在手里) */
+export const Shards: React.FC<{x: number; ground: number; since: number; picked?: number; scale?: number}> = ({x, ground, since, picked = 0, scale = 1}) => {
+	const mode = useRenderMode();
+	if (mode !== 'normal' || since < 0) return null;
+	return (
+		<g>
+			{SHARDS.map((sh, i) => {
+				if (i < picked) return null;
+				const t = Math.min(since, 24);
+				const px = x + sh.restX * scale * (1 - Math.exp(-t / 6));
+				const fly = Math.max(0, sh.vy * t + 0.9 * t * t);
+				const y = ground - Math.max(0, -(sh.vy * t + 0.9 * t * t)) * scale - 6;
+				const bounce = since > 24 ? 0 : fly;
+				return (
+					<g key={i} transform={`translate(${px} ${y - bounce * 0}) rotate(${sh.spin * Math.min(since, 24)}) scale(${scale})`}>
+						<polygon points={sh.pts.map((q) => q.join(',')).join(' ')} fill={COLORS.cup} stroke={COLORS.cupShade} strokeWidth={1} />
+					</g>
+				);
+			})}
+		</g>
+	);
+};
+
+export const shardRest = (i: number, x: number, ground: number, scale = 1) => ({x: x + SHARDS[i].restX * scale, y: ground - 6});
+export const shardShape = (i: number) => SHARDS[i].pts;

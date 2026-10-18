@@ -31,6 +31,8 @@ const Stage: React.FC<{f: number}> = ({f}) => {
 	const darken = interpolate(f, [S(11).startFrame, S(12).startFrame], [1, 0.75], clamp01);
 	const plain = interpolate(f, [S(12).startFrame - 10, S(12).startFrame + 40], [0, 1], clamp01);
 	const bright = interpolate(f, [S(13).startFrame - 2, S(13).startFrame + 10], [0, 1], clamp01);
+	// 屏 14 起人群那边的暖光一起暗下去
+	const away = interpolate(f, [S(14).startFrame, S(14).startFrame + 36], [1, 0], clamp01);
 	return (
 		<g>
 			<defs>
@@ -52,10 +54,10 @@ const Stage: React.FC<{f: number}> = ({f}) => {
 				</linearGradient>
 			</defs>
 			<rect x={640} y={0} width={3600} height={900} fill="url(#plain-floor)" />
-			<ellipse cx={2150} cy={-60} rx={1700} ry={420} fill="url(#haze)" opacity={plain * 0.7} />
+			<ellipse cx={2150} cy={-60} rx={1700} ry={420} fill="url(#haze)" opacity={away * plain * 0.7} />
 			{/* 右边 6 人脚下的一片暖光, 屏 13 变亮; 左边 4 对留在暗处 */}
-			<ellipse cx={2620} cy={10} rx={460} ry={70} fill="url(#haze)" opacity={plain * (0.6 + 1.2 * bright)} />
-			<ellipse cx={2620} cy={-200} rx={420} ry={330} fill="url(#haze)" opacity={plain * (0.15 + 0.5 * bright)} />
+			<ellipse cx={2620} cy={10} rx={460} ry={70} fill="url(#haze)" opacity={away * plain * (0.6 + 1.2 * bright)} />
+			<ellipse cx={2620} cy={-200} rx={420} ry={330} fill="url(#haze)" opacity={away * plain * (0.15 + 0.5 * bright)} />
 			<line x1={640} x2={4200} y1={0} y2={0} stroke={COLORS.goldDim} strokeOpacity={0.25 * plain} strokeWidth={2} />
 			<polygon points={`${spot.x - 40},${spot.y} ${spot.x + 40},${spot.y} ${spot.x + 300},0 ${spot.x - 300},0`} fill="url(#spot-cone)" opacity={on * darken} />
 			<ellipse cx={spot.x - 60} cy={6} rx={380} ry={46} fill="url(#spot-pool)" opacity={on * darken} />
@@ -104,8 +106,11 @@ const crowdBase = (f: number): Partial<CrowdProps> => {
 export const Evidence: React.FC = () => {
 	const f = useCurrentFrame();
 	const {fps} = useVideoConfig();
-	const showCast = f >= HOOK_END;
-	const crowdOn = interpolate(f, [S(12).startFrame - 8, S(12).startFrame + 24], [0, 1], clamp01);
+	// 从屏 14 起主角和对方交给第 3 节 (Fusion) 去画; 人群在屏 14 里暗下去
+	const showCast = f >= HOOK_END && f < S(14).startFrame;
+	const crowdOn =
+		interpolate(f, [S(12).startFrame - 8, S(12).startFrame + 24], [0, 1], clamp01) *
+		interpolate(f, [S(14).startFrame, S(14).startFrame + 36], [1, 0], clamp01);
 	const happy = interpolate(f, [S(13).startFrame - 2, S(13).startFrame + 12], [0, 1], clamp01);
 
 	const hx = heroX(f);

@@ -197,10 +197,80 @@ def glint():
     return reverb(s, 0.6, 0.35)
 
 
+def pop():
+    """消息气泡 啵: 短促的下滑正弦"""
+    d = 0.25
+    x = t(d)
+    f = 900 * np.exp(-x * 18) + 380
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * env(len(x), 0.002, 0.06)
+
+
+def buzz():
+    """手机震动: 低频方波被 20Hz 门控两下"""
+    d = 0.75
+    x = t(d)
+    sq = np.sign(np.sin(2 * np.pi * 165 * x)) * 0.5 + np.sin(2 * np.pi * 82 * x) * 0.5
+    gate = ((x % 0.36) < 0.24).astype(float)
+    return band(sq * gate, 60, 2500) * np.clip(x / 0.01, 0, 1) * np.clip((d - x) / 0.05, 0, 1)
+
+
+def crack():
+    """瓷器开裂: 一串细碎的高频脆响"""
+    d = 0.9
+    s = np.zeros(int(d * SR))
+    for k in range(26):
+        i = int((k / 26) ** 1.4 * (d - 0.05) * SR)
+        n = int(0.006 * SR)
+        s[i:i + n] += band(noise(0.006), 2500, 9000) * rng.uniform(0.2, 0.8)
+    return reverb(s, 0.4, 0.2)
+
+
+def shatter():
+    """瓷器摔碎: 高通噪声爆 + 很多随机短音 + 低频撞地"""
+    d = 1.6
+    x = t(d)
+    burst = band(noise(d), 1800, 12000) * env(len(x), 0.0005, 0.25)
+    hit = np.sin(2 * np.pi * (70 + 60 * np.exp(-x * 30)) * x) * env(len(x), 0.001, 0.12)
+    s = burst + hit
+    for k in range(40):
+        i = int(rng.uniform(0, 0.9) * SR)
+        f = rng.uniform(2500, 7000)
+        seg = t(0.08)
+        s[i:i + len(seg)] += np.sin(2 * np.pi * f * seg) * env(len(seg), 0.0005, 0.03) * rng.uniform(0.1, 0.4)
+    return reverb(s, 0.9, 0.25)
+
+
+def tink():
+    """碎片 / 屏幕亮起: 清脆的一下"""
+    d = 0.5
+    x = t(d)
+    f = rng.uniform(3000, 3600)
+    s = np.sin(2 * np.pi * f * x) * env(len(x), 0.0005, 0.08) + np.sin(2 * np.pi * f * 2.3 * x) * env(len(x), 0.0005, 0.04) * 0.4
+    return reverb(s, 0.4, 0.25)
+
+
+def thud():
+    """人跪下 跌坐 落地: 低沉的闷响"""
+    d = 0.6
+    x = t(d)
+    body = np.sin(2 * np.pi * (60 + 40 * np.exp(-x * 25)) * x) * env(len(x), 0.002, 0.14)
+    cloth = band(noise(d), 200, 1500) * env(len(x), 0.003, 0.06) * 0.4
+    return body + cloth
+
+
+def shimmer():
+    """金缮描线: 慢慢升起的细碎高频"""
+    d = 1.8
+    x = t(d)
+    s = sum(np.sin(2 * np.pi * f * x + rng.uniform(0, 6)) * (0.5 + 0.5 * np.sin(2 * np.pi * rng.uniform(3, 7) * x)) for f in (2093, 2637, 3136, 3951))
+    return s * np.sin(np.pi * x / d) ** 2 * 0.3
+
+
 SOUNDS = {
     "thunk": thunk, "pour": pour, "drip": drip, "creak": creak, "slam": slam,
     "cupTap": cup_tap, "step": step, "whoosh": whoosh, "rattle": rattle,
     "chime": chime, "clap": clap, "glint": glint,
+    "pop": pop, "buzz": buzz, "crack": crack, "shatter": shatter, "tink": tink, "thud": thud, "shimmer": shimmer,
 }
 
 

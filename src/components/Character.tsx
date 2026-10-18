@@ -122,9 +122,10 @@ export const solveSkeleton = (p: CharacterProps, frame: number, fps: number): Sk
 	const headAngle = torso + rot + pose.neck;
 	const head = add(neckTop, mul(up(headAngle), D.headR));
 
+	// 整体旋转 rot 是 躯干往前倒 的方向: 躯干角 (从上往前量) 加 rot, 四肢角 (从下往前量) 减 rot
 	const legOf = (l: Pose['legF']) => {
-		const K = add(P0, mul(down(l.hip + rot), D.thigh));
-		const shinA = l.hip - l.kn + rot;
+		const K = add(P0, mul(down(l.hip - rot), D.thigh));
+		const shinA = l.hip - l.kn - rot;
 		const A = add(K, mul(down(shinA), D.shin));
 		const sole = down(shinA + l.an);
 		const along = down(shinA + l.an + 90);
@@ -138,16 +139,15 @@ export const solveSkeleton = (p: CharacterProps, frame: number, fps: number): Sk
 	const legB = legOf(pose.legB);
 
 	const armOf = (a: Pose['armF'], target: Vec | null | undefined, offset: number) => {
-		let sh = a.sh + shBreath;
-		let el = a.el;
+		// 绝对角 (从竖直向下量起)
+		let a1 = a.sh + shBreath - rot;
+		let a2 = a.sh + shBreath + a.el - rot;
 		if (target) {
 			const w = p.ikWeight ?? 1;
 			const sol = ik(S, target, D.upper, D.fore);
-			sh = sh + (sol.sh - sh) * w;
-			el = el + (sol.el - el) * w;
+			a1 = a1 + (sol.sh - a1) * w;
+			a2 = a2 + (sol.sh + sol.el - a2) * w;
 		}
-		const a1 = sh + rot;
-		const a2 = sh + el + rot;
 		const E = add({x: S.x + offset, y: S.y}, mul(down(a1), D.upper));
 		const W = add(E, mul(down(a2), D.fore));
 		const H = add(W, mul(down(a2 + a.wr), D.hand));
@@ -157,7 +157,10 @@ export const solveSkeleton = (p: CharacterProps, frame: number, fps: number): Sk
 	// 先不带 IK 算一遍, 找最低点贴地
 	const probeArmF = armOf(pose.armF, null, 2);
 	const probeArmB = armOf(pose.armB, null, -2);
-	const lows = [legF.heel.y, legF.toe.y, legB.heel.y, legB.toe.y, legF.K.y + D.thighR[1], legB.K.y + D.thighR[1], P0.y + D.hipW];
+	const lows = [
+		legF.heel.y, legF.toe.y, legB.heel.y, legB.toe.y, legF.K.y + D.thighR[1], legB.K.y + D.thighR[1], P0.y + D.hipW,
+		S.y + D.shoulderW, head.y + D.headR, // 躺下时背和头也是支撑点
+	];
 	if (pose.ground === 'hands') lows.push(probeArmF.H.y, probeArmB.H.y);
 	const g = -Math.max(...lows);
 

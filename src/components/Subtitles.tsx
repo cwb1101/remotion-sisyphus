@@ -36,24 +36,41 @@ export const Subtitles: React.FC = () => {
 
 	return (
 		<>
-			{pinned.map(({x, until}) => {
+			{pinned.map(({x, until}, slot) => {
 				// 等砸下来的字站稳后, 从字幕行里那个重点词的位置飞到左上角
 				const from = x.startFrame + 16;
 				if (frame < from || frame >= until) return null;
 				const t = spring({frame: frame - from, fps, config: {damping: 15, stiffness: 120}});
-				const adv = (c: string) => (c === ' ' ? 28 : SUBTITLE.size + 6);
-				const chars = [...x.text];
-				const k0 = x.text.indexOf(x.keyword!);
-				const total = chars.reduce((a, c) => a + adv(c), 0);
-				const before = chars.slice(0, k0).reduce((a, c) => a + adv(c), 0);
-				const startLeft = W / 2 - total / 2 + before;
-				const startTop = H - SUBTITLE.bottom - SUBTITLE.size * 1.2;
-				const left = interpolate(t, [0, 1], [startLeft, 120]);
-				const top = interpolate(t, [0, 1], [startTop, 96]);
-				const size = interpolate(t, [0, 1], [SUBTITLE.size, 120]);
-				const fade =
+				const kwLeft = (text: string, kw: string) => {
+					const adv = (c: string) => (c === ' ' ? 28 : SUBTITLE.size + 6);
+					const chars = [...text];
+					const total = chars.reduce((a, c) => a + adv(c), 0);
+					return W / 2 - total / 2 + chars.slice(0, text.indexOf(kw)).reduce((a, c) => a + adv(c), 0);
+				};
+				const lineTop = H - SUBTITLE.bottom - SUBTITLE.size * 1.2;
+				// 第几个钉住的词就排在第几行, 都在左上
+				const pinTop = 96 + slot * 150;
+				const pinSize = slot === 0 ? 120 : 100;
+				let left = interpolate(t, [0, 1], [kwLeft(x.text, x.keyword!), 120]);
+				let top = interpolate(t, [0, 1], [lineTop, pinTop]);
+				let size = interpolate(t, [0, 1], [SUBTITLE.size, pinSize]);
+				let fade =
 					interpolate(frame, [from, from + 5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
 					interpolate(frame, [from + 30, from + 90], [1, 0.42], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+				// 收回: 下一次出现这个词的那一屏开始前 14 帧, 从左上角落回字幕行; 否则淡出
+				const target = SCREENS.find((y) => y.id === x.pinUntil);
+				if (until - frame <= 14) {
+					const k = 1 - (until - frame) / 14;
+					if (target && target.keyword === x.keyword) {
+						const e = k * k;
+						left = interpolate(e, [0, 1], [120, kwLeft(target.text, x.keyword!)]);
+						top = interpolate(e, [0, 1], [pinTop, lineTop]);
+						size = interpolate(e, [0, 1], [pinSize, SUBTITLE.size]);
+						fade = interpolate(k, [0, 1], [0.42, 1]);
+					} else {
+						fade *= 1 - k;
+					}
+				}
 				return (
 					<div
 						key={x.id}

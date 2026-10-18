@@ -3,7 +3,7 @@
 // 重卡点: 镜头冲一下 (zoom punch) + 震动
 import React from 'react';
 import {Easing, interpolate, useCurrentFrame} from 'remotion';
-import {CAMERA_MOVES, HEAVY_FRAMES} from '../lib/timeline';
+import {CAMERA_MOVES, HEAVY_FRAMES, PORTALS, PORTAL_PULL, PORTAL_PUSH} from '../lib/timeline';
 import type {Shot} from '../data/shots';
 import {H, W} from '../theme';
 
@@ -25,11 +25,25 @@ export const cameraAt = (frame: number): CamState => {
 		const m = CAMERA_MOVES[i];
 		if (frame < m.start) break;
 		const from = state;
-		const t = interpolate(frame, [m.start, m.end], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+		const prog = (f: number) => (m.end <= m.start ? (f >= m.start ? 1 : 0) : interpolate(f, [m.start, m.end], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}));
+		const t = prog(frame);
 		const next = CAMERA_MOVES[i + 1];
 		// 下一段开始时, 以这一段在那一帧的位置为起点
-		const evalAt = next && frame >= next.start ? interpolate(next.start, [m.start, m.end], [0, 1], {extrapolateRight: 'clamp'}) : t;
+		const evalAt = next && frame >= next.start ? prog(next.start) : t;
 		state = mix(from, m.to, ease(evalAt));
+	}
+	// 穿过物件换场: 换场前推近 portalFrom, 换场后从 portalTo 拉出
+	for (const p of PORTALS) {
+		const before = p.frame - frame;
+		if (before > 0 && before <= PORTAL_PUSH) {
+			const k = ease(1 - before / PORTAL_PUSH);
+			state = {...state, x: state.x + (p.from.x - state.x) * k, y: state.y + (p.from.y - state.y) * k, zoom: state.zoom * (1 + 7 * k * k)};
+		}
+		const after = frame - p.frame;
+		if (after >= 0 && after < PORTAL_PULL) {
+			const k = ease(1 - after / PORTAL_PULL);
+			state = {...state, x: state.x + (p.to.x - state.x) * k, y: state.y + (p.to.y - state.y) * k, zoom: state.zoom * (1 + 7 * k * k)};
+		}
 	}
 	const sec = frame / 30;
 	// 呼吸般的漂移

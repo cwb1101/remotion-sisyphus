@@ -12,6 +12,8 @@ import {HERO_LOOK, PARTNER_LOOK, PLACES, heroState, heroVx, heroX, lightFor, par
 
 const S = (id: number) => screenById(id);
 export const HOOK_END = S(10).startFrame;
+/** 第 7 节回到这间屋子: 桌上开头留下的杯子和洒出的液体都收走了 */
+const LATER = S(44).startFrame;
 
 const ease = Easing.bezier(0.45, 0, 0.2, 1);
 export const CUP_SCALE = 0.82;
@@ -96,7 +98,11 @@ const partnerCupFill = (f: number) =>
 const Room: React.FC<{f: number}> = ({f}) => {
 	const mode = useRenderMode();
 	if (mode !== 'normal') return null;
-	const dim = interpolate(f, [T.back, T.back + 30, T.slam, T.slam + 3, T.slam + 40, T.heroUp + 60], [1, 0.72, 0.72, 1.35, 0.85, 0.55], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	const dim =
+		f < LATER
+			? interpolate(f, [T.back, T.back + 30, T.slam, T.slam + 3, T.slam + 40, T.heroUp + 60], [1, 0.72, 0.72, 1.35, 0.85, 0.55], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})
+			: // 第 7 节主角回到这间屋子时, 灯比开头更暖更亮
+				interpolate(f, [LATER, LATER + 60], [0.55, 1.15], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 	const swing = f >= T.slam ? 5 * Math.exp(-(f - T.slam) / 45) * Math.sin((f - T.slam) * 0.16) : 0;
 	const lamp = PLACES.lamp;
 	return (
@@ -145,7 +151,7 @@ const Room: React.FC<{f: number}> = ({f}) => {
 	);
 };
 
-const Chair: React.FC<{x: number; dir: 1 | -1}> = ({x, dir}) => {
+export const Chair: React.FC<{x: number; dir: 1 | -1}> = ({x, dir}) => {
 	const mode = useRenderMode();
 	if (mode !== 'normal') return null;
 	const back = x - dir * 42;
@@ -164,7 +170,7 @@ const Table: React.FC<{f: number}> = ({f}) => {
 	if (mode !== 'normal') return null;
 	const top = PLACES.tableTop;
 	const X = PLACES.tableX;
-	const spill = interpolate(f, [S(3).startFrame, T.back], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	const spill = f >= LATER ? 0 : interpolate(f, [S(3).startFrame, T.back], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 	return (
 		<g>
 			<rect x={-X} y={top} width={X * 2} height={13} fill={COLORS.woodLit} />
@@ -206,7 +212,8 @@ const Phone: React.FC<{at: {x: number; y: number}; opacity: number; facing: numb
 	);
 };
 
-export const Hook: React.FC = () => {
+/** layer: back = 墙 灯 椅子 人物; front = 桌子和桌上的杯 (画在所有人物之后, 让坐着的人被桌子挡住腿) */
+export const Hook: React.FC<{layer: 'back' | 'front'}> = ({layer}) => {
 	const f = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const showCast = f < HOOK_END;
@@ -262,20 +269,26 @@ export const Hook: React.FC = () => {
 	const dropT = interpolate(f, [T.lastDrop - 9, T.lastDrop], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 	const lip4 = cupLip(heroCup(T.lastDrop - 9));
 
+	if (layer === 'back') {
+		return (
+			<g>
+				<Room f={f} />
+				<Chair x={PLACES.heroChair} dir={1} />
+				<Chair x={PLACES.partnerChair} dir={-1} />
+				{showCast ? (
+					<>
+						<Character {...partnerProps} />
+						<Phone at={phoneAt} opacity={phoneW} facing={pfacing} />
+						<Character {...heroProps} between={f < T.setDown ? heroCupNode : null} />
+					</>
+				) : null}
+			</g>
+		);
+	}
 	return (
 		<g>
-			<Room f={f} />
-			<Chair x={PLACES.heroChair} dir={1} />
-			<Chair x={PLACES.partnerChair} dir={-1} />
-			{showCast ? (
-				<>
-					<Character {...partnerProps} />
-					<Phone at={phoneAt} opacity={phoneW} facing={pfacing} />
-					<Character {...heroProps} between={f < T.setDown ? heroCupNode : null} />
-				</>
-			) : null}
 			<Table f={f} />
-			<Cup id="partner" x={pc.x} y={pc.y} scale={CUP_SCALE} fill={partnerCupFill(f)} liquid={COLORS.liquidHero} wobble={pourFlow > 0 ? 0.6 : 0.15} />
+			{f < LATER ? <Cup id="partner" x={pc.x} y={pc.y} scale={CUP_SCALE} fill={partnerCupFill(f)} liquid={COLORS.liquidHero} wobble={pourFlow > 0 ? 0.6 : 0.15} /> : null}
 			{showCast && f >= T.setDown ? heroCupNode : null}
 			<PourStream from={lip} to={{x: pc.x + 6, y: pc.y - 52}} flow={pourFlow} />
 			{f >= T.lastDrop - 9 && f <= T.lastDrop ? (
