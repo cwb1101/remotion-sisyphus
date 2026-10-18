@@ -1,7 +1,8 @@
 import React from 'react';
-import { Composition } from 'remotion';
+import { Composition, Still } from 'remotion';
 import beatmap from './data/beatmap.json';
 import { screen } from './data/subtitles';
+import { COVER_H, COVER_W, Cover } from './Cover';
 import { Film } from './Film';
 import { FPS, H, W } from './film/theme';
 
@@ -28,5 +29,7 @@ export const RemotionRoot: React.FC = () => (
       height={H}
       defaultProps={{ durationInFrames: PREVIEW_END, fadeOutFrames: 12 }}
     />
+    {/* 3:4 封面 */}
+    <Still id="Cover" component={Cover} width={COVER_W} height={COVER_H} />
   </>
 );
