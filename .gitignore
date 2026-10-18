@@ -147,3 +147,7 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# 由 scripts/bgm.py 按成片时长生成
+public/audio/bgm.wav
+src/data/beatmap.json
