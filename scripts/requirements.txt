@@ -1,3 +1,4 @@
 librosa>=0.10
 numpy
+soundfile
 matplotlib
