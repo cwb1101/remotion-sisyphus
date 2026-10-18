@@ -1,5 +1,6 @@
 import React from 'react';
-import {Composition} from 'remotion';
+import {Composition, Still} from 'remotion';
+import {Cover, COVER_SIZE} from './Cover';
 import {Film, type FilmProps} from './Film';
 import {DURATION, FPS} from './data/beatmap';
 import {screenById} from './lib/timeline';
@@ -27,5 +28,6 @@ export const RemotionRoot: React.FC = () => (
 			height={1080}
 			defaultProps={{mode: 'normal'}}
 		/>
+		<Still id="Cover" component={Cover} width={COVER_SIZE.width} height={COVER_SIZE.height} />
 	</>
 );
