@@ -270,11 +270,12 @@ def main(video, qa_dir):
     # 瞬时响度 (400ms) 逐 0.1 秒: 重卡点前后 0.5 秒里的最大值 应高于其他时间的最大值
     mom = [(float(t), float(m)) for t, m in _re.findall(r"t:\s*([\d.]+)\s+TARGET:-?\d+ LUFS\s+M:\s*(-?[\d.]+)", eb)]
     hv = [h / fps for h in meta["heavy"]]
-    near = lambda t: any(-0.1 <= t - x <= 0.6 for x in hv)
+    # 重卡点这一下 (含 0.45 秒的主体和尾音) 算到落点后 1 秒
+    near = lambda t: any(-0.1 <= t - x <= 1.0 for x in hv)
     other = max((m for t, m in mom if not near(t)), default=-99)
     loud_rows = []
     for x in hv:
-        pk = max((m for t, m in mom if -0.1 <= t - x <= 0.6), default=-99)
+        pk = max((m for t, m in mom if -0.1 <= t - x <= 1.0), default=-99)
         loud_rows.append(f"| {x:.2f}s | {pk:.1f} LUFS | {other:.1f} LUFS | {'是' if pk >= other else '否'} |")
         if pk < other:
             problems.append(f"重卡点 {x:.2f}s 的瞬时响度 {pk:.1f} 低于别处最大值 {other:.1f}")
@@ -292,7 +293,7 @@ def main(video, qa_dir):
            "", "## 重卡点", "", "| 帧 | 画面变化最大的帧 | 重音效起音偏差 (帧) |", "|---|---|---|"] + [
            f"| {h} | {p} | {o:+.1f} |" for (h, p, _), (_, o) in zip(heavy_rows, audio_rows)] + [
            "", "## BGM 让位", "", "| 重卡点帧 | BGM 平时音量 | 最低 | 压低 | 持续 |", "|---|---|---|---|---|"] + duck_rows + [
-           "", "## 重卡点响度", "", "| 时间 | 重卡点 0.5 秒内瞬时响度最大 | 其余时间最大 | 最响 |", "|---|---|---|---|"] + loud_rows + [
+           "", "## 重卡点响度", "", "| 时间 | 重卡点 1 秒内瞬时响度最大 | 其余时间最大 | 最响 |", "|---|---|---|---|"] + loud_rows + [
            "", "## 镜头落点", "", "| 机位 | 开始帧 (小节) | 落定帧 | 落在底鼓上 |", "|---|---|---|---|"] + cam_rows + [""]
     (qa / "report.md").write_text("\n".join(rep))
     print("\n".join(problems) if problems else "no problems")

@@ -116,17 +116,19 @@ def creak():
 
 
 def slam():
-    """重卡点: 全片最响的一下. 低频冲击 + 中频轰鸣 + 音色体 + 高频脆裂, 软饱和抬高响度, 长尾混响
-    只有低频的话听感响度很低 (K 计权会把 100Hz 以下压掉), 所以中频那一层是主体"""
+    """重卡点: 全片听感最响的一下
+    成片要标准化到 -14 LUFS / 真峰 -1 dBTP, 尖而短的冲击会被限幅器削掉响度,
+    所以做成 "厚" 的一下: 持续约 0.4 秒的低频 + 中频轰鸣 + 音色体, 高频脆裂只在开头, 再饱和压低峰值因数"""
     d = 1.6
     x = t(d)
-    sub = np.sin(2 * np.pi * (48 + 90 * np.exp(-x * 18)) * x) * env(len(x), 0.002, 0.6, 3) * 0.7
-    boom = band(noise(d), 90, 900) * env(len(x), 0.002, 0.45, 3) * 1.6
-    body = (np.sin(2 * np.pi * 110 * x) + 0.6 * np.sin(2 * np.pi * 220 * x + 1) + 0.35 * np.sin(2 * np.pi * 330 * x + 2)) * env(len(x), 0.003, 0.4, 3) * 0.6
-    crack = band(noise(d), 1500, 6000) * env(len(x), 0.0005, 0.06) * 0.7
-    mix = sub + boom + body + crack
-    mix = np.tanh(2.2 * mix / np.max(np.abs(mix))) / np.tanh(2.2)
-    return reverb(mix, 1.4, 0.25, 80, 4000)
+    hold = np.clip(x / 0.004, 0, 1) * np.where(x < 0.45, 1.0, np.exp(-(x - 0.45) / 0.22))
+    sub = np.sin(2 * np.pi * (46 + 70 * np.exp(-x * 14)) * x) * 0.8
+    body = np.sin(2 * np.pi * 98 * x) + 0.7 * np.sin(2 * np.pi * 196 * x + 1) + 0.45 * np.sin(2 * np.pi * 294 * x + 2)
+    boom = band(noise(d), 120, 1400) * 2.2
+    crack = band(noise(d), 2000, 7000) * env(len(x), 0.0005, 0.05) * 0.9
+    mix = (sub + body * 0.55 + boom) * hold + crack
+    mix = np.tanh(8.0 * mix / np.max(np.abs(mix))) / np.tanh(8.0)
+    return reverb(mix, 1.4, 0.2, 80, 4000)
 
 
 def cup_tap():
