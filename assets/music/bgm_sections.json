@@ -1,0 +1,39 @@
+{
+  "_note": "人工标注的段落表 依据 scripts/analyze_music.py 输出的 bgm_analysis.json 和 bgm_analysis.png 复核; 时间为原曲秒数 帧号按 30fps",
+  "bpm": 112.35,
+  "beat_sec": 0.534,
+  "beat_frames": 16.02,
+  "bar_sec": 2.136,
+  "phrase_sec": 8.545,
+  "first_beat": 0.093,
+  "duration": 169.56,
+  "accents": [
+    { "t": 0.093, "f": 3, "strength": 6.73, "note": "全曲最强低频重击 开场第一帧" },
+    { "t": 17.078, "f": 512, "strength": 1.83, "note": "drop1" },
+    { "t": 67.965, "f": 2039, "strength": 4.3, "note": "第二强 低谷结束 蓄力开始" },
+    { "t": 72.237, "f": 2167, "strength": 1.52, "note": "蓄力段内次重音" },
+    { "t": 84.939, "f": 2548, "strength": 1.97, "note": "主 drop" }
+  ],
+  "sections": [
+    { "name": "前奏", "start": 0.0, "end": 8.591, "bars": [0, 3], "energy": 0.49 },
+    { "name": "铺垫", "start": 8.591, "end": 14.954, "bars": [4, 6], "energy": 0.27, "note": "变暗变薄" },
+    { "name": "吸气停拍", "start": 14.954, "end": 17.067, "bars": [7, 7], "energy": 0.08, "note": "低频抽空 近乎只剩余音" },
+    { "name": "drop1 主段A", "start": 17.067, "end": 51.014, "bars": [8, 23], "energy": 0.71, "note": "每个乐句第 3 小节偏轻" },
+    { "name": "低谷", "start": 51.014, "end": 65.852, "bars": [24, 30], "energy": 0.14, "note": "每小节一下低频 像心跳 共 7 下" },
+    { "name": "抽空", "start": 65.852, "end": 67.988, "bars": [31, 31], "energy": 0.29, "note": "低频完全消失 留给重击前的吸气" },
+    { "name": "蓄力", "start": 67.988, "end": 82.826, "bars": [32, 38], "energy": 0.43, "note": "67.96 重击开门 能量逐步爬升" },
+    { "name": "停拍", "start": 82.826, "end": 84.939, "bars": [39, 39], "energy": 0.03, "note": "全曲最空的一小节" },
+    { "name": "主drop 高潮一", "start": 84.939, "end": 118.886, "bars": [40, 55], "energy": 0.72 },
+    { "name": "高潮二", "start": 118.886, "end": 152.811, "bars": [56, 71], "energy": 0.78, "note": "低频最重 亮度最低" },
+    { "name": "尾段", "start": 152.811, "end": 165.79, "bars": [72, 77], "energy": 0.68, "note": "重新变亮" },
+    { "name": "收尾", "start": 165.79, "end": 169.56, "bars": [78, 79], "energy": 0.16, "note": "余音" }
+  ],
+  "proposed_edit": {
+    "_note": "建议: 剪掉高潮二里重复的 3 个乐句 让成片约 144 秒 接缝两边都是乐句第 1 小节",
+    "cut_from": 118.886,
+    "cut_to": 144.335,
+    "removed_sec": 25.449,
+    "result_duration": 144.11,
+    "shift_after_cut": -25.449
+  }
+}
