@@ -1,6 +1,6 @@
 # 字幕稿：总观效应
 
-> 由 `scripts/subtitles.py` 根据 `src/data/beatmap.json` 生成，改字幕请改脚本后重跑。
+> **定稿已移到 `src/data/subtitles.ts`（第 3 步起唯一来源）**，这里保留画面 / 音效的设计描述；时间以 subtitles.ts 为准。
 > 时间码 = 分:秒.百分秒（30fps 帧号写在卡点列）。字数不计标点和【】。
 
 | 屏号 | 时间码 | 字幕 | 画面动作 | 音效 | 卡点 |
