@@ -19,6 +19,9 @@ export type TrackName =
   | 'speed'
   | 'cool'
   | 'beam'
+  | 'beamDX'
+  | 'beamRot'
+  | 'focus'
   | 'moonTop';
 
 export type ShotKeys = Partial<Record<TrackName, Key[]>>;
@@ -35,6 +38,10 @@ const DEFAULTS: Record<TrackName, number> = {
   speed: 1,
   cool: 0,
   beam: 0,
+  beamDX: 0,
+  beamRot: 0,
+  // 1 = 只有地球亮着，其余变暗（悲伤那一屏）
+  focus: 0,
   moonTop: 1600,
 };
 
@@ -58,6 +65,15 @@ export const mergeKeys = (...all: ShotKeys[]): ShotKeys => {
   }
   return out;
 };
+
+/**
+ * 在 f 帧把所有轨道“钉住”：给每条轨道补一个取值不变的关键帧。
+ * 用来保护已经定稿的段落——后面加的关键帧不会回头改动 f 之前的插值。
+ */
+export const freezeAt = (keys: ShotKeys, f: number): ShotKeys =>
+  Object.fromEntries(
+    (Object.keys(DEFAULTS) as TrackName[]).map((n) => [n, [...(keys[n] ?? []), { f, v: value(keys, n, f) }]]),
+  ) as ShotKeys;
 
 const value = (keys: ShotKeys, name: TrackName, f: number) => {
   const ks = keys[name];

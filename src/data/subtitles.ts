@@ -8,6 +8,7 @@
  * - text：屏幕上的文字；highlight：要高亮的词（必须是 text 的子串，每屏最多一个）
  * - heavy：重卡点名（全片 3–5 个，必须落在 beatmap.dropFrame 或 accents 上）
  * - label：附着在物件上的小字标签 / 注释
+ * - tone：重点词颜色，默认金色；'vermilion' = 朱红（只给情绪反转用）
  *
  * 规则校验：npm run check
  */
@@ -23,6 +24,7 @@ export interface Screen {
   highlight: string | null;
   heavy?: string;
   label?: string;
+  tone?: 'vermilion';
 }
 
 export const SCREENS: Screen[] = [
@@ -42,7 +44,7 @@ export const SCREENS: Screen[] = [
   { id: 14, section: 'evidence', start: 1285, end: 1371, text: "空气层不到2毫米。", highlight: "2毫米", label: "示意：以 100 km 卡门线计，6371 km 地球半径" },
   { id: 15, section: 'evidence', start: 1371, end: 1456, text: "演《星际迷航》船长的沙特纳，", highlight: null, label: "威廉·沙特纳" },
   { id: 16, section: 'evidence', start: 1456, end: 1542, text: "90岁时，真的飞上了太空。", highlight: null, label: "2021.10.13 · 蓝色起源 NS-18 · 全程约 10 分钟" },
-  { id: 17, section: 'evidence', start: 1542, end: 1713, text: "「我感受过最强烈的悲伤之一。」", highlight: "悲伤", heavy: "核心反转", label: "沙特纳《Boldly Go》· 2022" },
+  { id: 17, section: 'evidence', start: 1542, end: 1713, text: "「我感受过最强烈的悲伤之一。」", highlight: "悲伤", heavy: "核心反转", label: "沙特纳《Boldly Go》· 2022", tone: 'vermilion' },
   { id: 18, section: 'naming', start: 1713, end: 1799, text: "不止他一个。", highlight: null },
   { id: 19, section: 'naming', start: 1799, end: 1884, text: "这种转变，有个名字——", highlight: null },
   { id: 20, section: 'naming', start: 1884, end: 2055, text: "总观效应", highlight: "总观效应", heavy: "主题词", label: "The Overview Effect · 弗兰克·怀特 1987 年提出 · 指看到整个地球后发生的认知转变" },

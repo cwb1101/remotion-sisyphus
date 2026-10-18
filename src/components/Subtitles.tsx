@@ -22,6 +22,9 @@ const Line: React.FC<{ s: Screen; f: number }> = ({ s, f }) => {
   const hi = s.highlight ? s.text.indexOf(s.highlight) : -1;
   const hiEnd = hi >= 0 ? hi + Array.from(s.highlight!).length : -1;
   const end = exitAt(s);
+  // 重卡点里很短的一行（主题词）用大字号
+  const size = s.heavy && chars.length <= 6 ? SUB.size * 1.75 : SUB.size;
+  const hiColor = s.tone === 'vermilion' ? C.vermilion : C.gold;
   const out = 1 - clamp((f - (end - OUT)) / OUT);
 
   let lineScale = 1;
@@ -48,8 +51,8 @@ const Line: React.FC<{ s: Screen; f: number }> = ({ s, f }) => {
         textAlign: 'center',
         fontFamily: FONT_SERIF,
         fontWeight: 700,
-        fontSize: SUB.size,
-        letterSpacing: '0.06em',
+        fontSize: size,
+        letterSpacing: size > SUB.size ? '0.18em' : '0.06em',
         lineHeight: 1.25,
         color: C.ivory,
         textShadow: '0 0 24px rgba(8,6,4,0.85), 0 0 6px rgba(8,6,4,0.6)',
@@ -67,7 +70,7 @@ const Line: React.FC<{ s: Screen; f: number }> = ({ s, f }) => {
               display: 'inline-block',
               opacity: e,
               filter: e < 0.999 ? `blur(${(1 - e) * 10}px)` : undefined,
-              color: isHi ? C.gold : undefined,
+              color: isHi ? hiColor : undefined,
             }}
           >
             {ch}

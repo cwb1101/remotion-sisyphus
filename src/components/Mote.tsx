@@ -68,6 +68,17 @@ export const Mote: React.FC<MoteProps> = ({ cx, cy, r, lightAngle, lightAmt, rim
     return { w, o: 0.22 / Math.pow(1.3, i) };
   });
   const d = limbPath(cx, cy, r);
+  // 比几个像素还小时，球体看不出来了，只剩一个光点（“暗淡蓝点”那一段）
+  if (r < 4) {
+    const a = Math.min(1, 0.55 + r / 6);
+    return (
+      <g opacity={ambient}>
+        <circle cx={cx} cy={cy} r={9} fill={C.gold} opacity={0.12 * a} />
+        <circle cx={cx} cy={cy} r={3.2} fill={C.gold} opacity={0.35 * a} />
+        <circle cx={cx} cy={cy} r={Math.max(1.1, r)} fill={C.ivory} opacity={a} />
+      </g>
+    );
+  }
   return (
     <g opacity={ambient}>
       <defs>

@@ -8,7 +8,8 @@
     "sfx": "python3 scripts/sfx.py",
     "check": "tsc --noEmit && node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-subtitles.mts",
     "render:preview": "remotion render src/index.ts Preview out/preview.mp4",
-    "render": "remotion render src/index.ts Overview out/overview.mp4"
+    "render": "python3 scripts/render_full.py",
+    "check:shot": "esbuild scripts/check-shot.tsx --bundle --platform=node --outfile=out/check-shot.cjs --log-level=error --jsx=automatic --loader:.css=empty && node out/check-shot.cjs"
   },
   "devDependencies": {
     "@types/react": "18.3.12",

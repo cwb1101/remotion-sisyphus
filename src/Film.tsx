@@ -11,16 +11,31 @@ import { Mote } from './components/Mote';
 import { Soundtrack } from './components/Soundtrack';
 import { Subtitles } from './components/Subtitles';
 import { Watermark } from './components/Watermark';
-import { CREDITS, SCREENS } from './data/subtitles';
-import { clamp, ease } from './film/anim';
+import { CREDITS, SCREENS, screen } from './data/subtitles';
+import { clamp, ease, lerp } from './film/anim';
 import { DROP } from './film/cues';
-import { mergeKeys, shotAt } from './film/shot';
+import { freezeAt, mergeKeys, shotAt } from './film/shot';
 import { C, FONT_SANS, FONT_SERIF, H, W } from './film/theme';
-import { EvidenceOverlay, evidenceKeys, evidenceSfx } from './sections/Evidence';
+import { answerFlash, answerKeys, answerSfx } from './sections/Answer';
+import { EvidenceOverlay, evidenceKeys, evidenceKeysLate, evidenceSfx } from './sections/Evidence';
 import { HookOverlay, hookFlash, hookKeys, hookSfx } from './sections/Hook';
+import { BondsOverlay, MechanismOverlay, mechanismKeys, mechanismSfx } from './sections/Mechanism';
+import { NamingOverlay, namingFlash, namingKeys, namingSfx } from './sections/Naming';
+import { EndFade, ReturnOverlay, returnKeys, returnSfx } from './sections/Return';
+import { ViewerOverlay, viewerFlash, viewerKeys, viewerSfx } from './sections/Viewer';
 
-const KEYS = mergeKeys(hookKeys, evidenceKeys);
-export const SFX = [...hookSfx, ...evidenceSfx];
+// 预览段（到第 10 屏结束）已经定稿：先把它的轨道在那一帧钉住，后面各节的关键帧只能往后加
+const PREVIEW_END = screen(10).end;
+export const KEYS = mergeKeys(
+  freezeAt(mergeKeys(hookKeys, evidenceKeys), PREVIEW_END),
+  evidenceKeysLate,
+  namingKeys,
+  viewerKeys,
+  mechanismKeys,
+  answerKeys,
+  returnKeys,
+);
+export const SFX = [...hookSfx, ...evidenceSfx, ...namingSfx, ...viewerSfx, ...mechanismSfx, ...answerSfx, ...returnSfx];
 
 const useFonts = () => {
   const [handle] = useState(() => delayRender('加载思源字体'));
@@ -39,28 +54,41 @@ const World: React.FC = () => {
   const st = shotAt(KEYS, f);
   // 光束 18 帧扫过画面，从 drop 那一拍开始
   const sweep = ease.out(clamp((f - DROP) / 18));
-  const beam = beamGeometry(sweep, st.beam, f);
+  const beam = beamGeometry(sweep, st.beam, f, st.beamDX, st.beamRot);
+  // focus = 1 时只有地球亮着（悲伤那一屏）
+  const moteAmb = lerp(Math.min(1, st.ambient), 1, st.focus);
+  const dustAmb = st.ambient * (1 - 0.6 * st.focus);
   return (
     <svg width={W} height={H} style={{ position: 'absolute', inset: 0 }}>
       <Backdrop cool={st.cool} lightAngle={st.lightAngle} ambient={st.ambient} />
       <LightBeam beam={beam} />
-      <Dust logS={Math.log(st.s)} panX={(st.cx - W / 2) * 0.25} panY={(st.cy - st.r - 700) * 0.12} tau={st.tau} ambient={st.ambient} beam={beam} />
-      <Mote cx={st.cx} cy={st.cy} r={st.r} lightAngle={st.lightAngle} lightAmt={st.lightAmt} rim={st.rim} ambient={Math.min(1, st.ambient)} />
+      <Dust logS={Math.log(st.s)} panX={(st.cx - W / 2) * 0.25} panY={(st.cy - st.r - 700) * 0.12} tau={st.tau} ambient={dustAmb} beam={beam} />
+      <Mote cx={st.cx} cy={st.cy} r={st.r} lightAngle={st.lightAngle} lightAmt={st.lightAmt} rim={st.rim} ambient={moteAmb} />
       <HookOverlay f={f} st={st} />
       <EvidenceOverlay f={f} st={st} />
+      <NamingOverlay f={f} st={st} />
+      <ViewerOverlay f={f} st={st} />
+      <BondsOverlay f={f} st={st} />
+      <MechanismOverlay f={f} st={st} />
+      <ReturnOverlay f={f} st={st} />
       <Vignette />
+      <EndFade f={f} />
     </svg>
   );
 };
 
 const Flash: React.FC = () => {
   const f = useCurrentFrame();
-  const a = hookFlash(f);
+  const a = hookFlash(f) + namingFlash(f) + viewerFlash(f) + answerFlash(f);
   if (a < 0.002) return null;
   return <AbsoluteFill style={{ backgroundColor: C.gold, opacity: a, mixBlendMode: 'screen' }} />;
 };
 
-export const Film: React.FC<{ durationInFrames: number; fadeOutFrames?: number }> = ({ durationInFrames, fadeOutFrames }) => {
+export const Film: React.FC<{ durationInFrames: number; fadeOutFrames?: number; bgmOnly?: boolean }> = ({
+  durationInFrames,
+  fadeOutFrames,
+  bgmOnly,
+}) => {
   useFonts();
   return (
     <AbsoluteFill style={{ backgroundColor: C.bg }}>
@@ -68,7 +96,7 @@ export const Film: React.FC<{ durationInFrames: number; fadeOutFrames?: number }
       <Flash />
       <Subtitles />
       <Watermark />
-      <Soundtrack cues={SFX} durationInFrames={durationInFrames} fadeOutFrames={fadeOutFrames} />
+      <Soundtrack cues={SFX} durationInFrames={durationInFrames} fadeOutFrames={fadeOutFrames} bgmOnly={bgmOnly} />
     </AbsoluteFill>
   );
 };

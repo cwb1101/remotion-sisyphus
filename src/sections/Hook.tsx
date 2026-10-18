@@ -92,13 +92,13 @@ const ORBIT_R = 1.16 * R;
 /** 绕行角度：按帧走，落地后停住（落点固定） */
 const orbitAngle = (f: number) => -2.35 + (Math.min(f, m7.to) - orbitIn) * 0.011;
 
-/** 第 1–2 屏：金色反光沿地平线扫过 */
-const Glint: React.FC<{ f: number; st: ShotState }> = ({ f, st }) => {
-  const t = progress(f, glint.from, glint.to);
-  if (f < glint.from || f > glint.to + 10) return null;
+/** 金色反光沿地平线从左扫到右（第 2 屏；结尾第 40 屏原样再来一次） */
+export const GlintSweep: React.FC<{ f: number; st: ShotState; from: number; to: number }> = ({ f, st, from, to }) => {
+  const t = progress(f, from, to);
+  if (f < from || f > to + 10) return null;
   const x = -150 + ease.inOut(t) * 2220;
   const y = limbYAt(st.cx, st.cy, st.r, x);
-  const a = Math.sin(Math.PI * clamp(t)) * (f > glint.to ? 1 - (f - glint.to) / 10 : 1);
+  const a = Math.sin(Math.PI * clamp(t)) * (f > to ? 1 - (f - to) / 10 : 1);
   return (
     <g opacity={a}>
       <defs>
@@ -113,6 +113,8 @@ const Glint: React.FC<{ f: number; st: ShotState }> = ({ f, st }) => {
     </g>
   );
 };
+
+const Glint: React.FC<{ f: number; st: ShotState }> = ({ f, st }) => <GlintSweep f={f} st={st} from={glint.from} to={glint.to} />;
 
 /** 第 6–8 屏：一粒小光点绕球转，然后落回球面 */
 const Orbiter: React.FC<{ f: number; st: ShotState }> = ({ f, st }) => {
@@ -161,8 +163,8 @@ export const HookOverlay: React.FC<{ f: number; st: ShotState }> = ({ f, st }) =
   return (
     <>
       <Glint f={f} st={st} />
-      <Label x={labelX} y={ly} dx={40} dy={-70} text={`高度 ${km} km`} opacity={fade(s3.start + 6, s3.end)} />
-      <Label x={labelX - 120} y={limbYAt(st.cx, st.cy, st.r, labelX - 120)} dx={40} dy={-80} size={24} text={s4.label ?? ''} opacity={0.85 * fade(m4.to - 10, s4.end)} />
+      <Label x={labelX} y={ly} dx={40} dy={-70} text={`高度 ${km} km`} opacity={fade(s3.start + 6, s3.end)} avoidSubtitle={false} />
+      <Label x={labelX - 120} y={limbYAt(st.cx, st.cy, st.r, labelX - 120)} dx={40} dy={-80} size={24} text={s4.label ?? ''} opacity={0.85 * fade(m4.to - 10, s4.end)} avoidSubtitle={false} />
       <Orbiter f={f} st={st} />
     </>
   );

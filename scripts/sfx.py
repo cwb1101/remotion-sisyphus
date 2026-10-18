@@ -14,6 +14,9 @@
   boom         重卡点：45Hz 正弦（音高 70→40Hz）+ 低通噪声瞬态 + 轻微饱和，1.6s
   bell         FM 合成钟声，2s
   air          滤过的白噪声铺底，2s
+  subdrop      悲伤：120Hz → 38Hz 下滑正弦 + 低通噪声，1.8s，高频全压掉
+  stretch      旧认知被撑开：220Hz 慢慢降到 110Hz，带一点颤音，1.4s
+  glint_rev    倒放的 glint（重画前的吸回）
 """
 import os
 
@@ -144,10 +147,28 @@ def air():
     return x * np.sin(np.pi * t / sec) ** 2
 
 
+def subdrop():
+    sec = 1.8
+    t = t_axis(sec)
+    f = 38 + 82 * np.exp(-t / 0.35)
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * env_ad(len(t), 0.004, 0.7, sec)
+    rumble = signal.lfilter(*signal.butter(2, 160 / (SR / 2)), pink(len(t))) * env_ad(len(t), 0.01, 0.6, sec)
+    return np.tanh(1.4 * (body + 0.5 * rumble / (np.abs(rumble).max() + 1e-9)))
+
+
+def stretch():
+    sec = 1.4
+    t = t_axis(sec)
+    f = 220 * np.power(0.5, t / sec) * (1 + 0.01 * np.sin(2 * np.pi * 5 * t))
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.3 * np.sin(4 * np.pi * np.cumsum(f) / SR)
+    return x * np.sin(np.pi * t / sec) ** 1.2
+
+
 SOUNDS = {
     "glint": glint, "tick": tick, "thud": thud,
     "whoosh_up": lambda: whoosh(300, 3000, 1.4), "whoosh_down": lambda: whoosh(3000, 250, 1.2),
     "swell": swell, "rev_swell": rev_swell, "boom": boom, "bell": bell, "air": air,
+    "subdrop": subdrop, "stretch": stretch, "glint_rev": lambda: glint()[::-1].copy(),
 }
 
 
@@ -156,7 +177,7 @@ def main():
     for name, fn in SOUNDS.items():
         x = fn()
         x = norm(x)
-        if name != "rev_swell":
+        if name not in ("rev_swell", "glint_rev"):
             x = fade_edges(x)
         sf.write(f"{OUT}/{name}.wav", x.astype(np.float32), SR, subtype="PCM_16")
         print(f"{name:<12} {len(x) / SR:5.2f}s  {int(round(len(x) / SR * 30)):>3} 帧")

@@ -15,7 +15,9 @@ export interface SfxCue {
   frames?: number;
 }
 
-const BGM_GAIN = 0.5; // 约 -6 dB，音效默认 0.8–1.0
+// 混音总线留 3 dB 余量：重卡点上 boom + 下沉低音 + BGM 叠加时不削波（响度在 render_full.py 里统一拉到 -14 LUFS）
+const MASTER = 0.7;
+const BGM_GAIN = 0.5 * MASTER; // BGM 比音效低：音效默认 0.8–1.0
 const DUCK_DB = 5;
 const DUCK_HOLD = 15; // 0.5 秒
 const DUCK_ATTACK = 2;
@@ -35,10 +37,11 @@ const duckAt = (f: number, cues: SfxCue[]) => {
   return Math.pow(10, (-DUCK_DB * depth) / 20);
 };
 
-export const Soundtrack: React.FC<{ cues: SfxCue[]; durationInFrames: number; fadeOutFrames?: number }> = ({
+export const Soundtrack: React.FC<{ cues: SfxCue[]; durationInFrames: number; fadeOutFrames?: number; bgmOnly?: boolean }> = ({
   cues,
   durationInFrames,
   fadeOutFrames = 0,
+  bgmOnly = false,
 }) => (
   <>
     <Audio
@@ -48,9 +51,10 @@ export const Soundtrack: React.FC<{ cues: SfxCue[]; durationInFrames: number; fa
         return BGM_GAIN * duckAt(f, cues) * tail;
       }}
     />
-    {cues.map((c, i) => (
+    {/* bgmOnly：自查用，只出 BGM（含压低），用来直接量压低曲线 */}
+    {(bgmOnly ? [] : cues).map((c, i) => (
       <Sequence key={i} from={c.at} durationInFrames={c.frames} layout="none">
-        <Audio src={staticFile(`sfx/${c.name}.wav`)} volume={c.gain ?? 0.9} />
+        <Audio src={staticFile(`sfx/${c.name}.wav`)} volume={(c.gain ?? 0.9) * MASTER} />
       </Sequence>
     ))}
   </>

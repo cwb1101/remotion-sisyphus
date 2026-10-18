@@ -3,11 +3,11 @@ import React from 'react';
 import type { Beam } from './Dust';
 import { C, H } from '../film/theme';
 
-export const beamGeometry = (sweep: number, intensity: number, f: number): Beam => {
+export const beamGeometry = (sweep: number, intensity: number, f: number, dx = 0, rot = 0): Beam => {
   // sweep 0→1：光束中线从画面左上外侧扫到最终位置
-  const angle = 58;
-  // 从画面左外侧扫进来，停在画面左中（后面的场景接着用这束光）
-  const x = -900 + sweep * 1550 + Math.sin(f / 90) * 20;
+  const angle = 58 + rot;
+  // 从画面左外侧扫进来，停在画面左中（后面的场景接着用这束光，dx / rot 让它平移、转动）
+  const x = -900 + sweep * 1550 + Math.sin(f / 90) * 20 + dx;
   return { x, y: H / 2, angle, halfWidth: 260, intensity };
 };
 

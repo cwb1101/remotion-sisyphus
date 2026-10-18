@@ -45,3 +45,7 @@ export const rand = (seed: number) => {
 
 /** 一次性的冲击包络：f0 处为 1，之后按 tau 帧指数衰减；f0 之前为 0 */
 export const hit = (f: number, f0: number, tau: number) => (f < f0 ? 0 : Math.exp(-(f - f0) / tau));
+
+/** 在 [from, to) 内显示：开头 fin 帧淡入，结尾 fout 帧淡出 */
+export const win = (f: number, from: number, to: number, fin = 8, fout = 6) =>
+  clamp((f - from) / fin) * clamp((to - f) / fout);
