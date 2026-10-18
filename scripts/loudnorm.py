@@ -25,6 +25,16 @@ def main(src, dst):
     f = f"loudnorm=I={TARGET['I']}:TP={TARGET['TP']}:LRA={TARGET['LRA']}{extra},aresample=48000"
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", src, "-af", f, "-ar", "48000", "-c:a", "pcm_s24le", dst], check=True)
     r = measure(dst)
+    # 线性调整后真峰仍可能贴着上限: 再过一道 4 倍过采样的限幅器, 直到真峰低于 -1 dBTP, 再补回响度
+    ceiling = -1.6
+    while float(r["input_tp"]) > TARGET["TP"] - 0.2:
+        tmp = dst + ".tmp.wav"
+        lim = (f"aresample=192000,alimiter=limit={10 ** (ceiling / 20):.4f}:attack=1:release=60:level=false,"
+               f"aresample=48000,volume={TARGET['I'] - float(r['input_i']):.2f}dB")
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", dst, "-af", lim, "-c:a", "pcm_s24le", tmp], check=True)
+        subprocess.run(["mv", tmp, dst], check=True)
+        r = measure(dst)
+        ceiling -= 0.4
     print(f"before I {m['input_i']} TP {m['input_tp']}  ->  after I {r['input_i']} LUFS  TP {r['input_tp']} dBTP  LRA {r['input_lra']}")
 
 
