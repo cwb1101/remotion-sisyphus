@@ -116,13 +116,17 @@ def creak():
 
 
 def slam():
-    """重卡点: 低频冲击 + 噪声爆 + 长尾混响"""
+    """重卡点: 全片最响的一下. 低频冲击 + 中频轰鸣 + 音色体 + 高频脆裂, 软饱和抬高响度, 长尾混响
+    只有低频的话听感响度很低 (K 计权会把 100Hz 以下压掉), 所以中频那一层是主体"""
     d = 1.6
     x = t(d)
-    sub = np.sin(2 * np.pi * (48 + 90 * np.exp(-x * 18)) * x) * env(len(x), 0.002, 0.6, 3)
-    knock = band(noise(d), 60, 400) * env(len(x), 0.001, 0.12) * 0.8
-    air = band(noise(d), 2000, 9000) * env(len(x), 0.001, 0.05) * 0.25
-    return reverb(sub * 1.2 + knock + air, 1.4, 0.3, 80, 3000)
+    sub = np.sin(2 * np.pi * (48 + 90 * np.exp(-x * 18)) * x) * env(len(x), 0.002, 0.6, 3) * 0.7
+    boom = band(noise(d), 90, 900) * env(len(x), 0.002, 0.45, 3) * 1.6
+    body = (np.sin(2 * np.pi * 110 * x) + 0.6 * np.sin(2 * np.pi * 220 * x + 1) + 0.35 * np.sin(2 * np.pi * 330 * x + 2)) * env(len(x), 0.003, 0.4, 3) * 0.6
+    crack = band(noise(d), 1500, 6000) * env(len(x), 0.0005, 0.06) * 0.7
+    mix = sub + boom + body + crack
+    mix = np.tanh(2.2 * mix / np.max(np.abs(mix))) / np.tanh(2.2)
+    return reverb(mix, 1.4, 0.25, 80, 4000)
 
 
 def cup_tap():

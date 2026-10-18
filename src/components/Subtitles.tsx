@@ -6,6 +6,7 @@ import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {SCREENS} from '../data/subtitles';
 import {COLORS, FONTS, H, SUBTITLE, W} from '../theme';
 import {useRenderMode} from './Character';
+import {portalRadius} from './Atmosphere';
 
 const lineStyle: React.CSSProperties = {
 	position: 'absolute',
@@ -58,6 +59,10 @@ export const Subtitles: React.FC = () => {
 					interpolate(frame, [from, from + 5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
 					interpolate(frame, [from + 30, from + 90], [1, 0.42], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 				// 收回: 下一次出现这个词的那一屏开始前 14 帧, 从左上角落回字幕行; 否则淡出
+				// 穿物件换场的亮光盖住画面时, 钉住的词也一起隐去
+				const glowR = portalRadius(frame);
+				const underGlow = 1 - Math.min(1, Math.max(0, (glowR - 500) / 500));
+				if (mask && underGlow < 0.5) return null;
 				const target = SCREENS.find((y) => y.id === x.pinUntil);
 				if (until - frame <= 14) {
 					const k = 1 - (until - frame) / 14;
@@ -78,7 +83,7 @@ export const Subtitles: React.FC = () => {
 						style={{
 							position: 'absolute', left, top, fontFamily: FONTS.serif, fontWeight: 900, fontSize: size, lineHeight: 1,
 							// 遮罩里用灰色, 质检能把它和主字幕分开
-							color: mask ? '#aaa' : COLORS.gold, opacity: mask ? 1 : fade,
+							color: mask ? '#aaa' : COLORS.gold, opacity: mask ? 1 : fade * underGlow,
 							textShadow: mask ? undefined : '0 0 40px rgba(221,189,116,0.35)',
 						}}
 					>
