@@ -7,6 +7,7 @@ import {SHOTS} from '../src/data/shots';
 import {CAMERA_MOVES, HEAVY_FRAMES} from '../src/lib/timeline';
 import beatmap from '../src/data/beatmap.json';
 import {bgmVolume} from '../src/components/SoundLayer';
+import {portalRadius} from '../src/components/Atmosphere';
 
 const [out, endArg] = process.argv.slice(2);
 const end = Number(endArg);
@@ -17,13 +18,15 @@ const meta = {
 	kicks: beatmap.kicks,
 	heavy: HEAVY_FRAMES.filter((f) => f < end),
 	heavyScreens: SCREENS.filter((s) => s.heavy && s.startFrame < end).map((s) => ({id: s.id, frame: s.startFrame, kind: s.heavy})),
-	camera: CAMERA_MOVES.filter((m) => m.start < end).map((m) => ({name: m.name, start: m.start, end: m.end})),
+	camera: CAMERA_MOVES.filter((m) => m.start < end).map((m) => ({name: m.name, start: m.start, end: m.end, cut: !!m.to.cut})),
 	// 每一帧: 是否算特写 (特写机位本身, 以及从特写拉出来的那段运动), 镜头是否在动, BGM 音量
 	frames: Array.from({length: end}, (_, f) => {
 		const moving = CAMERA_MOVES.some((m) => f >= m.start && f <= m.end);
 		const fromClose = CAMERA_MOVES.some((m) => f >= m.start && f <= m.end && (m.from.closeup || m.to.closeup));
 		const sc = SCREENS.find((s) => f >= s.startFrame && f < s.endFrame);
-		return {closeup: fromClose || (!moving && !!(sc && SHOTS[sc.shot]?.closeup)), moving, bgm: Number(bgmVolume(f).toFixed(4))};
+		// 穿物件换场时镜头有意推到极近 (允许裁切), 亮光盖住的圆里人物看不见 (遮挡检查跳过这一圈)
+		const glow = portalRadius(f);
+		return {closeup: glow > 0 || fromClose || (!moving && !!(sc && SHOTS[sc.shot]?.closeup)), moving, glow: Math.round(glow * 0.55), bgm: Number(bgmVolume(f).toFixed(4))};
 	}),
 	screens: SCREENS.filter((s) => s.startFrame < end).map((s) => ({
 		id: s.id,

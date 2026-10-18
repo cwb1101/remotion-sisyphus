@@ -10,6 +10,7 @@ import {H, W} from '../theme';
 export type CamState = {x: number; y: number; zoom: number; rot: number};
 
 const ease = Easing.bezier(0.45, 0, 0.2, 1);
+const PORTAL_ZOOM = 4;
 
 const mix = (a: Shot | CamState, b: Shot | CamState, t: number): CamState => ({
 	x: a.x + (b.x - a.x) * t,
@@ -37,12 +38,12 @@ export const cameraAt = (frame: number): CamState => {
 		const before = p.frame - frame;
 		if (before > 0 && before <= PORTAL_PUSH) {
 			const k = ease(1 - before / PORTAL_PUSH);
-			state = {...state, x: state.x + (p.from.x - state.x) * k, y: state.y + (p.from.y - state.y) * k, zoom: state.zoom * (1 + 7 * k * k)};
+			state = {...state, x: state.x + (p.from.x - state.x) * k, y: state.y + (p.from.y - state.y) * k, zoom: state.zoom * (1 + PORTAL_ZOOM * k * k)};
 		}
 		const after = frame - p.frame;
 		if (after >= 0 && after < PORTAL_PULL) {
 			const k = ease(1 - after / PORTAL_PULL);
-			state = {...state, x: state.x + (p.to.x - state.x) * k, y: state.y + (p.to.y - state.y) * k, zoom: state.zoom * (1 + 7 * k * k)};
+			state = {...state, x: state.x + (p.to.x - state.x) * k, y: state.y + (p.to.y - state.y) * k, zoom: state.zoom * (1 + PORTAL_ZOOM * k * k)};
 		}
 	}
 	const sec = frame / 30;

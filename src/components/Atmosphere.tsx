@@ -59,12 +59,18 @@ export const Atmosphere: React.FC = () => {
 	);
 };
 
+/** 换场亮光的半径 (屏幕像素), 不在换场时为 0; 质检用它判断哪些像素被亮光盖住 */
+export const portalRadius = (frame: number) => {
+	const p = PORTALS.find((q) => frame >= q.frame - PORTAL_PUSH && frame < q.frame + PORTAL_PULL);
+	if (!p) return 0;
+	const k = frame < p.frame ? 1 - (p.frame - frame) / PORTAL_PUSH : 1 - (frame - p.frame) / PORTAL_PULL;
+	return 40 + 1700 * Math.pow(Math.max(0, k), 1.5);
+};
+
 /** 换场时盖住画面的一圈亮光 (象牙白到金), 中心就是镜头推近的那个物件 */
 const PortalGlow: React.FC<{frame: number}> = ({frame}) => {
-	const p = PORTALS.find((q) => frame >= q.frame - PORTAL_PUSH && frame < q.frame + PORTAL_PULL);
-	if (!p) return null;
-	const k = frame < p.frame ? 1 - (p.frame - frame) / PORTAL_PUSH : 1 - (frame - p.frame) / PORTAL_PULL;
-	const r = 40 + 1500 * Math.pow(Math.max(0, k), 2.2);
+	const r = portalRadius(frame);
+	if (r <= 0) return null;
 	return (
 		<>
 			<defs>

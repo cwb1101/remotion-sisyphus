@@ -104,15 +104,17 @@ def main(video, qa_dir):
     wav = qa / "audio.wav"
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(video), "-ac", "1", "-ar", "48000", str(wav)], check=True)
     y, sr = sf.read(wav)
-    hop = 160
-    env = np.array([np.sqrt(np.mean(y[i:i + hop] ** 2)) for i in range(0, len(y) - hop, hop)])
-    onset = np.maximum(0, np.diff(env, prepend=env[0]))
+    # 用重音效本身的波形 (public/sfx/slam.wav) 和成片做互相关, 找出它在成片里的确切位置
+    slam, ssr = sf.read(Path(__file__).resolve().parent.parent / "public/sfx/slam.wav")
+    slam = slam[: int(0.25 * ssr)]
     audio_rows = []
     for h in meta["heavy"]:
-        c = int(h / fps * sr / hop)
-        a, b = c - int(0.15 * sr / hop), c + int(0.15 * sr / hop)
-        k = a + int(np.argmax(onset[a:b]))
-        off = (k * hop / sr - h / fps) * fps
+        c = int(h / fps * sr)
+        a, b = c - int(0.2 * sr), c + int(0.2 * sr) + len(slam)
+        seg = y[a:b]
+        xc = np.correlate(seg, slam, mode="valid")
+        k = a + int(np.argmax(np.abs(xc)))
+        off = (k / sr - h / fps) * fps
         audio_rows.append((h, off))
         if abs(off) > 1.5:
             problems.append(f"重卡点 f{h}: 重音效起音偏了 {off:+.1f} 帧")
@@ -127,6 +129,13 @@ def main(video, qa_dir):
     flags = {k: [] for k in ["wm_char", "wm_text", "band", "edge", "right", "face", "hand", "head_crop", "foot_crop", "dot"]}
     for f in range(min(len(chars), len(subs), end)):
         cm = masks(load(chars[f]))
+        glow = meta["frames"][f].get("glow", 0)
+        if glow:
+            # 换场亮光盖住的圆: 里面的人物看不见, 不参与遮挡和水印检查
+            gh, gw = cm["any"].shape
+            yy, xx = np.ogrid[:gh, :gw]
+            covered = (xx - gw / 2) ** 2 + (yy - gh / 2) ** 2 < (glow * gw / W) ** 2
+            cm = {k: v & ~covered for k, v in cm.items()}
         sv = load(subs[f]).max(axis=2)
         sm = sv > 110          # 所有文字 (主字幕 白 / 钉住的重点词 浅灰 / 注释 深灰)
         main_sub = sv > 220    # 只有主字幕
@@ -227,8 +236,10 @@ def main(video, qa_dir):
         if not (-6.5 <= db <= -3.5) or not (0.35 <= dur <= 0.7):
             problems.append(f"重卡点 f{h}: BGM 让位 {db:.1f}dB {dur:.2f}秒, 不在 4-6dB 约 0.5 秒")
     kicks = set(meta["kicks"])
-    cam_rows = [f"| {m['name']} | {m['start']} | {m['end']} | {'是' if m['end'] in kicks else '否'} |" for m in meta["camera"]]
+    cam_rows = [f"| {m['name']} | {m['start']} | {m['end']} | {'穿物件换场 (瞬切)' if m.get('cut') else '是' if m['end'] in kicks else '否'} |" for m in meta["camera"]]
     for m in meta["camera"]:
+        if m.get("cut"):
+            continue
         if m["end"] not in kicks:
             problems.append(f"镜头 {m['name']} 没有落在底鼓上")
 

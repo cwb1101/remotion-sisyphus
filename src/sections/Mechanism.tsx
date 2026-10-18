@@ -54,8 +54,9 @@ export const mHeroX = (f: number): number => {
 };
 export const mPartnerX = (f: number): number => {
 	if (f < M.chase) return px0;
-	if (f < M.hold) return travel(PARTNER_KEYS, f, px0, 4640, M.chase, M.crack);
-	if (f < M.hug) return travel(PARTNER_KEYS, f, 4640, 4290, M.hold, M.leave);
+	// 退到 4720: 杯子落地那几个特写里, 对方的头不会进到右上角的水印区
+	if (f < M.hold) return travel(PARTNER_KEYS, f, px0, 4720, M.chase, M.crack);
+	if (f < M.hug) return travel(PARTNER_KEYS, f, 4720, 4290, M.hold, M.leave);
 	return travel(PARTNER_KEYS, f, 4290, 4440, M.hug, M.five);
 };
 

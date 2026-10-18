@@ -140,7 +140,7 @@ export const Turn: React.FC = () => {
 
 	return (
 		<g>
-			{!inBed ? (
+			{!inBed && mode === 'normal' ? (
 				<>
 					<Shards x={IMPACT_X} ground={0} since={f < M.mend ? since : -1} picked={0} />
 					{/* 被捡起的碎片: 先飞到手里, 屏 34 所有碎片聚回杯子的形状 */}
