@@ -30,15 +30,15 @@ export const W = {
 export const rackTubeX = (i: number) => W.rack.x + (i - 3) * W.rack.spacing;
 
 export const CAMERA: CamKey[] = [
-  // 2.4s 匹配剪辑：镜头贴在「嫉妒」那支试管的玻璃上
-  {f: beat('o3', 'matchCut'), x: rackTubeX(1), y: -40, s: 4.6},
-  // 3.0s 之前快速拉远（对数空间匀速），之后急刹（速度渐变）
-  {f: beat('o3', 'ramp'), x: -120, y: -22, s: 1.42, e: ease.linear},
-  {f: beat('o3', 'ramp') + 18, x: 30, y: 0, s: 1.0, e: ease.out},
-  {f: cue('o4').start, x: 40, y: 4, s: 0.99, e: ease.linear},
+  // 3.4s 定格卡片开始缩小，镜头从近处拉远（与卡片同时），露出整排试管
+  {f: beat('o3', 'reveal') - 2, x: rackTubeX(2), y: -60, s: 2.1},
+  // 4.0s 之前匀速拉远，之后急刹（速度渐变）
+  {f: beat('o3', 'ramp'), x: -20, y: -24, s: 1.18, e: ease.inOut},
+  {f: beat('o3', 'ramp') + 24, x: 30, y: 0, s: 1.0, e: ease.out},
+  {f: cue('o4').start, x: 36, y: 2, s: 0.995, e: ease.linear},
   {f: cue('o5').start, x: 60, y: 10, s: 1.07, e: ease.linear},
   // 5.0s 甩镜离开试管架
-  {f: beat('o5', 'whip') + 8, x: -1500, y: 0, s: 1.0, e: ease.inOut},
+  {f: beat('o5', 'whip') + 12, x: -1500, y: 0, s: 1.0, e: ease.inOut},
   {f: cue('o6').start, x: -2350, y: 0, s: 1.0, e: ease.linear},
   // 时间往回卷：先快后慢，停在公元4世纪
   {f: beat('o6', 'rollEnd'), x: -3550, y: 0, s: 0.97, e: ease.out},
@@ -67,7 +67,7 @@ export const CAMERA: CamKey[] = [
 
 /** 天空/环境底色关键帧 [帧, 顶部色, 底部色] */
 export const SKY: [number, string, string][] = [
-  [beat('o3', 'matchCut'), '#0D1318', '#1A252E'],
+  [beat('o3', 'reveal'), '#0D1318', '#1A252E'],
   [cue('o5').start, '#0D1318', '#1A252E'],
   [cue('o5').start + 12, '#17120F', '#2A2219'],
   [beat('o6', 'dusk'), '#1D1622', '#3A2A2A'],

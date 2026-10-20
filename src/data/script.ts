@@ -45,70 +45,70 @@ export const CUES: Cue[] = [
     id: 'o1',
     section: 's0',
     start: 0,
-    end: 24,
+    end: 36,
     text: '8点之前',
     keywords: [],
-    // 第 0 帧印章「懒惰」已盖上；0.7s 跳切到 07:40
-    beats: {stampSloth: 0, alarm: 4, jumpCut: 21},
+    // 第 0 帧印章「懒惰」已盖上；整整 1.2 秒让人看清第一个画面
+    beats: {stampSloth: 0, alarm: 4},
   },
   {
     id: 'o2',
     section: 's0',
-    start: 24,
-    end: 72,
+    start: 36,
+    end: 102,
     text: '你已经犯了三宗罪',
     keywords: ['三宗罪'],
-    // 0.9s 印章「嫉妒」；1.4s 甩镜到地铁；1.7s 印章「暴怒」；2.0s 定格三联；2.2s 推向手机
-    beats: {stampEnvy: 3, whip: 18, doorClose: 21, stampRage: 27, freeze: 36, pushPhone: 42},
+    // 1.2s 跳切到坐姿；1.47s 印章「嫉妒」；2.33s 甩镜到地铁；2.87s 印章「暴怒」；3.27s 定格去色
+    beats: {jumpCut: 0, stampEnvy: 8, whip: 34, doorClose: 42, stampRage: 50, freeze: 62},
   },
   {
     id: 'o3',
     section: 's0',
-    start: 72,
-    end: 114,
+    start: 102,
+    end: 144,
     text: '但没有一条犯法',
     keywords: ['犯法'],
-    // 2.4s 匹配剪辑进试管；3.0s 速度渐变 + 四个标签依次亮；3.5s 主角探头
-    beats: {matchCut: 0, ramp: 18, labels: 18, peek: 33},
+    // 3.4s 定格画面缩小飞进「暴怒」试管，镜头同时拉远露出整排试管；4.0s 速度渐变急刹 + 标签依次亮
+    beats: {reveal: 0, ramp: 18, labels: 20, peek: 30},
   },
   {
     id: 'o4',
     section: 's0',
-    start: 114,
-    end: 150,
+    start: 144,
+    end: 186,
     text: '凭什么叫致命',
     keywords: ['致命'],
     display: 'slam',
-    // 3.8s 柔光闪白 + 大字落下；4.0s 最重的一下；4.5s「致命」脱出变纸签
-    beats: {flash: 0, land: 6, scratch: 12, tagDetach: 21},
+    // 4.8s 柔光 + 大字落下；5.0s 最重的一下；5.67s「致命」脱出变纸签
+    beats: {flash: 0, land: 6, scratch: 14, tagDetach: 26},
   },
   {
     id: 'o5',
     section: 's0',
-    start: 150,
-    end: 222,
+    start: 186,
+    end: 258,
     text: '答案藏在 一个古老的词里',
     keywords: ['古老的词'],
-    // 5.0s 甩镜离开试管架；5.8s 卷轴向左铺开
-    beats: {whip: 0, scrollRoll: 24},
+    // 6.2s 甩镜离开试管架；7.1s 卷轴向左铺开
+    beats: {whip: 0, scrollRoll: 28},
   },
   {
     id: 'o6',
     section: 's0',
-    start: 222,
-    end: 300,
+    start: 258,
+    end: 336,
     text: '先从 一千六百多年前说起',
     keywords: [],
     // 刻度尺年份往回滚，减速停在公元4世纪
-    beats: {rulerRoll: 0, rollEnd: 48, dusk: 30},
+    beats: {rulerRoll: 0, rollEnd: 56, dusk: 34},
   },
 
   // ── 一 致命是源头 ──────────────────────────────
   {
     id: 'c1',
     section: 's1',
-    start: 300,
-    end: 378,
+    start: 336,
+    end: 414,
     text: '沙漠里的修士 写下八种念头',
     keywords: ['念头'],
     beats: {arrive: 0, smokeRise: 12},
@@ -116,8 +116,8 @@ export const CUES: Cue[] = [
   {
     id: 'c2',
     section: 's1',
-    start: 378,
-    end: 444,
+    start: 414,
+    end: 480,
     text: '提醒自己 别被它们缠上',
     keywords: ['缠上'],
     beats: {pressIn: 6, tubesBorn: 36},
@@ -125,8 +125,8 @@ export const CUES: Cue[] = [
   {
     id: 'c3',
     section: 's1',
-    start: 444,
-    end: 504,
+    start: 480,
+    end: 540,
     text: '后来这张清单 一改再改',
     keywords: [],
     beats: {travel: 0, hand1: 6, hand2: 24, hand3: 42},
@@ -134,8 +134,8 @@ export const CUES: Cue[] = [
   {
     id: 'c4',
     section: 's1',
-    start: 504,
-    end: 558,
+    start: 540,
+    end: 594,
     text: '八条 变成了七条',
     keywords: ['七条'],
     beats: {grow: 0, eight: 4, merge: 18, seven: 30},
@@ -143,8 +143,8 @@ export const CUES: Cue[] = [
   {
     id: 'c5',
     section: 's1',
-    start: 558,
-    end: 636,
+    start: 594,
+    end: 672,
     text: '它的拉丁原名里 藏着一个字',
     keywords: [],
     beats: {plinth: 0, magnifier: 18, capJump: 60},
@@ -152,8 +152,8 @@ export const CUES: Cue[] = [
   {
     id: 'c6',
     section: 's1',
-    start: 636,
-    end: 672,
+    start: 672,
+    end: 708,
     text: '头',
     keywords: ['头'],
     display: 'slam',
@@ -162,8 +162,8 @@ export const CUES: Cue[] = [
   {
     id: 'c7',
     section: 's1',
-    start: 672,
-    end: 738,
+    start: 708,
+    end: 774,
     text: '不是判死罪 是源头',
     keywords: ['源头'],
     beats: {gavel: 0, strike: 12, spring: 30},
@@ -171,8 +171,8 @@ export const CUES: Cue[] = [
   {
     id: 'c8',
     section: 's1',
-    start: 738,
-    end: 798,
+    start: 774,
+    end: 834,
     text: '每一条 都会生出别的错',
     keywords: ['生出别的错'],
     beats: {pipes: 0, overflow: 18, cups: 36},
@@ -180,8 +180,8 @@ export const CUES: Cue[] = [
   {
     id: 'c9',
     section: 's1',
-    start: 798,
-    end: 840,
+    start: 834,
+    end: 876,
     text: '这才是致命',
     keywords: ['致命'],
     display: 'slam',
@@ -243,6 +243,9 @@ export type SoundName =
 
 export type SfxCue = {sound: SoundName; at: number; gain: number};
 
+/** 试管标签依次亮起的间隔（帧），画面和音效共用 */
+export const LABEL_STEP = 6;
+
 const s1 = sectionRange('s1');
 
 export const SFX: SfxCue[] = [
@@ -250,21 +253,21 @@ export const SFX: SfxCue[] = [
   {sound: 'thump', at: beat('o1', 'stampSloth'), gain: 0.8},
   {sound: 'tick', at: beat('o1', 'alarm'), gain: 0.5},
   {sound: 'tick', at: beat('o1', 'alarm') + 7, gain: 0.45},
-  {sound: 'click', at: beat('o1', 'jumpCut'), gain: 0.55},
+  {sound: 'click', at: beat('o2', 'jumpCut'), gain: 0.5},
   {sound: 'thumpSoft', at: beat('o2', 'stampEnvy'), gain: 0.7},
-  {sound: 'whip', at: beat('o2', 'whip') - 2, gain: 0.7},
+  {sound: 'whip', at: beat('o2', 'whip') - 6, gain: 0.6},
   {sound: 'doorAir', at: beat('o2', 'doorClose'), gain: 0.6},
   {sound: 'thump', at: beat('o2', 'stampRage'), gain: 0.95},
-  {sound: 'freeze', at: beat('o2', 'freeze'), gain: 0.75},
-  {sound: 'click', at: beat('o2', 'freeze'), gain: 0.5},
-  {sound: 'glass', at: beat('o3', 'matchCut'), gain: 0.6},
-  {sound: 'whoosh', at: beat('o3', 'matchCut') + 1, gain: 0.55},
-  ...[0, 1, 2, 3].map((i) => ({sound: 'click' as const, at: beat('o3', 'labels') + i * 4, gain: 0.42})),
-  {sound: 'riser', at: beat('o4', 'flash') - 6, gain: 0.55},
+  {sound: 'freeze', at: beat('o2', 'freeze'), gain: 0.7},
+  {sound: 'whoosh', at: beat('o3', 'reveal'), gain: 0.5},
+  {sound: 'glass', at: beat('o3', 'ramp') + 4, gain: 0.55},
+  {sound: 'bubble', at: beat('o3', 'ramp') + 6, gain: 0.4},
+  ...[0, 1, 2, 3].map((i) => ({sound: 'click' as const, at: beat('o3', 'labels') + i * LABEL_STEP, gain: 0.4})),
+  {sound: 'riser', at: beat('o4', 'flash') - 8, gain: 0.5},
   {sound: 'thumpHeavy', at: beat('o4', 'land'), gain: 0.95},
   {sound: 'paper', at: beat('o4', 'tagDetach'), gain: 0.5},
   // 5–10 秒
-  {sound: 'whip', at: beat('o5', 'whip') - 2, gain: 0.6},
+  {sound: 'whip', at: beat('o5', 'whip') - 2, gain: 0.55},
   {sound: 'paper', at: beat('o5', 'scrollRoll'), gain: 0.45},
   {sound: 'tickRoll', at: beat('o6', 'rulerRoll'), gain: 0.5},
   {sound: 'thumpSoft', at: beat('o6', 'rollEnd'), gain: 0.75},

@@ -3,25 +3,33 @@ import {AbsoluteFill} from 'remotion';
 import {beat} from '../../data/script';
 import {Person, POSES, Kettle, handWorld, mixPose, type Pose} from '../../components/Person';
 import {Clock, Stamp} from '../../components/Props';
+import {TUBE_W} from '../../components/DesireGauge';
+import {toScreen, useCam} from '../../lib/camera';
 import {C} from '../../theme';
 import {bell, ease, hash, lerp, prog} from '../../lib/anim';
+import {rackTubeX} from '../../world';
 
-// 开头 0–2.4 秒的"剪辑段"：屏幕空间里的快节奏镜头
-// 0.0 卧室·躺（印章懒惰） → 0.7 跳切·坐（印章嫉妒） → 1.4 甩镜·地铁（印章暴怒）
-// → 2.0 定格裂成三联 → 2.2 推向手机 → 2.4 匹配剪辑进试管（之后交给世界镜头）
+// 开头 0–4 秒的"剪辑段"：每个镜头至少停 1 秒，让人看清
+// 0.0 卧室·躺（印章懒惰） → 1.2 跳切·坐（印章嫉妒） → 2.33 甩镜·地铁（印章暴怒）
+// → 3.27 定格去色 → 3.4 定格画面缩成一张卡片，飞进「暴怒」试管，镜头同时拉远（交给世界镜头）
 
 const F = {
-  jump: beat('o1', 'jumpCut'),
+  jump: beat('o2', 'jumpCut'),
   envy: beat('o2', 'stampEnvy'),
   whip: beat('o2', 'whip'),
   door: beat('o2', 'doorClose'),
   rage: beat('o2', 'stampRage'),
   freeze: beat('o2', 'freeze'),
-  push: beat('o2', 'pushPhone'),
-  match: beat('o3', 'matchCut'),
+  reveal: beat('o3', 'reveal'),
 };
 
-export const CUTS_END = F.match;
+/** 甩镜时长（帧） */
+const WHIP = 12;
+/** 卡片缩进试管用时（帧） */
+export const CARD = 24;
+/** 世界镜头从这一帧开始在卡片后面渲染 */
+export const WORLD_START = F.reveal - 2;
+export const CUTS_END = F.reveal + CARD + 2;
 
 // ── 卧室 ──────────────────────────────────────────
 
@@ -34,12 +42,6 @@ const sitPose = (t: number): Pose => {
   return {...p, armBack: ph.armBack, armFront: ph.armFront, headTilt: 12, lean: 2};
 };
 const liePose = (t: number): Pose => ({...POSES.phone(t), lean: 0, headTilt: 70, armFront: [107, -10], armBack: [100, -20], legFront: [8, -16], legBack: [4, -10]});
-
-/** 坐姿时手机屏幕中心（场景坐标），三联定格推镜头要对准它 */
-export const phoneCenterB = () => {
-  const h = handWorld(sitPose(F.freeze - F.jump), {x: SIT.x, y: SIT.y, scale: SIT.scale});
-  return {x: h.x + 34, y: h.y - 40};
-};
 
 const Phone: React.FC<{screen?: boolean}> = ({screen}) => (
   <g transform="rotate(-6)">
@@ -196,12 +198,11 @@ export const Subway: React.FC<{t: number; layer?: 'base' | 'stamp' | 'all'; froz
   );
 };
 
-// ── 三联定格 ──────────────────────────────────────
+// ── 试管里的倒影：三个场景的定格小图 ──────────────
 
-const PANEL = {w: 400, h: 700, y: 140, gap: 40};
-const panelX = (i: number) => 960 - (PANEL.w * 3 + PANEL.gap * 2) / 2 + i * (PANEL.w + PANEL.gap);
-/** 每格裁切的场景区域（宽高比与格子一致） */
+const PANEL = {w: 400, h: 700};
 const CROP_W = (1080 * PANEL.w) / PANEL.h;
+/** 每张小图裁切的场景区域（宽高比与试管里的倒影一致） */
 const CROPS = [
   {x: 520, w: CROP_W},
   {x: 600, w: CROP_W},
@@ -209,12 +210,12 @@ const CROPS = [
 ];
 
 const PanelScene: React.FC<{i: number; layer: 'base' | 'stamp'}> = ({i, layer}) => {
-  if (i === 0) return <Bedroom t={F.jump - 3} variant="lie" layer={layer} />;
-  if (i === 1) return <Bedroom t={F.freeze - F.jump} variant="sit" layer={layer} />;
+  if (i === 0) return <Bedroom t={F.jump - 4} variant="lie" layer={layer} />;
+  if (i === 1) return <Bedroom t={F.whip - F.jump - 6} variant="sit" layer={layer} />;
   return <Subway t={F.freeze - F.whip} layer={layer} />;
 };
 
-/** 定格后的一格（也给试管倒影复用） */
+/** 定格后的一张小图（去色，只留朱红印章），给试管倒影用；面板序号 0 懒惰 1 嫉妒 2 暴怒 */
 export const FrozenPanel: React.FC<{i: number; w: number; h: number}> = ({i, w, h}) => {
   const crop = CROPS[i];
   const s = w / crop.w;
@@ -241,126 +242,77 @@ export const FrozenPanel: React.FC<{i: number; w: number; h: number}> = ({i, w, 
   );
 };
 
-const Triptych: React.FC<{frame: number}> = ({frame}) => {
-  const split = ease.out(prog(frame, F.freeze, 5));
-  // 2.2 秒起加速推向中间一格的手机，2.4 秒正好切
-  const pushT = ease.inStrong(prog(frame, F.push, F.match - F.push));
-  const ph = phoneCenterB();
-  const s1 = PANEL.w / CROPS[1].w;
-  const target = {x: panelX(1) + (ph.x - CROPS[1].x) * s1, y: PANEL.y + ph.y * (PANEL.h / 1080)};
-  const zoom = Math.exp(lerp(0, Math.log(9), pushT));
-  const cx = lerp(960, target.x, Math.min(1, pushT * 1.6));
-  const cy = lerp(540, target.y, Math.min(1, pushT * 1.6));
-  return (
-    <svg width={1920} height={1080} viewBox="0 0 1920 1080">
-      <defs>
-        <filter id="freezegray" colorInterpolationFilters="sRGB">
-          <feColorMatrix type="saturate" values="0" />
-          <feComponentTransfer>
-            <feFuncR type="linear" slope={0.82} />
-            <feFuncG type="linear" slope={0.82} />
-            <feFuncB type="linear" slope={0.82} />
-          </feComponentTransfer>
-        </filter>
-      </defs>
-      <rect width={1920} height={1080} fill="#0B0F14" />
-      <g transform={`translate(960 540) scale(${zoom}) translate(${-cx} ${-cy})`}>
-        {[0, 1, 2].map((i) => {
-          // 从整屏（当前地铁画面）裂成三格：内容保持等比缩放，只有裁切框在变
-          const sc = lerp(1, PANEL.w / CROPS[i].w, split);
-          const tx = lerp(0, panelX(i) - sc * CROPS[i].x, split);
-          const ty = lerp(0, PANEL.y, split);
-          const x = lerp(0, panelX(i), split);
-          const y = lerp(0, PANEL.y, split);
-          const w = lerp(1920, PANEL.w, split);
-          const h = lerp(1080, PANEL.h, split);
-          const settle = 1 + 0.025 * (1 - ease.out(prog(frame, F.freeze + 3, 8)));
-          const r = lerp(0, 16, split);
-          return (
-            <g key={i} transform={`translate(${x + w / 2} ${y + h / 2}) scale(${settle}) translate(${-x - w / 2} ${-y - h / 2})`}>
-              <clipPath id={`panel${i}`}>
-                <rect x={x} y={y} width={w} height={h} rx={r} />
-              </clipPath>
-              <g clipPath={`url(#panel${i})`}>
-                <g transform={`translate(${tx} ${ty}) scale(${sc})`}>
-                  <g filter="url(#freezegray)">
-                    <PanelScene i={i} layer="base" />
-                  </g>
-                  <PanelScene i={i} layer="stamp" />
-                </g>
-              </g>
-              <rect x={x} y={y} width={w} height={h} rx={r} fill="none" stroke={C.paper} strokeOpacity={0.25 * split} strokeWidth={2} />
-            </g>
-          );
-        })}
-        {/* 计数器：七个圆点亮起三个（不用 3/7 这种带斜杠的文字） */}
-        {Array.from({length: 7}, (_, i) => {
-          const lit = i >= 1 && i <= 3;
-          const p = lit ? ease.outBack(prog(frame, F.freeze + 1 + (i - 1) * 2, 6)) : split;
-          return (
-            <circle
-              key={i}
-              cx={960 + (i - 3) * 46}
-              cy={92}
-              r={11 * p}
-              fill={lit ? C.accent : 'none'}
-              stroke={lit ? 'none' : C.paper}
-              strokeOpacity={0.5}
-              strokeWidth={2.5}
-            />
-          );
-        })}
-      </g>
-    </svg>
-  );
-};
-
 // ── 剪辑段总控 ────────────────────────────────────
 
 export const OpeningCuts: React.FC<{frame: number}> = ({frame}) => {
-  if (frame >= F.match) return null;
+  const {cam} = useCam();
+  if (frame >= CUTS_END) return null;
 
-  if (frame >= F.freeze) {
-    return (
-      <AbsoluteFill>
-        <Triptych frame={frame} />
-      </AbsoluteFill>
-    );
-  }
-
-  // 0–0.7 秒：躺着，缓推
+  // 0–1.2 秒：躺着，缓推
   if (frame < F.jump) {
-    const push = 1 + 0.045 * ease.outSoft(prog(frame, 0, F.jump));
+    const push = 1 + 0.05 * ease.outSoft(prog(frame, 0, F.jump));
     return (
       <AbsoluteFill style={{transform: `scale(${push})`, transformOrigin: '52% 58%'}}>
-        <Bedroom t={frame} variant="lie" stampP={frame >= 0 ? 0.62 + 0.38 * ease.out(prog(frame, 0, 6)) : 0} />
+        <Bedroom t={frame} variant="lie" stampP={0.62 + 0.38 * ease.out(prog(frame, 0, 6))} />
       </AbsoluteFill>
     );
   }
 
-  // 0.7 秒跳切（同机位、景别小跳一档） → 1.4 秒甩镜到地铁
-  const whipStart = F.whip - 4;
-  const w = ease.inOut(prog(frame, whipStart, 8));
-  const blur = bell(prog(frame, whipStart, 8)) * 60;
-  const tB = frame - F.jump;
-  const punch = 1.08 + 0.03 * prog(frame, F.jump, whipStart - F.jump);
-  return (
-    <AbsoluteFill style={{filter: blur > 0.5 ? 'url(#whipblur)' : undefined}}>
-      <svg width={0} height={0} style={{position: 'absolute'}}>
-        <filter id="whipblur" x="-5%" y="0" width="110%" height="100%">
-          <feGaussianBlur stdDeviation={`${blur} 0`} />
-        </filter>
-      </svg>
-      <AbsoluteFill style={{transform: `translateX(${-w * 1920}px)`}}>
-        <AbsoluteFill style={{transform: `scale(${punch})`, transformOrigin: '46% 56%'}}>
-          <Bedroom t={tB} variant="sit" stampP={prog(frame, F.envy, 9)} />
+  // 1.2 秒跳切（同机位、景别小跳一档） → 2.33 秒甩镜到地铁
+  if (frame < F.freeze) {
+    const whipStart = F.whip - WHIP / 2;
+    const w = ease.inOut(prog(frame, whipStart, WHIP));
+    const blur = bell(prog(frame, whipStart, WHIP)) * 48;
+    const tB = frame - F.jump;
+    const punch = 1.08 + 0.03 * prog(frame, F.jump, whipStart - F.jump);
+    return (
+      <AbsoluteFill style={{filter: blur > 0.5 ? 'url(#whipblur)' : undefined}}>
+        <svg width={0} height={0} style={{position: 'absolute'}}>
+          <filter id="whipblur" x="-5%" y="0" width="110%" height="100%">
+            <feGaussianBlur stdDeviation={`${blur} 0`} />
+          </filter>
+        </svg>
+        <AbsoluteFill style={{transform: `translateX(${-w * 1920}px)`}}>
+          <AbsoluteFill style={{transform: `scale(${punch})`, transformOrigin: '46% 56%'}}>
+            <Bedroom t={tB} variant="sit" stampP={prog(frame, F.envy, 10)} />
+          </AbsoluteFill>
         </AbsoluteFill>
+        {w > 0 ? (
+          <AbsoluteFill style={{transform: `translateX(${(1 - w) * 1920}px)`}}>
+            <Subway t={frame - F.whip} />
+          </AbsoluteFill>
+        ) : null}
       </AbsoluteFill>
-      {w > 0 ? (
-        <AbsoluteFill style={{transform: `translateX(${(1 - w) * 1920}px)`}}>
-          <Subway t={frame - F.whip} />
-        </AbsoluteFill>
-      ) : null}
+    );
+  }
+
+  // 3.27 秒定格：画面慢慢褪成灰，印章保留朱红；
+  // 3.4 秒起定格画面缩成一张卡片，飞进「暴怒」试管，后面的世界镜头同时拉远
+  const gray = ease.inOut(prog(frame, F.freeze, 8));
+  const shrink = ease.inOut(prog(frame, F.reveal, CARD));
+  const target = toScreen(cam, rackTubeX(2), -60);
+  const endScale = (TUBE_W * cam.s * 0.92) / 1920;
+  const sc = lerp(1, endScale, shrink);
+  const cx = lerp(960, target.x, shrink);
+  const cy = lerp(540, target.y, shrink);
+  const fade = 1 - prog(frame, F.reveal + CARD - 6, 6);
+  const frozenT = F.freeze - F.whip;
+  return (
+    <AbsoluteFill
+      style={{
+        transform: `translate(${cx - 960}px, ${cy - 540}px) scale(${sc})`,
+        opacity: fade,
+        overflow: 'hidden',
+        borderRadius: 40 * shrink,
+        boxShadow: shrink > 0 ? `0 0 0 ${18 * shrink}px rgba(239,232,220,0.85), 0 30px 80px rgba(0,0,0,${0.5 * shrink})` : undefined,
+      }}
+    >
+      <AbsoluteFill style={{filter: `grayscale(${gray}) brightness(${1 - 0.18 * gray})`}}>
+        <Subway t={frozenT} layer="base" />
+      </AbsoluteFill>
+      <AbsoluteFill>
+        <Subway t={frozenT} layer="stamp" />
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

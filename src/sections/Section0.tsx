@@ -1,11 +1,11 @@
 import React from 'react';
 import {AbsoluteFill} from 'remotion';
-import {beat, cue} from '../data/script';
+import {LABEL_STEP, beat, cue} from '../data/script';
 import {Layer, ScreenLayer, useCam, type Cam} from '../lib/camera';
 import {Person, POSES, handWorld, mixPose, type Expression, type Pose} from '../components/Person';
 import {TubeRack, TUBE_W} from '../components/DesireGauge';
 import {PaperTag} from '../components/Props';
-import {FrozenPanel, OpeningCuts, CUTS_END} from './opening/OpeningCuts';
+import {CARD, FrozenPanel, OpeningCuts, WORLD_START} from './opening/OpeningCuts';
 import {C, FONT_SERIF} from '../theme';
 import {bell, ease, hash, lerp, mixColor, prog} from '../lib/anim';
 import {SINS, W, rackTubeX} from '../world';
@@ -17,7 +17,7 @@ import {SINS, W, rackTubeX} from '../world';
 export type Slot = 'back' | 'main' | 'front' | 'screen';
 
 const F = {
-  match: beat('o3', 'matchCut'),
+  reveal: beat('o3', 'reveal'),
   labels: beat('o3', 'labels'),
   peek: beat('o3', 'peek'),
   flash: beat('o4', 'flash'),
@@ -54,7 +54,7 @@ export const heroS0 = (frame: number, cam: Cam): {x: number; y: number; pose: Po
   }
   if (frame < F.roll) {
     // 甩镜后从画面右侧追着纸签跑进来
-    const off = lerp(760, 90, ease.out(prog(frame, F.whip + 8, 22)));
+    const off = lerp(760, 90, ease.out(prog(frame, F.whip + 12, 24)));
     return {x: cam.x + off / cam.s, y, pose: POSES.run(frame), expr: 'focused', facing: -1, light: 0};
   }
   // 站在刻度尺上，世界在脚下往回卷；停下后举起手电往前走
@@ -109,21 +109,23 @@ const Hero: React.FC<{frame: number}> = ({frame}) => {
 const REFLECT: Record<number, number> = {1: 1, 2: 2, 3: 0};
 
 const Rack: React.FC<{frame: number}> = ({frame}) => {
-  if (frame < F.match || frame > F.whip + 20) return null;
-  const lit = [1, 2, 3];
+  if (frame < WORLD_START || frame > F.whip + 24) return null;
   const order = [0, 4, 5, 6];
-  const reflOp = lerp(0.95, 0.5, ease.out(prog(frame, F.match, 36)));
+  // 「暴怒」那支等定格卡片飞进来才变红、映出画面
+  const land = ease.inOut(prog(frame, F.reveal + CARD - 8, 12));
   const tubes = SINS.map((name, i) => {
-    const stamped = lit.includes(i);
+    const stamped = i === 1 || i === 3 || (i === 2 && land > 0);
     const k = order.indexOf(i);
+    const lit = k >= 0 ? ease.out(prog(frame, F.labels + k * LABEL_STEP, 8)) : 1;
+    const level = i === 2 ? lerp(0.14, 0.82, land) : stamped ? 0.82 : 0.14;
     return {
       x: rackTubeX(i),
-      level: stamped ? 0.82 : 0.14,
+      level,
       label: name,
-      labelOpacity: stamped ? 1 : ease.out(prog(frame, F.labels + k * 4, 6)),
-      glow: stamped ? 0.8 : 0.25 * prog(frame, F.labels + k * 4, 6),
+      labelOpacity: k >= 0 ? lit : i === 2 ? land : 1,
+      glow: stamped ? 0.8 * (i === 2 ? land : 1) : 0.25 * lit,
       reflection: stamped ? (
-        <g opacity={reflOp} transform="translate(0 70)">
+        <g opacity={0.55 * (i === 2 ? land : 1)} transform="translate(0 70)">
           <FrozenPanel i={REFLECT[i]} w={TUBE_W} h={168} />
         </g>
       ) : undefined,
@@ -187,8 +189,11 @@ const Ruler: React.FC<{frame: number}> = ({frame}) => {
 /** 年份读数：2026 往回滚，停在公元4世纪（屏幕空间） */
 const YearReadout: React.FC<{frame: number}> = ({frame}) => {
   if (frame < F.roll || frame >= cue('c1').start + 24) return null;
-  const p = ease.out(prog(frame, F.roll, F.rollEnd - F.roll));
-  const year = Math.round(lerp(2026, 400, p));
+  // 数字每 2 帧换一次，避免逐帧乱跳看着闪
+  const stepped = F.roll + Math.floor((frame - F.roll) / 2) * 2;
+  const p = ease.out(prog(stepped, F.roll, F.rollEnd - F.roll));
+  // 先显示 2026，之后按整十年往回滚（避免出现 404 这类容易误读的数字）
+  const year = stepped === F.roll ? 2026 : Math.max(400, Math.round(lerp(2026, 400, p) / 10) * 10);
   const done = frame >= F.rollEnd;
   const slam = ease.outBack(prog(frame, F.rollEnd, 8));
   const inP = ease.out(prog(frame, F.roll, 6));
@@ -275,13 +280,13 @@ const Spotlight: React.FC<{frame: number}> = ({frame}) => {
 // ── 屏幕层：闪白、纸签 ────────────────────────────
 
 const Flash: React.FC<{frame: number}> = ({frame}) => {
-  const t = prog(frame, F.flash, 8);
+  const t = prog(frame, F.flash, 14);
   if (t <= 0 || t >= 1) return null;
   return (
     <AbsoluteFill
       style={{
         background: 'radial-gradient(ellipse at 50% 45%, rgba(255,250,240,0.95), rgba(255,250,240,0.2) 55%, rgba(255,250,240,0) 80%)',
-        opacity: bell(t) * 0.62,
+        opacity: bell(t) * 0.35,
       }}
     />
   );
@@ -295,8 +300,9 @@ const Tag: React.FC<{frame: number}> = ({frame}) => {
   // 甩镜时纸签被"甩"得晃起来
   const kick = Math.max(-30, Math.min(30, vel.x * 0.08));
   const swing = Math.sin(frame * 0.12) * 6 + kick;
-  const x = lerp(TAG_SCREEN.x, TAG_SCREEN.x - 300, leave);
-  const y = lerp(TAG_SCREEN.y - 80, -260, leave);
+  // 竖直往上飞出画面，不从左上角主题标注上经过
+  const x = TAG_SCREEN.x;
+  const y = lerp(TAG_SCREEN.y - 80, -420, leave);
   return (
     <ScreenLayer>
       <PaperTag x={x} y={y} text="致命" swing={swing} scale={0.82} opacity={appear} string={320} />
@@ -308,7 +314,7 @@ const Tag: React.FC<{frame: number}> = ({frame}) => {
 
 export const Section0: React.FC<{frame: number; slot: Slot}> = ({frame, slot}) => {
   if (frame >= cue('c1').start + 60) return null;
-  const world = frame >= CUTS_END;
+  const world = frame >= WORLD_START;
   if (slot === 'back') {
     if (!world) return null;
     return (
