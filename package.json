@@ -8,7 +8,10 @@
     "sfx": "python3 scripts/synth_sfx.py",
     "check": "tsx scripts/check-script.ts",
     "render:preview": "npm run sfx && npm run check && remotion render Preview out/preview.mp4",
-    "qa": "bash scripts/qa.sh out/preview.mp4"
+    "qa": "bash scripts/qa.sh out/preview.mp4",
+    "render:film": "bash scripts/render-film.sh",
+    "qa:film": "bash scripts/qa.sh out/film.mp4",
+    "mix": "npx tsx scripts/export-timeline.ts && python3 scripts/mix_audio.py"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.3.0",

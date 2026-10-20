@@ -21,6 +21,10 @@ export type BallProps = {
   /** 基色，默认红；后面的章节会把它冷却成蓝 */
   hue?: 'red' | 'blue';
   opacity?: number;
+  /** 球面上盖了几个「对不起」印章（客服那一节） */
+  stamps?: number;
+  /** 从红向蓝冷却的程度 0–1（童年那一节：情绪被收进口袋、冷成蓝色） */
+  cool?: number;
 };
 
 const PALETTE = {
@@ -39,7 +43,18 @@ export const EmotionBall: React.FC<BallProps> = ({
   spin = 0,
   hue = 'red',
   opacity = 1,
+  stamps = 0,
+  cool = 0,
 }) => {
+  if (cool > 0.001 && cool < 0.999 && hue === 'red') {
+    return (
+      <g opacity={opacity}>
+        <EmotionBall uid={`${uid}-r`} x={x} y={y} r={r} glow={glow} dim={dim} squash={squash} spin={spin} stamps={stamps} />
+        <EmotionBall uid={`${uid}-b`} x={x} y={y} r={r} glow={glow} dim={dim} squash={squash} spin={spin} hue="blue" opacity={cool} />
+      </g>
+    );
+  }
+  if (cool >= 0.999) hue = 'blue';
   const p = PALETTE[hue];
   const hi = mix(p.hi, p.dimTo, dim * 0.8);
   const mid = mix(p.mid, p.dimTo, dim);
@@ -99,6 +114,24 @@ export const EmotionBall: React.FC<BallProps> = ({
           fill="#FFFFFF"
           opacity={0.5 * (1 - dim * 0.6)}
         />
+        {stamps > 0 ? (
+          <g clipPath={`url(#${uid}-clip)`}>
+            {Array.from({ length: Math.floor(stamps) }).map((_, i) => {
+              const a = i * 137.5;
+              const d = i === 0 ? 0 : r * (0.25 + ((i * 0.37) % 0.6));
+              const cx = Math.cos((a * Math.PI) / 180) * d;
+              const cy = Math.sin((a * Math.PI) / 180) * d;
+              return (
+                <g key={i} transform={`translate(${cx} ${cy}) rotate(${(i * 23) % 40 - 20})`}>
+                  <rect x={-r * 0.42} y={-r * 0.2} width={r * 0.84} height={r * 0.4} rx={r * 0.06} fill="none" stroke="#5C5A66" strokeWidth={r * 0.05} opacity={0.85} />
+                  <text x={0} y={r * 0.1} textAnchor="middle" fontFamily='"Noto Sans SC", sans-serif' fontWeight={700} fontSize={r * 0.24} fill="#5C5A66" opacity={0.85}>
+                    对不起
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        ) : null}
         <circle r={r} fill="none" stroke={hi} strokeOpacity={0.25} strokeWidth={Math.max(1, r * 0.03)} />
       </g>
     </g>

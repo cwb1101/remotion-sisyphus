@@ -1,8 +1,8 @@
 import React from 'react';
 import { Html5Audio, Sequence, staticFile, useCurrentFrame } from 'remotion';
 import { ease, prog, track } from '../anim';
-import { GAUGE, SFX } from '../data/timeline';
-import { C } from '../theme';
+import { GAUGE, GAUGE_END, SFX } from '../data/timeline';
+import { C, FONT_SANS } from '../theme';
 
 /** 细颗粒：很淡，逐帧换种子，只增加质感不抢画面 */
 export const Grain: React.FC<{ opacity?: number }> = ({ opacity = 0.05 }) => {
@@ -40,7 +40,8 @@ export const Vignette: React.FC = () => (
 export const Gauge: React.FC<{ from: number }> = ({ from }) => {
   const f = useCurrentFrame();
   const o = prog(f, from, from + 14, ease.out);
-  if (o <= 0) return null;
+  const fadeOut = 1 - prog(f, GAUGE_END, GAUGE_END + 20, ease.inOut);
+  if (o <= 0 || fadeOut <= 0) return null;
   const keys = GAUGE.map(([fr, v]) => [fr, v, ease.inOut] as [number, number, typeof ease.inOut]);
   const v = track(f, keys);
   const a = -120 + v * 240;
@@ -53,7 +54,7 @@ export const Gauge: React.FC<{ from: number }> = ({ from }) => {
     return `M ${p(from)} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${p(to)}`;
   };
   return (
-    <svg width={140} height={120} style={{ position: 'absolute', right: 52, top: 40, opacity: o * 0.8 }}>
+    <svg width={140} height={120} style={{ position: 'absolute', right: 56, top: 96, opacity: o * fadeOut * 0.8 }}>
       <g transform="translate(70 66)">
         <path d={arc(-120, 120)} stroke={C.subtitle} strokeOpacity={0.22} strokeWidth={6} fill="none" strokeLinecap="round" />
         <path d={arc(-120, a)} stroke={C.accent} strokeOpacity={0.85} strokeWidth={6} fill="none" strokeLinecap="round" />
@@ -81,4 +82,33 @@ export const SfxTrack: React.FC<{ until: number }> = ({ until }) => (
       </Sequence>
     ))}
   </>
+);
+
+/**
+ * 右上角固定水印：在镜头之外，不随镜头缩放；细空心方框包住文字。
+ * 字幕和动画文字都不进入这个区域（x > 1440 本来就是字幕禁区）。
+ */
+export const WATERMARK = '肆号静匣Logos';
+export const Watermark: React.FC = () => (
+  <div
+    style={{
+      position: 'absolute',
+      right: 52,
+      top: 42,
+      padding: '7px 14px 8px',
+      border: '1px solid rgba(255, 250, 235, 1)',
+      borderRadius: 2,
+      opacity: 0.35,
+      fontFamily: FONT_SANS,
+      fontWeight: 500,
+      fontSize: 22,
+      lineHeight: '26px',
+      letterSpacing: '0.12em',
+      color: '#FFFAEB',
+      whiteSpace: 'nowrap',
+      pointerEvents: 'none',
+    }}
+  >
+    {WATERMARK}
+  </div>
 );

@@ -16,7 +16,7 @@ import { C, mix } from '../theme';
  */
 export const S1NotColdViolence: React.FC = () => {
   const f = useCurrentFrame();
-  if (f < B.toS1 + 12) return null;
+  if (f < B.toS1 + 12 || f >= B.wipe + 24) return null;
   const fadeIn = prog(f, B.toS1 + 12, B.toS1 + 20, ease.inOut);
   return (
     <div style={{ position: 'absolute', inset: 0, opacity: fadeIn }}>
@@ -806,7 +806,7 @@ const WipeToHall: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-const HallTeaser: React.FC<{ f: number }> = ({ f }) => {
+export const HallTeaser: React.FC<{ f: number }> = ({ f }) => {
   const drift = (f - B.wipe) * 1.5;
   return (
     <g>
