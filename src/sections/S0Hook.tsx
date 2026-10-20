@@ -10,7 +10,7 @@ import { C, FONT_SANS, mix } from '../theme';
 
 /**
  * 第 0 节「一个字」：
- * 0–0.5s 长气泡发出 → 快切对方视角 → 三次跳切气泡越回越短 → 定格闪白去色
+ * 0–1.2s 写满三百字的长气泡（停住看清）→ 发送 → 快切对方视角，TA 只回了「嗯」→ 跳切推近 → 定格闪白去色
  * → 推拉变焦推向已读圆点 → 圆点变遮罩揭开深夜客厅 → 速度渐变推向两人之间，红球滚到靠垫边
  * → 红球特写变暗 → 推向沙发靠背线，匹配到下一节的门框横梁。
  */
@@ -27,24 +27,14 @@ export const S0Hook: React.FC = () => {
 
 // ───────────────────────── 聊天特写 ─────────────────────────
 
-const REPLIES: [number, string][] = [
-  [B.quickCut, '我今天有点累'],
-  [B.jump1, '对不起'],
-  [B.jump2, '好'],
-  [B.jump3, '嗯'],
-];
-const REPLY_Y = 470;
-const REPLY_SIZE = 100;
-
-const replyAt = (f: number) => {
-  let cur = REPLIES[0];
-  for (const r of REPLIES) if (f >= r[0]) cur = r;
-  return cur;
-};
+const REPLY = { x: 560, y: 660 };
+const REPLY_SIZE = 110;
+const PUNCH_Z = 1.2;
+const MASK_Z = PUNCH_Z * 8.2;
 
 const dotPos = () => {
   const w = bubbleWidth('嗯', REPLY_SIZE);
-  return { x: 960 + w / 2 + 46, y: REPLY_Y + 62 };
+  return { x: REPLY.x + w / 2 + 50, y: REPLY.y + 70 };
 };
 
 const ChatPhase: React.FC<{ f: number }> = ({ f }) => {
@@ -52,16 +42,52 @@ const ChatPhase: React.FC<{ f: number }> = ({ f }) => {
   return <TheirSide f={f} />;
 };
 
-/** 第 1 帧：自己这边，暖橙长气泡正在被发出去 */
-const MySide: React.FC<{ f: number }> = ({ f }) => {
-  const dyKeys: Key[] = [
-    [B.send, -40],
-    [B.quickCut, -820, ease.in],
-  ];
-  const dy = track(f, dyKeys);
-  const vy = velocity(f, dyKeys);
-  const s = lerp(1, 0.9, prog(f, B.send, B.quickCut, ease.in));
+const LongBubbleBody: React.FC<{ count: number; caret: boolean }> = ({ count, caret }) => {
   const rows = [-300, -215, -130, -45, 40, 125, 210, 295];
+  return (
+    <>
+      <rect x={-750} y={-372} width={1500} height={760} rx={70} fill="#000" opacity={0.25} />
+      <rect x={-760} y={-390} width={1520} height={760} rx={70} fill="url(#my-bubble)" />
+      <g filter="url(#soft4)" opacity={0.55}>
+        {rows.map((ry, i) => (
+          <rect
+            key={i}
+            x={-660}
+            y={ry - 22}
+            width={i === rows.length - 1 ? 520 : 1180 + (rand(i) - 0.5) * 220}
+            height={36}
+            rx={18}
+            fill="#FFE0C9"
+          />
+        ))}
+      </g>
+      {(
+        [
+          ['今天', -660, -215],
+          ['好难受', -180, 40],
+          ['你知道吗', 120, 210],
+        ] as const
+      ).map(([t, x, y]) => (
+        <text key={t} x={x} y={y + 26} fontFamily={FONT_SANS} fontWeight={700} fontSize={74} fill="#FFF7EE">
+          {t}
+        </text>
+      ))}
+      {caret ? <rect x={-128} y={268} width={6} height={54} rx={3} fill="#FFF7EE" /> : null}
+      <text x={690} y={340} textAnchor="end" fontFamily={FONT_SANS} fontWeight={500} fontSize={44} fill="#FFF1E4" opacity={0.85}>
+        {count}
+      </text>
+    </>
+  );
+};
+
+/** 第 1 帧：自己这边，写满三百字的暖橙长气泡；停够时间看清，再按发送 */
+const MySide: React.FC<{ f: number }> = ({ f }) => {
+  const go = prog(f, B.sendGo, B.quickCut, ease.in);
+  const dy = -12 * Math.sin(f * 0.08) - go * 820;
+  const vy = f >= B.sendGo ? (prog(f + 0.5, B.sendGo, B.quickCut, ease.in) - prog(f - 0.5, B.sendGo, B.quickCut, ease.in)) * 820 : 0;
+  const s = lerp(1.02, 0.9, go) - prog(f, 0, B.sendGo) * 0.02;
+  const count = Math.round(lerp(296, 312, prog(f, 2, 20)));
+  const press = f >= B.sendGo - 2 ? 1 - Math.sin(prog(f, B.sendGo - 2, B.sendGo + 4) * Math.PI) * 0.18 : 1;
   return (
     <Stage>
       <defs>
@@ -81,8 +107,8 @@ const MySide: React.FC<{ f: number }> = ({ f }) => {
         </filter>
       </defs>
       <rect width={1920} height={1080} fill="url(#my-bg)" />
-      {/* 背景：卧室虚焦光斑 */}
-      <g filter="url(#bokeh)" transform={`translate(0 ${dy * 0.08})`}>
+      {/* 背景：卧室虚焦光斑，缓慢漂移 */}
+      <g filter="url(#bokeh)" transform={`translate(${-f * 0.6} ${dy * 0.08})`}>
         <circle cx={1580} cy={260} r={190} fill={C.lamp} opacity={0.32} />
         <circle cx={1760} cy={520} r={90} fill={C.lamp} opacity={0.22} />
         <circle cx={260} cy={180} r={130} fill="#6F8CC9" opacity={0.22} />
@@ -90,68 +116,48 @@ const MySide: React.FC<{ f: number }> = ({ f }) => {
         <circle cx={1500} cy={900} r={120} fill={C.lamp} opacity={0.16} />
       </g>
       <MotionBlur id="mb-my" bx={0} by={Math.min(36, Math.abs(vy) * 0.5)}>
-        <g transform={`translate(960 ${540 + dy}) scale(${s})`}>
-          <rect x={-750} y={-372} width={1500} height={760} rx={70} fill="#000" opacity={0.25} />
-          <rect x={-760} y={-390} width={1520} height={760} rx={70} fill="url(#my-bubble)" />
-          <g filter="url(#soft4)" opacity={0.55}>
-            {rows.map((ry, i) => (
-              <rect
-                key={i}
-                x={-660}
-                y={ry - 22}
-                width={i === rows.length - 1 ? 520 : 1180 + (rand(i) - 0.5) * 220}
-                height={36}
-                rx={18}
-                fill="#FFE0C9"
-              />
-            ))}
-          </g>
-          {(
-            [
-              ['今天', -660, -215],
-              ['好难受', -180, 40],
-              ['你知道吗', 120, 210],
-            ] as const
-          ).map(([t, x, y]) => (
-            <text key={t} x={x} y={y + 26} fontFamily={FONT_SANS} fontWeight={700} fontSize={74} fill="#FFF7EE">
-              {t}
-            </text>
-          ))}
-          <text x={690} y={340} textAnchor="end" fontFamily={FONT_SANS} fontWeight={500} fontSize={44} fill="#FFF1E4" opacity={0.85}>
-            312
-          </text>
+        <g transform={`translate(960 ${520 + dy}) scale(${s})`}>
+          <LongBubbleBody count={count} caret={f < B.sendGo && Math.floor(f / 8) % 2 === 0} />
         </g>
       </MotionBlur>
+      {/* 发送键：右下角，按下时轻轻一缩 */}
+      <g transform={`translate(1790 1000) scale(${press})`} opacity={1 - go}>
+        <circle r={46} fill="#F08A4B" />
+        <path d="M -16 14 L 18 0 L -16 -14 L -10 0 Z" fill="#FFF7EE" />
+      </g>
     </Stage>
   );
 };
 
-/** 对方视角：冷色，气泡越回越短，定格 → 推拉变焦 → 遮罩转场 */
+/** 对方视角：你的长消息还挂在上面，TA 只回了一个「嗯」→ 跳切推近 → 定格 → 推拉变焦 → 遮罩 */
 const TheirSide: React.FC<{ f: number }> = ({ f }) => {
   // 定格之后，画面内容停在定格那一帧
   const tc = Math.min(f, B.freeze);
-  const [since, text] = replyAt(tc);
-  const pop = prog(tc, since, since + 5, ease.outBack);
-  const w = bubbleWidth(text, REPLY_SIZE);
+  const enter = prog(tc, B.quickCut, B.quickCut + 8, ease.out);
+  const pop = prog(tc, B.reply, B.reply + 6, ease.outBack);
+  const typing = tc < B.reply;
 
-  // 跳切：同机位，阶梯式推近 + 轻微错位
-  const jumpZ = tc >= B.jump3 ? 1.18 : tc >= B.jump2 ? 1.12 : tc >= B.jump1 ? 1.06 : 1;
-  const jumpX = tc >= B.jump3 ? -10 : tc >= B.jump2 ? 12 : tc >= B.jump1 ? -14 : 0;
+  // 跳切：同机位突然推近一档 + 轻微错位
+  const jumpZ = tc >= B.punch ? PUNCH_Z : 1;
+  const jumpX = tc >= B.punch ? -16 : 0;
+  // 跳切之间不完全静止：极慢的推近
+  const creep = 1 + prog(tc, B.quickCut, B.freeze) * 0.03;
 
   // 推拉变焦：主体（气泡、已读点）指数放大，背景反向缩小
   const dp = prog(f, B.dolly, B.mask, ease.in);
   const dot = dotPos();
-  const pivot = { x: lerp(960 + jumpX, dot.x, ease.inOut(dp)), y: lerp(REPLY_Y + 30, dot.y, ease.inOut(dp)) };
-  const z = jumpZ * Math.pow(8.2, dp) * (1 + prog(f, B.mask, B.mask + 16) * 2);
-  const zBg = jumpZ * (1 - 0.32 * dp);
+  const base = { x: REPLY.x + 260 + jumpX, y: REPLY.y - 120 };
+  const pivot = { x: lerp(base.x, dot.x, ease.inOut(dp)), y: lerp(base.y, dot.y, ease.inOut(dp)) };
+  const z = jumpZ * creep * Math.pow(8.2, dp) * (1 + prog(f, B.mask, B.mask + 16) * 2);
+  const zBg = jumpZ * creep * (1 - 0.32 * dp);
   const fgT = `translate(960 540) scale(${z}) translate(${-pivot.x} ${-pivot.y})`;
-  const bgT = `translate(960 540) scale(${zBg}) translate(${-(960 + jumpX)} ${-(REPLY_Y + 30)})`;
+  const bgT = `translate(960 540) scale(${zBg}) translate(${-base.x} ${-base.y})`;
 
   const desat = prog(f, B.freeze, B.freeze + 4);
   const bloom = track(f, [
     [B.freeze, 0],
-    [B.freeze + 1, 0.7],
-    [B.freeze + 6, 0, ease.out],
+    [B.freeze + 2, 0.6],
+    [B.freeze + 10, 0, ease.out],
   ]);
   const fade = 1 - prog(f, B.mask + 6, B.mask + 16);
   const bubbleCol = mix('#7C93B5', '#4F86D6', desat);
@@ -161,12 +167,11 @@ const TheirSide: React.FC<{ f: number }> = ({ f }) => {
   const dotR = 11 * z;
   const maskR = lerp(dotR, 1300, prog(f, B.mask, B.mask + 15, ease.inOut));
 
-  const orangeOut = prog(tc, B.jump2, B.thumb + 6, ease.in);
   const thumb = track(tc, [
     [B.thumb, 0],
-    [B.thumb + 6, 1, ease.out],
-    [B.thumb + 10, 1],
-    [B.freeze, 0.2, ease.in],
+    [B.thumb + 8, 1, ease.out],
+    [B.thumb + 14, 1],
+    [B.freeze, 0.3, ease.in],
   ]);
 
   return (
@@ -176,11 +181,18 @@ const TheirSide: React.FC<{ f: number }> = ({ f }) => {
           <stop offset="0%" stopColor="#2C3447" />
           <stop offset="100%" stopColor="#151A26" />
         </linearGradient>
+        <linearGradient id="my-bubble-2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#F9A877" />
+          <stop offset="100%" stopColor="#EC8045" />
+        </linearGradient>
         <filter id="desat">
           <feColorMatrix type="saturate" values={`${1 - desat * 0.95}`} />
         </filter>
         <filter id="soft6">
           <feGaussianBlur stdDeviation="6" />
+        </filter>
+        <filter id="soft3">
+          <feGaussianBlur stdDeviation="3.5" />
         </filter>
         <radialGradient id="bloom">
           <stop offset="0%" stopColor="#FFF4DD" stopOpacity={1} />
@@ -190,31 +202,22 @@ const TheirSide: React.FC<{ f: number }> = ({ f }) => {
       </defs>
       <g filter={desat > 0 ? 'url(#desat)' : undefined}>
         <rect width={1920} height={1080} fill="url(#their-bg)" />
-        {/* 背景：更早的聊天记录，缓慢上漂 */}
         <g transform={bgT}>
-          <g filter="url(#soft6)" transform={`translate(0 ${-tc * 0.6})`} opacity={0.5}>
-            {[0, 1, 2, 3, 4].map((i) => (
-              <rect
-                key={i}
-                x={i % 2 ? 1060 : 260}
-                y={210 + i * 70}
-                width={i % 2 ? 560 : 380 + rand(i + 3) * 300}
-                height={46}
-                rx={23}
-                fill={i % 2 ? '#C9825A' : '#55657F'}
-              />
-            ))}
+          {/* 你刚发出的长消息：挂在右上，三百字 */}
+          <g transform={`translate(0 ${(1 - enter) * 120})`} opacity={enter}>
+            <rect x={780} y={110} width={940} height={400} rx={56} fill="url(#my-bubble-2)" />
+            <g filter="url(#soft3)" opacity={0.55}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <rect key={i} x={840} y={160 + i * 64} width={i === 4 ? 420 : 800 - rand(i + 2) * 120} height={26} rx={13} fill="#FFE0C9" />
+              ))}
+            </g>
+            <text x={1120} y={262} fontFamily={FONT_SANS} fontWeight={700} fontSize={52} fill="#FFF7EE">
+              好难受
+            </text>
+            <text x={1660} y={488} textAnchor="end" fontFamily={FONT_SANS} fontWeight={500} fontSize={32} fill="#FFF1E4" opacity={0.85}>
+              312
+            </text>
           </g>
-          {/* 被挤出去的暖橙长气泡一角 */}
-          <rect
-            x={-260 - orangeOut * 760}
-            y={790}
-            width={760}
-            height={520}
-            rx={70}
-            fill="#EC8045"
-            opacity={0.85}
-          />
           {/* 手机边框 */}
           <path
             d="M -300 -300 H 2220 V 1380 H -300 Z M 180 30 Q 90 30 90 120 V 960 Q 90 1050 180 1050 H 1740 Q 1830 1050 1830 960 V 120 Q 1830 30 1740 30 Z"
@@ -240,23 +243,23 @@ const TheirSide: React.FC<{ f: number }> = ({ f }) => {
           />
         </g>
       </g>
-      {/* 主体：气泡 + 已读圆点（定格后保持冷蓝，不去色） */}
+      {/* 主体：TA 的回复 + 已读圆点（定格后保持冷蓝，不去色） */}
       <g transform={fgT}>
-        <ChatBubble
-          x={960 + jumpX}
-          y={REPLY_Y}
-          text={text}
-          fill={bubbleCol}
-          size={REPLY_SIZE}
-          scale={0.82 + 0.18 * pop}
-        />
-        {tc >= B.jump3 ? (
-          <circle cx={dot.x} cy={dot.y} r={11 * prog(tc, B.jump3, B.jump3 + 4, ease.outBack)} fill={dotCol} />
-        ) : null}
+        {typing ? (
+          <g transform={`translate(${REPLY.x - 40} ${REPLY.y})`} opacity={enter}>
+            <rect x={-90} y={-50} width={180} height={100} rx={50} fill="#55657F" />
+            {[-1, 0, 1].map((k) => (
+              <circle key={k} cx={k * 40} cy={0} r={11} fill="#C9D6EA" opacity={0.4 + 0.6 * Math.max(0, Math.sin(tc * 0.5 - k))} />
+            ))}
+          </g>
+        ) : (
+          <>
+            <ChatBubble x={REPLY.x} y={REPLY.y} text="嗯" fill={bubbleCol} size={REPLY_SIZE} scale={0.7 + 0.3 * pop} />
+            <circle cx={dot.x} cy={dot.y} r={11 * prog(tc, B.reply + 6, B.reply + 12, ease.outBack)} fill={dotCol} />
+          </>
+        )}
       </g>
-      {bloom > 0 ? (
-        <circle cx={960} cy={REPLY_Y} r={1100} fill="url(#bloom)" opacity={bloom} />
-      ) : null}
+      {bloom > 0 ? <circle cx={REPLY.x} cy={REPLY.y} r={1200} fill="url(#bloom)" opacity={bloom} /> : null}
       {f >= B.mask ? (
         <circle
           cx={960}
@@ -379,7 +382,7 @@ const LivingRoomShot: React.FC<{ f: number }> = ({ f }) => {
     <Stage>
       <defs>
         <clipPath id="room-reveal">
-          <circle cx={960} cy={540} r={lerp(11 * 9.7, 1300, prog(f, B.mask, B.mask + 15, ease.inOut))} />
+          <circle cx={960} cy={540} r={lerp(11 * MASK_Z, 1300, prog(f, B.mask, B.mask + 15, ease.inOut))} />
         </clipPath>
         <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0D1230" />

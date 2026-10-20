@@ -114,15 +114,18 @@ const CorridorShot: React.FC<{ f: number }> = ({ f }) => {
   } else if (f < B.doorHit + 3) {
     ball = { x: LX + 10, y: -70, r: 26, squash: 1.45 - (f - B.doorHit) * 0.15 };
   } else if (f < B.whip) {
-    // 弹回来直冲镜头：半径指数放大，最后几帧填满画面后从下方掠过
-    const t = prog(f, B.doorHit + 3, B.doorHit + 21);
+    // 弹回来直冲镜头：先迎面放大，在画面中央停留一下（看得清），再从下方掠出
     const sx = 960 + (LX + 10 - cam.x) * cam.zoom;
     const sy = 540 + (-70 - cam.y) * cam.zoom;
+    const r0 = 26 * cam.zoom;
+    const a = prog(f, B.doorHit + 3, B.doorHit + 15, ease.out);
+    const hover = prog(f, B.doorHit + 15, B.whip - 6);
+    const drop = prog(f, B.whip - 6, B.whip, ease.in);
     ballScreen = {
-      x: lerp(sx, 1000, ease.out(t)),
-      y: lerp(sy, 600, ease.out(t)) + Math.max(0, (t - 0.72) / 0.28) * 1500,
-      r: 26 * cam.zoom * Math.pow(30, t),
-      blur: Math.max(0, t - 0.6) * 30,
+      x: lerp(sx, 980, a),
+      y: lerp(sy, 520, a) + hover * 20 + drop * 1300,
+      r: r0 * Math.pow(340 / r0, a) * (1 + hover * 0.12),
+      blur: drop * 22,
     };
   } else if (f >= B.whip + 6) {
     const h2 = handWorld({ x: ox, y: oy, scale: 2.1 }, 1, HOLD_SIDE);

@@ -6,15 +6,15 @@ import { beat, beatEnd } from './script';
 
 export const B = {
   // ── 一个字 ──────────────────────────────
-  send: beat('s0-01', 0), // 第 1 帧：长气泡正在发出
-  quickCut: beat('s0-01', 15), // 快切到对方视角
-  jump1: beat('s0-01', 24), // 跳切：对不起
-  jump2: beat('s0-02', -6), // 跳切：好
-  jump3: beat('s0-02', 3), // 跳切：嗯
-  thumb: beat('s0-02', 8), // 拇指剪影掠过
-  freeze: beat('s0-03', -12), // 定格 + 柔光闪白
-  dolly: beat('s0-03', 3), // 推拉变焦推向已读圆点
-  mask: beat('s0-03', 18), // 圆形遮罩揭开客厅
+  send: beat('s0-01', 0), // 第 1 帧：写满三百字的长气泡，停住看清
+  sendGo: beat('s0-01', 28), // 按下发送，气泡上滑
+  quickCut: beat('s0-02', 0), // 快切到对方视角：你的长消息 + TA 正在输入
+  reply: beat('s0-02', 8), // 「嗯」弹出
+  punch: beat('s0-02', 24), // 跳切推近「嗯」
+  thumb: beat('s0-02', 26), // 拇指剪影停一下又移开
+  freeze: beat('s0-03', 0), // 定格 + 柔光闪白（与「这不是冷暴力」同拍）
+  dolly: beat('s0-03', 8), // 推拉变焦推向已读圆点
+  mask: beat('s0-03', 28), // 圆形遮罩揭开客厅
   ballGlow: beat('s0-04', -3),
   ramp: beat('s0-04', 12), // 速度渐变推向两人之间
   ballStop: beat('s0-05', 12),
@@ -44,7 +44,7 @@ export const B = {
 };
 
 /** 画面里出现的非字幕文字（用于预加载字体） */
-export const IN_PICTURE_TEXT = ['今天', '好难受', '你知道吗', '312', '我今天有点累', '对不起', '好', '嗯'];
+export const IN_PICTURE_TEXT = ['今天', '好难受', '你知道吗', '0123456789', '嗯'];
 
 export type SfxName =
   | 'thump'
@@ -74,15 +74,14 @@ export type SfxEvent = { at: number; sound: SfxName; volume: number };
 
 export const SFX: SfxEvent[] = [
   // 一个字
-  { at: B.send, sound: 'tick', volume: 0.55 },
-  { at: B.send, sound: 'whoosh', volume: 0.5 },
+  ...[3, 8, 12, 17].map((o) => ({ at: B.send + o, sound: 'tick_soft' as const, volume: 0.22 })), // 打字
+  { at: B.sendGo, sound: 'tick', volume: 0.55 },
+  { at: B.sendGo + 1, sound: 'whoosh', volume: 0.5 },
   { at: B.quickCut, sound: 'thump', volume: 0.5 },
-  { at: B.jump1, sound: 'tick_hi', volume: 0.45 },
-  { at: B.jump2, sound: 'tick_mid', volume: 0.45 },
-  { at: B.jump3, sound: 'tick_lo', volume: 0.5 },
-  { at: B.freeze, sound: 'thump', volume: 0.55 },
-  { at: B.freeze, sound: 'muffle_down', volume: 0.4 },
-  { at: beat('s0-03'), sound: 'slam', volume: 0.8 },
+  { at: B.reply, sound: 'tick_lo', volume: 0.6 },
+  { at: B.punch, sound: 'tick_mid', volume: 0.45 },
+  { at: B.freeze, sound: 'slam', volume: 0.8 },
+  { at: B.freeze, sound: 'muffle_down', volume: 0.35 },
   { at: B.dolly, sound: 'whoosh_rise', volume: 0.45 },
   { at: B.mask, sound: 'whoosh_soft', volume: 0.5 },
   { at: B.mask, sound: 'pad_warm', volume: 0.32 },
