@@ -1,0 +1,274 @@
+{
+  "bowl-wood-land": {
+    "file": "audio/sfx/bowl-wood-land.wav",
+    "tier": "mid",
+    "label": "木碗落桌",
+    "durationFrames": 18,
+    "momentaryMax": -24.1,
+    "truePeak": -6.0
+  },
+  "cloth": {
+    "file": "audio/sfx/cloth.wav",
+    "tier": "light",
+    "label": "衣料摩擦",
+    "durationFrames": 14,
+    "momentaryMax": -30.0,
+    "truePeak": -16.1
+  },
+  "heavy-wood-bell": {
+    "file": "audio/sfx/heavy-wood-bell.wav",
+    "tier": "heavy",
+    "label": "重卡点1 低木块加柔化钟余音",
+    "durationFrames": 72,
+    "momentaryMax": -21.0,
+    "truePeak": -7.2
+  },
+  "scroll": {
+    "file": "audio/sfx/scroll.wav",
+    "tier": "light",
+    "label": "纸卷展开",
+    "durationFrames": 21,
+    "momentaryMax": -30.0,
+    "truePeak": -15.4
+  },
+  "wing": {
+    "file": "audio/sfx/wing.wav",
+    "tier": "light",
+    "label": "鹰翅轻扇",
+    "durationFrames": 18,
+    "momentaryMax": -30.0,
+    "truePeak": -11.8
+  },
+  "tub-set": {
+    "file": "audio/sfx/tub-set.wav",
+    "tier": "mid",
+    "label": "放进木盆",
+    "durationFrames": 24,
+    "momentaryMax": -24.0,
+    "truePeak": -7.5
+  },
+  "splash": {
+    "file": "audio/sfx/splash.wav",
+    "tier": "light",
+    "label": "拍水",
+    "durationFrames": 15,
+    "momentaryMax": -30.0,
+    "truePeak": -13.4
+  },
+  "chisel": {
+    "file": "audio/sfx/chisel.wav",
+    "tier": "light",
+    "label": "刻刀刮纸",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -18.0
+  },
+  "bowl-fall-roll": {
+    "file": "audio/sfx/bowl-fall-roll.wav",
+    "tier": "mid",
+    "label": "木碗落地滚动",
+    "durationFrames": 39,
+    "momentaryMax": -24.0,
+    "truePeak": -6.4
+  },
+  "bowl-set-soft": {
+    "file": "audio/sfx/bowl-set-soft.wav",
+    "tier": "light",
+    "label": "木碗轻放",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -11.2
+  },
+  "bowl-slide": {
+    "file": "audio/sfx/bowl-slide.wav",
+    "tier": "light",
+    "label": "碗推动",
+    "durationFrames": 11,
+    "momentaryMax": -30.0,
+    "truePeak": -15.5
+  },
+  "door-close": {
+    "file": "audio/sfx/door-close.wav",
+    "tier": "light",
+    "label": "木门轻合",
+    "durationFrames": 15,
+    "momentaryMax": -30.0,
+    "truePeak": -16.9
+  },
+  "page-turn": {
+    "file": "audio/sfx/page-turn.wav",
+    "tier": "light",
+    "label": "翻页",
+    "durationFrames": 11,
+    "momentaryMax": -30.0,
+    "truePeak": -16.7
+  },
+  "quill": {
+    "file": "audio/sfx/quill.wav",
+    "tier": "light",
+    "label": "鹅毛笔写字",
+    "durationFrames": 21,
+    "momentaryMax": -30.0,
+    "truePeak": -15.7
+  },
+  "clap": {
+    "file": "audio/sfx/clap.wav",
+    "tier": "light",
+    "label": "拍手",
+    "durationFrames": 5,
+    "momentaryMax": -30.0,
+    "truePeak": -9.8
+  },
+  "paper-rub": {
+    "file": "audio/sfx/paper-rub.wav",
+    "tier": "light",
+    "label": "纸面轻摩擦",
+    "durationFrames": 11,
+    "momentaryMax": -30.0,
+    "truePeak": -16.2
+  },
+  "title-hit": {
+    "file": "audio/sfx/title-hit.wav",
+    "tier": "mid",
+    "label": "出字 木块加碗沿轻响",
+    "durationFrames": 42,
+    "momentaryMax": -24.0,
+    "truePeak": -5.5
+  },
+  "pencil": {
+    "file": "audio/sfx/pencil.wav",
+    "tier": "light",
+    "label": "铅笔描线",
+    "durationFrames": 14,
+    "momentaryMax": -30.0,
+    "truePeak": -19.2
+  },
+  "stopwatch": {
+    "file": "audio/sfx/stopwatch.wav",
+    "tier": "light",
+    "label": "秒表按下",
+    "durationFrames": 4,
+    "momentaryMax": -30.0,
+    "truePeak": -9.4
+  },
+  "chair-rock": {
+    "file": "audio/sfx/chair-rock.wav",
+    "tier": "light",
+    "label": "婴儿椅轻晃",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -19.9
+  },
+  "freeze-click": {
+    "file": "audio/sfx/freeze-click.wav",
+    "tier": "mid",
+    "label": "定格 柔和木质咔",
+    "durationFrames": 12,
+    "momentaryMax": -24.1,
+    "truePeak": -6.0
+  },
+  "chair-creak": {
+    "file": "audio/sfx/chair-creak.wav",
+    "tier": "light",
+    "label": "椅子吱",
+    "durationFrames": 9,
+    "momentaryMax": -30.0,
+    "truePeak": -19.1
+  },
+  "bowl-porcelain-land": {
+    "file": "audio/sfx/bowl-porcelain-land.wav",
+    "tier": "mid",
+    "label": "瓷碗落桌",
+    "durationFrames": 27,
+    "momentaryMax": -24.0,
+    "truePeak": -8.2
+  },
+  "paper": {
+    "file": "audio/sfx/paper.wav",
+    "tier": "light",
+    "label": "纸张",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -18.1
+  },
+  "footstep": {
+    "file": "audio/sfx/footstep.wav",
+    "tier": "light",
+    "label": "脚步",
+    "durationFrames": 7,
+    "momentaryMax": -30.0,
+    "truePeak": -13.8
+  },
+  "chopsticks": {
+    "file": "audio/sfx/chopsticks.wav",
+    "tier": "light",
+    "label": "筷子碰碗",
+    "durationFrames": 6,
+    "momentaryMax": -30.0,
+    "truePeak": -10.7
+  },
+  "swallow": {
+    "file": "audio/sfx/swallow.wav",
+    "tier": "light",
+    "label": "吞咽",
+    "durationFrames": 6,
+    "momentaryMax": -30.0,
+    "truePeak": -14.6
+  },
+  "room-tone": {
+    "file": "audio/sfx/room-tone.wav",
+    "tier": "light",
+    "label": "环境底噪",
+    "durationFrames": 72,
+    "momentaryMax": -30.0,
+    "truePeak": -18.1
+  },
+  "heavy-thud": {
+    "file": "audio/sfx/heavy-thud.wav",
+    "tier": "heavy",
+    "label": "重卡点2 闷低音",
+    "durationFrames": 45,
+    "momentaryMax": -21.0,
+    "truePeak": -9.2
+  },
+  "heavy-bowl-resonance": {
+    "file": "audio/sfx/heavy-bowl-resonance.wav",
+    "tier": "heavy",
+    "label": "重卡点3 木碗放下的木质共鸣",
+    "durationFrames": 60,
+    "momentaryMax": -21.0,
+    "truePeak": -7.4
+  },
+  "scissors": {
+    "file": "audio/sfx/scissors.wav",
+    "tier": "light",
+    "label": "剪刀",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -11.1
+  },
+  "box-open": {
+    "file": "audio/sfx/box-open.wav",
+    "tier": "light",
+    "label": "木盒打开",
+    "durationFrames": 9,
+    "momentaryMax": -30.0,
+    "truePeak": -15.9
+  },
+  "typing": {
+    "file": "audio/sfx/typing.wav",
+    "tier": "light",
+    "label": "打字",
+    "durationFrames": 12,
+    "momentaryMax": -30.0,
+    "truePeak": -11.3
+  },
+  "paper-unfold": {
+    "file": "audio/sfx/paper-unfold.wav",
+    "tier": "light",
+    "label": "纸张展开",
+    "durationFrames": 15,
+    "momentaryMax": -30.0,
+    "truePeak": -17.3
+  }
+}

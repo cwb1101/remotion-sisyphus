@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""校验字幕稿 src/data/script.json 并生成 docs/subtitles.md。
+"""校验字幕稿 src/data/subtitles.ts 并生成 docs/subtitles.md。
 
 用法：
-    python3 scripts/build_script.py
+    npm run subtitles        （先导出 out/timeline.json，再跑本脚本）
 
 时间全部从 src/data/rhythm.json 取（先跑 scripts/rhythm.py）。
 任何一条规则不通过都会列出来并以非零状态退出，表格照样生成方便对照。
@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RHYTHM = ROOT / "src" / "data" / "rhythm.json"
-SCRIPT = ROOT / "src" / "data" / "script.json"
+SCRIPT = ROOT / "out" / "timeline.json"
 NOTES = ROOT / "docs" / "subtitles-notes.md"
 OUT = ROOT / "docs" / "subtitles.md"
 
@@ -65,6 +65,8 @@ def main():
     errors = []
     screens = []
     for n, s in enumerate(script["screens"], 1):
+        s = dict(s)
+        s["characters"] = s.get("characters") or []
         start = bars[s["startBar"] - 1]["start"]
         end = bars[s["startBar"] - 1 + s["bars"] - 1]["end"]
         lower_at = start + round(s.get("lowerDelayBeats", 0) * fpb)
@@ -185,7 +187,7 @@ def main():
     out = []
     w = out.append
     w("# 情感漠视 字幕稿\n")
-    w("> 本文件由 `scripts/build_script.py` 根据 `src/data/script.json` 和 `src/data/rhythm.json` 生成，改稿请改 json 后重新生成。\n")
+    w("> 本文件由 `npm run subtitles` 根据 `src/data/subtitles.ts` 和 `src/data/rhythm.json` 生成，改稿只改 subtitles.ts 后重新生成。\n")
     w(f"网格：{rhythm['bpm']:g} BPM，1 拍 {fpb:g} 帧，1 小节 {rhythm['framesPerBar']:g} 帧（{rhythm['framesPerBar'] / fps:g} 秒），"
       f"共 {len(bars)} 小节 {rhythm['durationInFrames']} 帧（{rhythm['durationSeconds']:g} 秒），climaxFrame = {climax}。"
       "时间码格式 时:分:秒:帧，fN 指本屏起点之后第 N 帧。\n")
@@ -212,13 +214,15 @@ def main():
         if s["chars"]:
             sub.append(f"{s['chars']}字 {s['cps']:.1f}字每秒")
         sfx = "<br>".join(f"f{x['at']} {x['name']} {tiers[x['tier']]['name']}" for x in s["sfx"]) or "无（留白）"
+        poses = "<br>".join(f"f{c['offset']} {c['who']} {c['poseLabel']}（{c['pose']}）" for c in s.get("cast", []))
+        people = s["people"] + (f"<br>**动作** {poses}" if poses else "")
         cue = s["cue"]
         if s.get("heavy"):
             cue = f"**★ {s['heavy']}** " + cue
         elif s.get("bigAction"):
             cue = "**大动作** " + cue
         time = f"{tc(s['start'], fps)}–{tc(s['end'], fps)}<br>B{s['startBar']}" + (f"–B{s['startBar'] + s['bars'] - 1}" if s["bars"] > 1 else "")
-        w(f"| {s['n']} | {time} | {'<br>'.join(sub)} | {s['people']} | {s['action']} | {styles[s['style']]} | {sfx} | {cue} |")
+        w(f"| {s['n']} | {time} | {'<br>'.join(sub)} | {people} | {s['action']} | {styles[s['style']]} | {sfx} | {cue} |")
 
     w("\n## 附录\n")
     w(f"- **总字数**：{total_chars} 字（主字幕和主题词大字，不含附着标签和出处）")

@@ -1,0 +1,31 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "情感漠视 抖音横屏知识短片",
+  "scripts": {
+    "studio": "remotion studio",
+    "rhythm": "python3 scripts/rhythm.py --seconds 148.8 --bpm 100 --climax 91.2",
+    "sfx": "python3 scripts/sfx.py",
+    "fonts": "python3 scripts/fonts.py",
+    "timeline": "tsx scripts/export-timeline.ts",
+    "subtitles": "npm run timeline && python3 scripts/build_script.py",
+    "render:preview": "remotion render Preview out/preview.mp4",
+    "render:posetest": "remotion render PoseTest out/posetest.mp4",
+    "check": "python3 scripts/check_preview.py",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.537",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.537"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.537",
+    "@remotion/renderer": "4.0.537",
+    "@types/react": "18.3.12",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}
