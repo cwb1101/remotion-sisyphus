@@ -1,0 +1,25 @@
+{
+  "name": "remotion-sisyphus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "现状偏差 · 横屏知识短视频（Remotion）",
+  "scripts": {
+    "studio": "npm run sfx && remotion studio",
+    "sfx": "python3 scripts/synth_sfx.py",
+    "validate": "python3 scripts/subtitle_rules.py",
+    "render:preview": "bash scripts/render_preview.sh",
+    "check:frames": "bash scripts/check_frames.sh out/preview.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-sc": "5.2.8",
+    "@remotion/cli": "4.0.530",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.530"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "typescript": "5.9.2"
+  }
+}

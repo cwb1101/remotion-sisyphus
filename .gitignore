@@ -147,3 +147,9 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Remotion 渲染产物与合成音频（由 npm run sfx 生成）
+out/
+public/audio/
+
+__pycache__/
