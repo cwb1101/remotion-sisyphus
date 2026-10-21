@@ -1,7 +1,8 @@
 import React from 'react';
-import {Composition} from 'remotion';
+import {Composition, Still} from 'remotion';
 import './fonts';
 import {FILM_END, FPS, screen} from './data/script';
+import {Cover, COVER} from './Cover';
 import {Film, Preview} from './Film';
 import {H, W} from './theme';
 
@@ -11,6 +12,7 @@ const PREVIEW_DURATION = PREVIEW_END + 15;
 
 export const RemotionRoot: React.FC = () => (
 	<>
+		<Still id="Cover" component={Cover} width={COVER.width} height={COVER.height} />
 		<Composition id="Film" component={Film} durationInFrames={FILM_END} fps={FPS} width={W} height={H} />
 		<Composition
 			id="Preview"
