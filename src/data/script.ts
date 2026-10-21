@@ -25,6 +25,7 @@ type Doc = {
 	fps: number;
 	width: number;
 	height: number;
+	filmEnd: number;
 	colors: {text: string; amber: string; cyan: string};
 	screens: Screen[];
 };
@@ -32,6 +33,8 @@ type Doc = {
 export const DATA = raw as unknown as Doc;
 export const FPS = DATA.fps;
 export const COLORS = DATA.colors;
+/** 成片总帧数（最后一屏字幕之后只留光） */
+export const FILM_END = DATA.filmEnd;
 
 export const screen = (id: number): Screen => {
 	const s = DATA.screens[id - 1];

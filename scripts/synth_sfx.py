@@ -3,10 +3,14 @@
 - 三档峰值：weak / mid / strong 取自数据文件 sfxPeakDbfs，每个音效单独归一到该峰值
 - 每个音效首尾 15ms 升余弦淡入淡出；噪声类先带通 100Hz–6kHz 再压电平
 - 总线限幅，天花板 -7 dBFS（给 AAC 编码留余量，保证成片峰值 ≤ -6 dBFS）
-- 没有音效的地方是数字静音（全零），不加抖动、不铺底噪
-- 另存噪声类音效分轨到 out/audio-check/，供单独放大检查
+- 垫底一层连续的环境和弦（只用正弦波，不含任何噪声），每节换一个和弦、交叉淡化；
+  遇到“中/强”音效自动压低（ducking），让关键句最响；垫底电平自动校准，使全片整体响度约 -20 LUFS
+- 不加抖动、不铺底噪；片头 0.4 秒淡入、片尾 1.5 秒淡出
+- 另存噪声类音效分轨、纯音效分轨到 out/audio-check/，供单独放大检查
 """
 import json
+import subprocess
+import tempfile
 
 import numpy as np
 from scipy.io import wavfile
@@ -17,6 +21,7 @@ from subtitle_rules import NOISE_TYPES, ROOT, load, resolve_at
 
 SR = 48000
 CEILING_DBFS = -7.0
+TARGET_LUFS = -20.5  # “约 -20 LUFS，宁可偏小”
 FADE_S = 0.015
 rng = np.random.default_rng(20261021)
 
@@ -221,6 +226,76 @@ def render_event(e, fps):
     raise ValueError(kind)
 
 
+# 每节的环境和弦（频率, 相对幅度）
+BED_CHORDS = {
+    "hook": [(110.0, .22), (220.0, .55), (329.63, .32), (523.25, .12)],
+    "question": [(110.0, .22), (220.0, .55), (329.63, .32), (523.25, .12)],
+    "choice": [(110.0, .22), (220.0, .55), (329.63, .32), (523.25, .12)],
+    "name": [(87.31, .22), (174.61, .55), (261.63, .32), (440.0, .12)],
+    "examples": [(146.83, .22), (293.66, .55), (349.23, .28), (440.0, .14)],
+    "threshold": [(164.81, .22), (329.63, .5), (415.30, .3), (493.88, .14)],
+    "ledger": [(110.0, .22), (220.0, .55), (329.63, .32), (523.25, .12)],
+    "installment": [(146.83, .22), (293.66, .55), (349.23, .28), (440.0, .14)],
+    "close": [(110.0, .22), (220.0, .55), (329.63, .32), (554.37, .16)],
+}
+XFADE_S = 1.5
+
+
+def bed(doc, total):
+    """连续的环境和弦：每个和弦的振荡器全程连续运行，只用包络交叉淡化，不会产生相位跳变。"""
+    fps = doc["fps"]
+    t = np.arange(total) / SR
+    sections = []
+    for sc in doc["screens"]:
+        if not sections or sections[-1][0] != sc["section"]:
+            sections.append([sc["section"], sc["start"] / fps])
+    out = np.zeros(total)
+    for i, (name, t0) in enumerate(sections):
+        t1 = sections[i + 1][1] if i + 1 < len(sections) else total / SR + XFADE_S
+        rise = np.clip((t - (t0 - XFADE_S / 2)) / XFADE_S, 0, 1) if i else np.ones(total)
+        fall = 1 - np.clip((t - (t1 - XFADE_S / 2)) / XFADE_S, 0, 1)
+        env = (0.5 - 0.5 * np.cos(np.pi * rise)) * (0.5 - 0.5 * np.cos(np.pi * fall))
+        if env.max() == 0:
+            continue
+        for k, (f, a) in enumerate(BED_CHORDS[name]):
+            lfo = 1 + 0.06 * np.sin(2 * np.pi * (0.07 + 0.03 * k) * t + k)
+            out += env * a * lfo * np.sin(2 * np.pi * f * t + 0.7 * k)
+    n_in, n_out = int(0.4 * SR), int(1.5 * SR)
+    out[:n_in] *= 0.5 - 0.5 * np.cos(np.linspace(0, np.pi, n_in))
+    out[-n_out:] *= 0.5 + 0.5 * np.cos(np.linspace(0, np.pi, n_out))
+    return out / np.max(np.abs(out))
+
+
+def duck_envelope(placed, total):
+    """中/强音效出现时压低垫底：强 -7dB、中 -4dB；30ms 压下，600ms 回升。"""
+    rate = 1000
+    n = total * rate // SR + 1
+    target = np.ones(n)
+    for e in placed:
+        depth = {"strong": 10 ** (-7 / 20), "mid": 10 ** (-4 / 20)}.get(e["level"])
+        if depth is None:
+            continue
+        a = max(0, int((e["start"] / SR - 0.05) * rate))
+        b = int((e["start"] + min(e["length"], int(1.4 * SR))) / SR * rate)
+        target[a:b] = np.minimum(target[a:b], depth)
+    g = np.empty(n)
+    cur = 1.0
+    att, rel = np.exp(-1 / (0.03 * rate)), np.exp(-1 / (0.6 * rate))
+    for i, v in enumerate(target):
+        c = att if v < cur else rel
+        cur = c * cur + (1 - c) * v
+        g[i] = cur
+    return np.interp(np.arange(total) / SR, np.arange(n) / rate, g)
+
+
+def integrated_lufs(x):
+    with tempfile.NamedTemporaryFile(suffix=".wav") as f:
+        wavfile.write(f.name, SR, np.stack([x, x], axis=1).astype(np.float32))
+        err = subprocess.run(["ffmpeg", "-nostats", "-i", f.name, "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+    import re
+    return float(re.findall(r"I:\s+(-?[\d.]+) LUFS", err)[-1])
+
+
 def limiter(x, ceiling_db, lookahead_s=0.005, release_s=0.08):
     ceiling = 10 ** (ceiling_db / 20)
     need = np.minimum(1.0, ceiling / (np.abs(x) + 1e-12))
@@ -243,7 +318,7 @@ def main():
     doc = load()
     fps = doc["fps"]
     peaks = doc["sfxPeakDbfs"]
-    total = int((doc["screens"][-1]["end"] / fps + 5) * SR)
+    total = int(doc["filmEnd"] / fps * SR)
     mix = np.zeros(total)
     noise_stem = np.zeros(total)
     placed = []
@@ -261,7 +336,20 @@ def main():
                                "target_dbfs": peaks[e["level"]], "noise": e["type"] in NOISE_TYPES})
                 if e["type"] in NOISE_TYPES:
                     noise_stem[i0:i0 + len(x)] += x[: total - i0]
-    mix = limiter(mix, CEILING_DBFS)
+    # 片尾：所有音效在成片最后 1.2 秒内淡出，避免截断
+    n_end = int(1.2 * SR)
+    mix[-n_end:] *= 0.5 + 0.5 * np.cos(np.linspace(0, np.pi, n_end))
+    events_only = mix.copy()
+
+    # 垫底：按目标响度二分校准，峰值不超过 -14 dBFS；遇到“中/强”音效时会被压到 -18/-21 dBFS 以下
+    pad_raw = bed(doc, total) * duck_envelope(placed, total)
+    lo, hi = -45.0, -14.0
+    for _ in range(9):
+        mid = (lo + hi) / 2
+        lufs = integrated_lufs(limiter(events_only + pad_raw * 10 ** (mid / 20), CEILING_DBFS))
+        lo, hi = (mid, hi) if lufs < TARGET_LUFS else (lo, mid)
+    bed_peak = lo
+    mix = limiter(events_only + pad_raw * 10 ** (bed_peak / 20), CEILING_DBFS)
     out = ROOT / "public" / "audio"
     out.mkdir(parents=True, exist_ok=True)
     to16 = lambda y: np.round(np.clip(y, -1, 1) * 32767).astype(np.int16)
@@ -269,9 +357,11 @@ def main():
     check = ROOT / "out" / "audio-check"
     check.mkdir(parents=True, exist_ok=True)
     wavfile.write(check / "noise_stem.wav", SR, to16(noise_stem))
+    wavfile.write(check / "events_stem.wav", SR, to16(events_only))
     boost = noise_stem / (np.max(np.abs(noise_stem)) + 1e-12) * 10 ** (-3 / 20)
     wavfile.write(check / "noise_stem_boosted.wav", SR, to16(boost))
-    (check / "events.json").write_text(json.dumps({"sr": SR, "events": placed}, ensure_ascii=False, indent=1))
+    (check / "events.json").write_text(json.dumps({"sr": SR, "events": placed, "bed_peak_dbfs": round(bed_peak, 2)}, ensure_ascii=False, indent=1))
+    print(f"垫底和弦峰值 {bed_peak:.2f} dBFS，整体响度 {integrated_lufs(mix):.2f} LUFS")
     print(f"写出 {out / 'sfx.wav'}：{total / SR:.1f}s，峰值 {20 * np.log10(np.max(np.abs(mix)) + 1e-12):.2f} dBFS")
 
 

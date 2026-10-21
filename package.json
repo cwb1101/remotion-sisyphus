@@ -8,8 +8,9 @@
     "sfx": "python3 scripts/synth_sfx.py",
     "validate": "python3 scripts/subtitle_rules.py",
     "render:preview": "bash scripts/render_preview.sh",
-    "check:frames": "bash scripts/check_frames.sh out/preview.mp4",
-    "typecheck": "tsc --noEmit"
+    "check:frames": "bash scripts/check_frames.sh out/film.mp4",
+    "typecheck": "tsc --noEmit",
+    "render:film": "bash scripts/render_film.sh"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.2.8",

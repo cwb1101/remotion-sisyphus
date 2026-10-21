@@ -35,6 +35,12 @@ export const STAND: Pose = {torso: 0, neck: 0, armB: -4, elbowB: 10, armF: 4, el
 export const CROUCH: Pose = {torso: 44, neck: 26, armB: 12, elbowB: 30, armF: 22, elbowF: 30, hipB: 62, kneeB: 108, hipF: 66, kneeF: 110};
 export const PUSH: Pose = {torso: 30, neck: 6, armB: 70, elbowB: 10, armF: 76, elbowF: 8, hipB: -22, kneeB: 6, hipF: 34, kneeF: 42};
 export const HOLD: Pose = {torso: 12, neck: 34, armB: 150, elbowB: 30, armF: 160, elbowF: 30, hipB: 80, kneeB: 140, hipF: 86, kneeF: 145};
+/** 坐在凳子上（髋部离地约 91） */
+export const SIT: Pose = {torso: 34, neck: 28, armB: 40, elbowB: 40, armF: 46, elbowF: 40, hipB: 88, kneeB: 88, hipF: 92, kneeF: 92};
+/** 屈膝坐在地上 */
+export const FLOORSIT: Pose = {torso: -6, neck: 16, armB: 52, elbowB: 70, armF: 60, elbowF: 64, hipB: 118, kneeB: 152, hipF: 122, kneeF: 158};
+/** 缩成一团的深蹲（适合更低的天花板） */
+export const HUDDLE: Pose = {torso: 52, neck: 34, armB: 24, elbowB: 50, armF: 30, elbowF: 50, hipB: 78, kneeB: 130, hipF: 82, kneeF: 134};
 export const LOOK_UP: Pose = {...STAND, torso: -4, neck: -26, armB: -8, armF: 6};
 
 const KEYS = Object.keys(STAND) as (keyof Pose)[];

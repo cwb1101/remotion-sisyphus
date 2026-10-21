@@ -1,7 +1,8 @@
-"""成片音频自检：整体响度、最大峰值、削波样本、超 -6 dBFS 的时间点、各档峰值、静音段、声画同步、噪声类音效。
+"""成片音频自检：整体响度、最大峰值、削波样本、超 -6 dBFS 的时间点、各档峰值、静音段（silencedetect）、声画同步、噪声类音效。
 
 用法：python3 scripts/audio_check.py out/preview.mp4
-依赖 synth_sfx.py 写出的 out/audio-check/events.json 与 noise_stem.wav。
+依赖 synth_sfx.py 写出的 out/audio-check/events.json、events_stem.wav 与 noise_stem.wav。
+各档峰值在“纯音效分轨”上量（成片里叠着环境垫底，单个音效的峰值没法单独量）。
 """
 import json
 import re
@@ -78,10 +79,12 @@ def main(path):
     def overlaps(e):
         return any(o is not e and o["start"] < e["start"] + e["length"] and e["start"] < o["start"] + o["length"] for o in ev)
 
+    _, stem = wavfile.read(CHECK / "events_stem.wav")
+    stem = stem.astype(np.float64) / 32768
     tiers = {}
-    isolated = [e for e in ev if e["start"] + e["length"] <= n and not overlaps(e)]
+    isolated = [e for e in ev if e["start"] + e["length"] <= min(n, len(stem)) and not overlaps(e)]
     for e in isolated:
-        seg = np.abs(mono[e["start"]:e["start"] + e["length"]])
+        seg = np.abs(stem[e["start"]:e["start"] + e["length"]])
         tiers.setdefault(e["level"], []).append(db(seg.max()))
     tier_report = {k: {"target": next(e["target_dbfs"] for e in ev if e["level"] == k), "min": round(min(v), 2), "max": round(max(v), 2), "count": len(v)} for k, v in tiers.items()}
     overlapped = len(ev) - len(isolated)
@@ -92,14 +95,12 @@ def main(path):
     k5 = int(0.005 * sr)
     hf_mix_peak = max(np.sqrt((hf_mix[i:i + k5] ** 2).mean()) for i in range(0, n - k5, k5))
 
-    # 静音段：所有音效窗之外（前后各留 30ms）应当是数字静音
-    busy = np.zeros(n, dtype=bool)
-    pad = int(0.03 * sr)
-    for e in ev:
-        busy[max(0, e["start"] - pad):e["start"] + e["length"] + pad] = True
-    quiet = np.abs(mono[~busy])
-    silence_peak = db(quiet.max()) if len(quiet) else float("-inf")
-    silence_secs = round(float((~busy).sum()) / sr, 2)
+    # 静音段：ffmpeg silencedetect（-60 dB，持续 0.3 秒以上）
+    err = subprocess.run(["ffmpeg", "-nostats", "-i", str(path), "-map", "0:a", "-af", "silencedetect=noise=-60dB:d=0.3", "-f", "null", "-"], capture_output=True, text=True).stderr
+    starts = [float(x) for x in re.findall(r"silence_start: (-?[\d.]+)", err)]
+    ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", err)]
+    silences = [(round(max(0.0, a), 2), round(b, 2)) for a, b in zip(starts, ends + [n / sr] * (len(starts) - len(ends)))]
+    # 垫底与音效之间的“底噪”：最安静的 50ms 窗里有没有嘶声（8kHz 以上能量）
 
     # 声画同步：成片与源 wav 的互相关（第一个强音效附近）
     src_sr, src = wavfile.read(ROOT / "public" / "audio" / "sfx.wav")
@@ -133,7 +134,7 @@ def main(path):
         })
 
     # 不重叠音效的首尾样本（源 wav）应为 0：淡入淡出生效
-    edges = max((max(abs(src[e["start"]]), abs(src[e["start"] + e["length"] - 1])) for e in isolated), default=0.0)
+    edges = max((max(abs(stem[e["start"]]), abs(stem[e["start"] + e["length"] - 1])) for e in isolated), default=0.0)
 
     report = {
         "file": str(path),
@@ -145,7 +146,7 @@ def main(path):
         "clipped_samples": clipped,
         "over_-6dBFS": over,
         "tiers": tier_report,
-        "silence": {"seconds": silence_secs, "peak_dbfs": silence_peak},
+        "silences": silences,
         "av_offset_ms": round(fine / sr * 1000, 2),
         "event_edge_max": round(float(edges), 6),
         "overlapped_events": overlapped,
@@ -159,9 +160,10 @@ def main(path):
         if k in tier_report:
             t = tier_report[k]
             print(f"  {k:6s} 目标 {t['target']} dBFS → 实测 {t['min']} ~ {t['max']}（{t['count']} 个）")
-    print(f"  （另有 {overlapped} 个音效与其他音效重叠或被片尾截断，不计入分档统计）")
+    print(f"  （各档峰值在纯音效分轨上量；另有 {overlapped} 个音效与其他音效重叠或被片尾截断，不计入分档统计）")
     print(f"整条混音 8kHz 以上 5ms 包络最大 {report['mix_hf_8k_peak_dbfs']} dBFS（咔哒检查）")
-    print(f"静音段 {silence_secs}s，其中最大电平 {silence_peak} dBFS｜声画偏移 {report['av_offset_ms']} ms｜音效首尾样本最大值 {report['event_edge_max']}")
+    print(f"静音段（silencedetect -60dB / 0.3s）：{silences if silences else '无'}")
+    print(f"声画偏移 {report['av_offset_ms']} ms｜不重叠音效的首尾样本最大值 {report['event_edge_max']}")
     for r in noise_report:
         print(f"  噪声类 #{r['screen']} {r['type']}: <100Hz {r['below_100Hz_pct']}%  >6kHz {r['above_6kHz_pct']}%  8kHz 以上包络峰 {r['hf_8k_peak_rel_db']} dB  首尾 {r['edge_start']}/{r['edge_end']}")
     if clipped or over:
